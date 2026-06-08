@@ -23,7 +23,7 @@ find_gamma <- function(c1, c2, .odds_ratio, .m, .n, .t, .alpha,
 
   A <- matrix(0, nrow = 2, ncol = 2)
   b <- c(0, 0)
-  gamma <- c(-1, -1) # doesn't seem to be used below??
+  #gamma <- c(-1, -1) # doesn't seem to be used below
 
   lower <- max(.t-.n, 0)
   upper <- min(.m, .t)

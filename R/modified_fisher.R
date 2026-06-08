@@ -136,6 +136,9 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
     or <- 1
 
+    df_power <- construct_test_frame(.odds_ratio = or, .m = m, .n = n,
+                                     .alpha = alpha, .precision = precision)
+
     gamma0 <- optimise_gamma0(.odds_ratio = or, .m = m, .n = n, .alpha = alpha,
                               .precision = precision, .method = method,
                               .maze = maze, .zoom_iter = zoom_iter)
@@ -145,7 +148,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
     p <- c(pi1, pi2)
 
-    power_mfet <- power_mfet(p, gamma0, or, .m = m, .n = n, .df = df,
+    power_mfet <- power_mfet(p, gamma0, or, .m = m, .n = n, .df = df_power,
                              .alpha = alpha, .precision = precision,
                              .superiority = superiority)*100
 
