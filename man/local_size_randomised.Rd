@@ -37,8 +37,9 @@ function computes that expected size directly. Find the local size of the
 MFET as a function of the null OR theta_0.
 }
 \keyword{find}
-\keyword{gradient}
 \keyword{hypothesis}
 \keyword{local}
+\keyword{randomised}
+\keyword{randomized}
 \keyword{size}
 \keyword{test}

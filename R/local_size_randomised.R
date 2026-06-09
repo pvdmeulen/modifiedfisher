@@ -1,4 +1,4 @@
-# Find local size and size gradient of randomised test -------------------------
+# Find local size of randomised test ------------------------------------------
 
 #' Local size of the randomised (UMPU) Fisher Exact Test The existing
 #' local_size() uses mod_fe_test(), which applies a gamma0 threshold and returns
@@ -16,7 +16,7 @@
 #' @param .alpha The nominal significance level α. Defaults to 0.05.
 #' @param .precision Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.
 #'
-#' @keywords find local size hypothesis test gradient
+#' @keywords find local size hypothesis test randomised randomized
 
 local_size_randomised <- function(nuisance, .m, .n, .df, .odds_ratio,
                                   .alpha, .precision) {
