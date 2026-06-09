@@ -5,8 +5,6 @@
 #' built for OR = 1 (the null).
 #'
 #' @param p Vector containing (pi1, pi2).
-#' @param .gamma0 Some randomisation probability gamma0.
-#' @param .odds_ratio The null hypothesis odds ratio being tested. No default.
 #' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
 #' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
 #' @param .df Testing frame (data frame) generated as part as construct_test_frame().
