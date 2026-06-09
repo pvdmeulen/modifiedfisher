@@ -7,7 +7,7 @@
 #' probability gamma1 (lower) or gamma2 (upper), not deterministically. This
 #' function computes that expected size directly. Find the local size of the
 #' MFET as a function of the null OR theta_0.
-#'
+
 #' @param nuisance Nuisance parameter.
 #' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
 #' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
@@ -66,4 +66,5 @@ local_size_randomised <- function(nuisance, .m, .n, .df, .odds_ratio,
   }
 
   return(size)
+
 }

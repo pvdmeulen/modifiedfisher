@@ -3,7 +3,7 @@ Title: Non-Randomised Non-Conservative Size-α Modified Fisher Exact Test
 Description: What the package does (one paragraph).
 URL: https://github.com/pvdmeulen/modified-fisher
 BugReports: https://github.com/pvdmeulen/modified-fisher/issues
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person("Peter", "van der Meulen", , "peter.vd.meulen@icloud.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0002-0988-8192"))
