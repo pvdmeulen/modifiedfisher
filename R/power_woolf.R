@@ -7,9 +7,7 @@
 #' @param p Vector containing (pi1, pi2).
 #' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
 #' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .df Testing frame (data frame) generated as part as construct_test_frame().
-#' @param .alpha The nominal significance level α. Defaults to 0.05.
-#' @param .precision Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.
+#' @param .alpha The nominal significance level α. No default.
 #' @param .superiority A logical. Defaults to FALSE. Setting this to TRUE will calculate the power for testing superiority.
 #'
 #' @keywords find power test woolf asymptotic
@@ -24,17 +22,19 @@ power_woolf <- function(p, .m, .n, .alpha, .superiority = FALSE) {
   for (u in 0:.m) {
     for (v in 0:.n) {
 
-      a  <- max(u,      0.5)
-      b  <- max(.m - u, 0.5)
-      cc <- max(v,      0.5)
-      d  <- max(.n - v, 0.5)
+      a <- max(u,      0.5)
+      b <- max(.m - u, 0.5)
+      c <- max(v,      0.5)
+      d <- max(.n - v, 0.5)
 
-      reject <- as.numeric(abs(log(a*d/(b*cc)) / sqrt(1/a+1/b+1/cc+1/d)) > z_crit)
+      reject <- as.numeric(abs(log(a*d/(b*c)) / sqrt(1/a+1/b+1/c+1/d)) > z_crit)
 
       contrib <- reject *
         stats::dbinom(u, size = .m, prob = p0) *
         stats::dbinom(v, size = .n, prob = p1)
+
       power <- power + if (.superiority) (v/.n > u/.m) * contrib else contrib
+
     }
   }
 

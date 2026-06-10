@@ -3,7 +3,7 @@
 \name{local_size_woolf}
 \alias{local_size_woolf}
 \title{Local size of Woolf's asymptotic (log-OR Wald) test
-Rejects H0 when |log(OR_hat) / SE(log OR_hat)| > z_\link{alpha/2}. Uses the
+Rejects H0 when |log(OR_hat) / SE(log OR_hat)| > z_(alpha/2). Uses the
 Haldane 0.5 correction for zero cells, exactly as the SAS macro does
 (a=max(u, 0.5); b=max(m-u, 0.5); etc.). Because this is a purely asymptotic
 test it does not need a test frame.}
@@ -23,7 +23,7 @@ local_size_woolf(nuisance, .odds_ratio, .m, .n, .alpha)
 }
 \description{
 Local size of Woolf's asymptotic (log-OR Wald) test
-Rejects H0 when |log(OR_hat) / SE(log OR_hat)| > z_\link{alpha/2}. Uses the
+Rejects H0 when |log(OR_hat) / SE(log OR_hat)| > z_(alpha/2). Uses the
 Haldane 0.5 correction for zero cells, exactly as the SAS macro does
 (a=max(u, 0.5); b=max(m-u, 0.5); etc.). Because this is a purely asymptotic
 test it does not need a test frame.
