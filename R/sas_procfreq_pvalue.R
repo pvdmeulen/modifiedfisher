@@ -13,6 +13,7 @@
 #' @param t Integer input. Number of successes in n. No default.
 #' @param m Integer input. Total number of trials m. No default.
 #' @param n Integer input. Total number of trials n. No default.
+#' @param odds_ratio Odds ratio used in the null hypothesis. Defaults to 1.
 #'
 #' @keywords find local size hypothesis test sas procfreq
 

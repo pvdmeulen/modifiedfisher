@@ -18,9 +18,11 @@ power_procfreq(p, .m, .n, .alpha, .superiority = FALSE)
 \item{.superiority}{A logical. Defaults to FALSE. Setting this to TRUE will calculate the power for testing superiority.}
 }
 \description{
-Identical to power_mfet(), but gamma0 is fixed at 1 so the
-boundary is never included in the rejection region. The test frame must be
-built for OR = 1 (the null).
+For each (u, v) pair the rejection decision is made using the SAS Proc FREQ
+Fisher exact p-value (sum of central-hypergeometric probabilities, given the
+marginal total t = u + v, that are no greater than the observed probability).
+This mirrors the way local_size_procfreq() determines rejection, and is the
+unconditional power of SAS Proc FREQ's exact test for H0: OR = 1.
 }
 \keyword{find}
 \keyword{power}

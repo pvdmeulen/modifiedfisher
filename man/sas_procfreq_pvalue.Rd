@@ -10,7 +10,7 @@ only base-R dhyper(),  no extra packages needed. Because the null
 distribution is always the central hypergeometric (OR = 1), no test frame is
 required.}
 \usage{
-sas_procfreq_pvalue(s, t, m, n)
+sas_procfreq_pvalue(s, t, m, n, odds_ratio = 1)
 }
 \arguments{
 \item{s}{Integer input. Number of successes in m. No default.}
@@ -20,6 +20,8 @@ sas_procfreq_pvalue(s, t, m, n)
 \item{m}{Integer input. Total number of trials m. No default.}
 
 \item{n}{Integer input. Total number of trials n. No default.}
+
+\item{odds_ratio}{Odds ratio used in the null hypothesis. Defaults to 1.}
 }
 \description{
 P-value from the SAS Proc FREQ exact test used in the local size calculation
