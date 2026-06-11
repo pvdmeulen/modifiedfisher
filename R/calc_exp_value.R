@@ -1,12 +1,21 @@
-#' Calculate expected OR value ---- helper function ---------------------------
+#' Conditional expected value of S given T
 #'
-#' Calculate expected value of theta (OR) given m, n, t and precision.
+#' Computes \eqn{E_{\theta_0}(S \mid T = t)}, the conditional expected value
+#' of \eqn{S} (number of successes in group 1) given total successes
+#' \eqn{T = t}, under the Fisher non-central hypergeometric distribution with
+#' odds ratio \eqn{\theta_0}. That is,
+#' \eqn{\sum_s s \cdot P_{\theta_0}(S = s \mid T = t)}
+#' over the support of \eqn{S}. Used by \code{find_gamma()} when solving for
+#' the randomisation probabilities \eqn{\gamma_1} and \eqn{\gamma_2}.
 #'
-#' @param .odds_ratio The null hypothesis odds ratio being tested. No default.
-#' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .t Integer input responses and sample sizes. t = u + v.
-#' @param .precision Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.
+#' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
+#' @param .m Number of trials in group 1.
+#' @param .n Number of trials in group 2.
+#' @param .t Total number of successes \eqn{t = u + v}; the conditioning value
+#'   for the non-central hypergeometric distribution. The expectation
+#'   \eqn{E_{\theta_0}(S \mid T = t)} is returned.
+#' @param .precision Numerical precision passed to
+#'   \code{BiasedUrn::dFNCHypergeo()}. No default.
 #'
 #' @keywords calculate expected value odds ratio theta
 #' @importFrom BiasedUrn dFNCHypergeo

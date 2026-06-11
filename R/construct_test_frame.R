@@ -1,15 +1,21 @@
-#' Construct testing frame and randomisation values ---------------------------
+#' Construct testing frame and randomisation values
 #'
-#' Construct data frame with possible values for u and attach the gamma1 and
-#' # gamma2 randomisation values (given the null odds ratio, precision, and
-#' significance level alpha) to this data frame.
+#' Constructs a data frame of critical values (\eqn{c_1}, \eqn{c_2}) and
+#' randomisation probabilities (\eqn{\gamma_1}, \eqn{\gamma_2}) for every
+#' possible value of the total \eqn{T = 0, \ldots, m + n}, given the null
+#' odds ratio, significance level \eqn{\alpha}, and precision. Starting from
+#' the \eqn{\alpha/2} quantiles of the Fisher non-central hypergeometric
+#' distribution, a spiral search over \eqn{(c_1, c_2)} is used whenever the
+#' initial solution for \eqn{(\gamma_1, \gamma_2)} falls outside \eqn{[0, 1]}.
 #'
-#' @param .odds_ratio The null hypothesis odds ratio being tested. No default.
-#' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .alpha The nominal significance level α. Defaults to 0.05.
-#' @param .precision Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.
-#' @param .message A logical. Defaults to FALSE. Setting this to TRUE will print messages as the function is running; this can be useful for debugging.
+#' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
+#' @param .m Number of trials in group 1.
+#' @param .n Number of trials in group 2.
+#' @param .alpha Nominal significance level \eqn{\alpha}. No default.
+#' @param .precision Numerical precision for quantile calculations and
+#'   \code{BiasedUrn::dFNCHypergeo()}. No default.
+#' @param .message A logical. Defaults to \code{FALSE}. Setting this to
+#'   \code{TRUE} will print progress messages; useful for debugging.
 #'
 #' @keywords construct randomisation values testing gamma
 #' @importFrom BiasedUrn qFNCHypergeo

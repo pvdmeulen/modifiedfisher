@@ -1,16 +1,24 @@
-#' Find randomisation values gamma1 and gamma2 --------------------------------
+#' Find randomisation probabilities \eqn{\gamma_1} and \eqn{\gamma_2}
 #'
-#' Find the gamma1 and gamma2 randomisation values (given the null odds ratio,
-#' precision, and critical values) so that the test size is alpha.
+#' Solves the \eqn{2 \times 2} linear system for \eqn{(\gamma_1, \gamma_2)}
+#' given critical values \eqn{(c_1, c_2)}, so that the test is conditionally
+#' of size \eqn{\alpha} and unbiased (Neyman-structure conditions). Returns
+#' \eqn{(-1, -1)} when no admissible solution exists, signalling
+#' \code{construct_test_frame()} to expand the search square.
 #'
-#' @param c1 Critical value 1.
-#' @param c2 Critical value 2.
-#' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .t Integer input responses and sample sizes. t = u + v.
-#' @param .odds_ratio The null hypothesis odds ratio being tested. No default.
-#' @param .alpha The nominal significance level α. Defaults to 0.05.
-#' @param .precision Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.
+#' @param c1 Lower critical value: \eqn{S \leq c_1} falls in the lower
+#'   rejection region; \eqn{S = c_1} exactly is rejected with probability
+#'   \eqn{\gamma_1}.
+#' @param c2 Upper critical value: \eqn{S \geq c_2} falls in the upper
+#'   rejection region; \eqn{S = c_2} exactly is rejected with probability
+#'   \eqn{\gamma_2}.
+#' @param .m Number of trials in group 1.
+#' @param .n Number of trials in group 2.
+#' @param .t Total number of successes \eqn{t = u + v}; the conditioning value
+#'   in the non-central hypergeometric distribution.
+#' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
+#' @param .alpha Nominal significance level \eqn{\alpha}. No default.
+#' @param .precision Numerical precision. No default.
 #'
 #' @keywords construct randomisation values testing gamma
 #' @importFrom BiasedUrn dFNCHypergeo

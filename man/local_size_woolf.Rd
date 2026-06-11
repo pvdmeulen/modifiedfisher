@@ -2,31 +2,31 @@
 % Please edit documentation in R/local_size_woolf.R
 \name{local_size_woolf}
 \alias{local_size_woolf}
-\title{Local size of Woolf's asymptotic (log-OR Wald) test
-Rejects H0 when |log(OR_hat) / SE(log OR_hat)| > z_(alpha/2). Uses the
-Haldane 0.5 correction for zero cells, exactly as the SAS macro does
-(a=max(u, 0.5); b=max(m-u, 0.5); etc.). Because this is a purely asymptotic
-test it does not need a test frame.}
+\title{Local size of Woolf's asymptotic test}
 \usage{
 local_size_woolf(nuisance, .odds_ratio, .m, .n, .alpha)
 }
 \arguments{
-\item{nuisance}{Nuisance parameter.}
+\item{nuisance}{The nuisance parameter \eqn{p_0}: success probability in
+group 1 under \eqn{H_0}. Must be in \eqn{[0, 1]}.}
 
-\item{.odds_ratio}{The null hypothesis odds ratio being tested. No default.}
+\item{.odds_ratio}{The null hypothesis odds ratio \eqn{\theta_0}. No default.}
 
-\item{.m}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.m}{Number of trials in group 1.}
 
-\item{.n}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.n}{Number of trials in group 2.}
 
-\item{.alpha}{The nominal significance level α. Defaults to 0.05.}
+\item{.alpha}{Nominal significance level \eqn{\alpha}. No default.}
 }
 \description{
-Local size of Woolf's asymptotic (log-OR Wald) test
-Rejects H0 when |log(OR_hat) / SE(log OR_hat)| > z_(alpha/2). Uses the
-Haldane 0.5 correction for zero cells, exactly as the SAS macro does
-(a=max(u, 0.5); b=max(m-u, 0.5); etc.). Because this is a purely asymptotic
-test it does not need a test frame.
+Computes the unconditional rejection probability (local size) of Woolf's
+asymptotic Wald test for \eqn{H_0}: OR = \eqn{\theta_0} at nuisance
+parameter \eqn{p_0}, where
+\eqn{p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))}. Rejects \eqn{H_0} when
+\eqn{|\log \hat{\theta} - \log \theta_0| / SE(\log \hat{\theta}) > z_{\alpha/2}},
+where \eqn{\hat{\theta} = u(n-v) / ((m-u)v)}. Uses the Haldane correction
+(replacing zero cells with 0.5) to handle tables where one or more cells
+are zero, matching the SAS macro.
 }
 \keyword{asymptotic}
 \keyword{find}

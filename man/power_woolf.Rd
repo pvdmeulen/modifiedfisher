@@ -2,25 +2,32 @@
 % Please edit documentation in R/power_woolf.R
 \name{power_woolf}
 \alias{power_woolf}
-\title{Find the power of the Woolf asymptotic test --------------------------------}
+\title{Power of Woolf's asymptotic test}
 \usage{
 power_woolf(p, .m, .n, .alpha, .superiority = FALSE)
 }
 \arguments{
-\item{p}{Vector containing (pi1, pi2).}
+\item{p}{Length-2 numeric vector \eqn{(\pi_1, \pi_2)}: success probability
+in group 1 (\eqn{\pi_1}) and group 2 (\eqn{\pi_2}) at which power is
+evaluated.}
 
-\item{.m}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.m}{Number of trials in group 1.}
 
-\item{.n}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.n}{Number of trials in group 2.}
 
-\item{.alpha}{The nominal significance level α. No default.}
+\item{.alpha}{Nominal significance level \eqn{\alpha}. No default.}
 
-\item{.superiority}{A logical. Defaults to FALSE. Setting this to TRUE will calculate the power for testing superiority.}
+\item{.superiority}{Logical. If \code{TRUE}, power is computed only over
+tables where the observed rate in group 2 exceeds that in group 1.
+Defaults to \code{FALSE}.}
 }
 \description{
-Identical to power_mfet(), but gamma0 is fixed at 1 so the
-boundary is never included in the rejection region. The test frame must be
-built for OR = 1 (the null).
+Computes the unconditional power of Woolf's asymptotic Wald test for
+\eqn{H_0}: OR = 1, at response rates \eqn{(\pi_1, \pi_2)}. Rejects
+\eqn{H_0} when
+\eqn{|\log \hat{\theta}| / SE(\log \hat{\theta}) > z_{\alpha/2}},
+where \eqn{\hat{\theta} = u(n-v) / ((m-u)v)}. Uses the Haldane correction
+(replacing zero cells with 0.5) for tables where one or more cells are zero.
 }
 \keyword{asymptotic}
 \keyword{find}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/optimise_gamma0.R
 \name{optimise_gamma0}
 \alias{optimise_gamma0}
-\title{Find optimal gamma0 MFET ----------------------------------------------------------------}
+\title{Find the optimal \eqn{\gamma_0}}
 \usage{
 optimise_gamma0(
   .odds_ratio,
@@ -16,24 +16,29 @@ optimise_gamma0(
 )
 }
 \arguments{
-\item{.odds_ratio}{The null hypothesis odds ratio being tested. No default.}
+\item{.odds_ratio}{The null hypothesis odds ratio \eqn{\theta_0}. No default.}
 
-\item{.m}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.m}{Number of trials in group 1.}
 
-\item{.n}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.n}{Number of trials in group 2.}
 
-\item{.alpha}{The nominal significance level α. Defaults to 0.05.}
+\item{.alpha}{Nominal significance level \eqn{\alpha}. No default.}
 
-\item{.precision}{Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.}
+\item{.precision}{Numerical precision. No default.}
 
-\item{.method}{Defines the numerical method used to find the optimum nuisance parameter (maximising actual size) of the test. The default is "zoom", with the second option being "trust" (this uses the trust() function from the trust region package).}
+\item{.method}{Numerical method for maximising the local size: \code{"zoom"}
+or \code{"trust"}.}
 
-\item{.maze}{Number of points at each iteration to select the nuisance parameter with maximum size from.}
+\item{.maze}{Number of grid points evaluated at each zoom iteration.}
 
-\item{.zoom_iter}{Number of iterations to zoom in with (in the "zoom" method).}
+\item{.zoom_iter}{Number of zoom iterations (\code{"zoom"} method only).}
 }
 \description{
-Find the optimal gamma0 by maximising the size with respect to alpha.
+Finds the optimal \eqn{\gamma_0} threshold: the largest value of
+\eqn{\gamma_0} such that the actual size of the MFET (the maximum of the
+local size over the nuisance parameter \eqn{p_0}) does not exceed
+\eqn{\alpha}. Uses a bisection search over the \eqn{2(m + n + 1)} sorted
+randomisation probability values from the test frame.
 }
 \keyword{alpha}
 \keyword{exact}

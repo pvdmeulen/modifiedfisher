@@ -2,23 +2,32 @@
 % Please edit documentation in R/calc_exp_value.R
 \name{calc_expected_value}
 \alias{calc_expected_value}
-\title{Calculate expected OR value ---- helper function ---------------------------}
+\title{Conditional expected value of S given T}
 \usage{
 calc_expected_value(.odds_ratio, .m, .n, .t, .precision)
 }
 \arguments{
-\item{.odds_ratio}{The null hypothesis odds ratio being tested. No default.}
+\item{.odds_ratio}{The null hypothesis odds ratio \eqn{\theta_0}. No default.}
 
-\item{.m}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.m}{Number of trials in group 1.}
 
-\item{.n}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.n}{Number of trials in group 2.}
 
-\item{.t}{Integer input responses and sample sizes. t = u + v.}
+\item{.t}{Total number of successes \eqn{t = u + v}; the conditioning value
+for the non-central hypergeometric distribution. The expectation
+\eqn{E_{\theta_0}(S \mid T = t)} is returned.}
 
-\item{.precision}{Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.}
+\item{.precision}{Numerical precision passed to
+\code{BiasedUrn::dFNCHypergeo()}. No default.}
 }
 \description{
-Calculate expected value of theta (OR) given m, n, t and precision.
+Computes \eqn{E_{\theta_0}(S \mid T = t)}, the conditional expected value
+of \eqn{S} (number of successes in group 1) given total successes
+\eqn{T = t}, under the Fisher non-central hypergeometric distribution with
+odds ratio \eqn{\theta_0}. That is,
+\eqn{\sum_s s \cdot P_{\theta_0}(S = s \mid T = t)}
+over the support of \eqn{S}. Used by \code{find_gamma()} when solving for
+the randomisation probabilities \eqn{\gamma_1} and \eqn{\gamma_2}.
 }
 \keyword{calculate}
 \keyword{expected}

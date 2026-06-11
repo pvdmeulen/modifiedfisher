@@ -2,30 +2,38 @@
 % Please edit documentation in R/find_gamma12.R
 \name{find_gamma}
 \alias{find_gamma}
-\title{Find randomisation values gamma1 and gamma2 --------------------------------}
+\title{Find randomisation probabilities \eqn{\gamma_1} and \eqn{\gamma_2}}
 \usage{
 find_gamma(c1, c2, .odds_ratio, .m, .n, .t, .alpha, .precision)
 }
 \arguments{
-\item{c1}{Critical value 1.}
+\item{c1}{Lower critical value: \eqn{S \leq c_1} falls in the lower
+rejection region; \eqn{S = c_1} exactly is rejected with probability
+\eqn{\gamma_1}.}
 
-\item{c2}{Critical value 2.}
+\item{c2}{Upper critical value: \eqn{S \geq c_2} falls in the upper
+rejection region; \eqn{S = c_2} exactly is rejected with probability
+\eqn{\gamma_2}.}
 
-\item{.odds_ratio}{The null hypothesis odds ratio being tested. No default.}
+\item{.odds_ratio}{The null hypothesis odds ratio \eqn{\theta_0}. No default.}
 
-\item{.m}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.m}{Number of trials in group 1.}
 
-\item{.n}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.n}{Number of trials in group 2.}
 
-\item{.t}{Integer input responses and sample sizes. t = u + v.}
+\item{.t}{Total number of successes \eqn{t = u + v}; the conditioning value
+in the non-central hypergeometric distribution.}
 
-\item{.alpha}{The nominal significance level α. Defaults to 0.05.}
+\item{.alpha}{Nominal significance level \eqn{\alpha}. No default.}
 
-\item{.precision}{Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.}
+\item{.precision}{Numerical precision. No default.}
 }
 \description{
-Find the gamma1 and gamma2 randomisation values (given the null odds ratio,
-precision, and critical values) so that the test size is alpha.
+Solves the \eqn{2 \times 2} linear system for \eqn{(\gamma_1, \gamma_2)}
+given critical values \eqn{(c_1, c_2)}, so that the test is conditionally
+of size \eqn{\alpha} and unbiased (Neyman-structure conditions). Returns
+\eqn{(-1, -1)} when no admissible solution exists, signalling
+\code{construct_test_frame()} to expand the search square.
 }
 \keyword{construct}
 \keyword{gamma}

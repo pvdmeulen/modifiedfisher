@@ -1,33 +1,56 @@
-# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-# MODIFIED FISHER EXACT TEST ==================================================
-# /////////////////////////////////////////////////////////////////////////////
-
-#' The non-conservative, non-randomised modified Fisher Exact Test.
+#' The non-conservative, size-\eqn{\alpha} modified Fisher exact test
 #'
-#' @param u Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param v Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param odds_ratio The null hypothesis odds ratio being tested. No default.
-#' @param alpha The nominal significance level alpha. Defaults to 0.05.
-#' @param precision Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.
-#' @param message A logical. Defaults to FALSE. Setting this to TRUE will print messages as the function is running; this can be useful for debugging.
-#' @param method Defines the numerical method used to find the optimum nuisance parameter (maximising actual size) of the test. The default is "zoom", with the second option being "trust" (this uses the trust() function from the trust region package).
-#' @param maze Number of points at each iteration to select the nuisance parameter with maximum size from.
-#' @param zoom_iter Number of iterations to zoom in with (in the "zoom" method).
-#' @param power A logical. Defaults to TRUE. Setting this to FALSE will skip the power calculation.
-#' @param superiority A logical. Defaults to FALSE. Setting this to TRUE will calculate the power for testing superiority.
-#' @param power_at_pi1 Power for pi1 (the null hypothesis). Defaults to 0.5.
-#' @param power_at_pi2 Power for pi2 (the alternative hypothesis). Defaults to 0.75.
-#' @param conf_int A logical. Defaults to TRUE. Setting this to FALSE will skip the (1-alpha, two-sided) confidence intervals calculations.
-#' @param pvalue A logical. Defaults to TRUE. Setting this to FALSE will skip the (two-sided, test-based) p-value calculations.
-#' @param local_size_data A logical. Defaults to FALSE. Setting this to TRUE will attach a 'local.size.data' data frame to the test results used in plotting the size of the test.
+#' Computes the non-conservative, size-\eqn{\alpha} modified Fisher exact test
+#' for comparing two proportions \eqn{u/m} and \eqn{v/n}, testing
+#' \eqn{H_0}: OR = \code{odds_ratio}. Returns an \code{htest} object
+#' containing test-based two-sided p-values and \eqn{(1 - \alpha)} confidence
+#' intervals for the odds ratio, which agree by construction. The test
+#' maximises the actual size over the nuisance parameter \eqn{p_0} subject to
+#' it remaining no greater than \eqn{\alpha}, making it less conservative than
+#' the standard Fisher exact test while strictly controlling the Type I error
+#' rate.
+#'
+#' @param u Number of successes observed in group 1 (out of \code{m} trials).
+#'   No default.
+#' @param m Number of trials in group 1. No default.
+#' @param v Number of successes observed in group 2 (out of \code{n} trials).
+#'   No default.
+#' @param n Number of trials in group 2. No default.
+#' @param odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
+#' @param alpha Nominal significance level \eqn{\alpha}. Defaults to 0.05.
+#' @param precision Numerical precision for p-values, confidence limits, and
+#'   size calculations. Defaults to 1e-03.
+#' @param message Logical. If \code{TRUE}, prints progress messages during
+#'   execution. Defaults to \code{FALSE}.
+#' @param method Numerical method for maximising the local size over the
+#'   nuisance parameter. Either \code{"zoom"} (default) or \code{"trust"}
+#'   (trust-region method from the trust package).
+#' @param maze Number of grid points evaluated at each zoom iteration.
+#'   Defaults to 10.
+#' @param zoom_iter Number of zoom iterations. Defaults to 6.
+#' @param power Logical. If \code{FALSE}, skips the power calculation.
+#'   Defaults to \code{TRUE}.
+#' @param superiority Logical. If \code{TRUE}, power is computed only over
+#'   tables where the observed rate in group 2 exceeds that in group 1.
+#'   Defaults to \code{FALSE}.
+#' @param power_at_pi1 Success probability in group 1 at which to evaluate
+#'   power. Defaults to 0.5.
+#' @param power_at_pi2 Success probability in group 2 at which to evaluate
+#'   power. Defaults to 0.75.
+#' @param conf_int Logical. If \code{FALSE}, skips the \eqn{(1 - \alpha)}
+#'   two-sided confidence interval. Defaults to \code{TRUE}.
+#' @param pvalue Logical. If \code{FALSE}, skips the two-sided test-based
+#'   p-value. Defaults to \code{TRUE}.
+#' @param local_size_data Logical. If \code{TRUE}, attaches a
+#'   \code{local.size.data} data frame to the results for plotting the size of
+#'   the test as a function of the nuisance parameter. Defaults to
+#'   \code{FALSE}.
 #'
 #' @keywords non randomised randomized conservative fisher exact test modified
 #' @rdname modified_fisher_exact_test
 #' @export
 #'
-#' @return Returns an <htest> object
+#' @return Returns an \code{htest} object.
 #' @examples
 #' \dontrun{
 #' # Example here
@@ -114,7 +137,6 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
   # source("R/optimise_gamma0.R")
   # source("R/accept.R")      # expand to also output accept/reject for other tests
   # source("R/local_power.R") # expand to also calc local power for other tests
-
 
   # START MAIN FUNCTION =========================================================
 

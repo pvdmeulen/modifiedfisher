@@ -2,35 +2,32 @@
 % Please edit documentation in R/sas_procfreq_pvalue.R
 \name{sas_procfreq_pvalue}
 \alias{sas_procfreq_pvalue}
-\title{P-value from the SAS Proc FREQ exact test used in the local size calculation
-The SAS Proc FREQ Fisher exact p-value sums all hypergeometric probabilities
-(under H0: OR = 1, i.e. the central hypergeometric) that are no greater than
-the observed table probability. Reject H0 if that sum <= alpha. This uses
-only base-R dhyper(),  no extra packages needed. Because the null
-distribution is always the central hypergeometric (OR = 1), no test frame is
-required.}
+\title{P-value from the SAS Proc FREQ exact test}
 \usage{
 sas_procfreq_pvalue(s, t, m, n, odds_ratio = 1)
 }
 \arguments{
-\item{s}{Integer input. Number of successes in m. No default.}
+\item{s}{Number of successes observed in group 1. No default.}
 
-\item{t}{Integer input. Number of successes in n. No default.}
+\item{t}{Total number of successes across both groups
+(\eqn{t = s + } successes in group 2); the conditioning variable in the
+hypergeometric distribution. No default.}
 
-\item{m}{Integer input. Total number of trials m. No default.}
+\item{m}{Number of trials in group 1. No default.}
 
-\item{n}{Integer input. Total number of trials n. No default.}
+\item{n}{Number of trials in group 2. No default.}
 
-\item{odds_ratio}{Odds ratio used in the null hypothesis. Defaults to 1.}
+\item{odds_ratio}{Null hypothesis odds ratio \eqn{\theta_0}. Defaults to 1.}
 }
 \description{
-P-value from the SAS Proc FREQ exact test used in the local size calculation
-The SAS Proc FREQ Fisher exact p-value sums all hypergeometric probabilities
-(under H0: OR = 1, i.e. the central hypergeometric) that are no greater than
-the observed table probability. Reject H0 if that sum <= alpha. This uses
-only base-R dhyper(),  no extra packages needed. Because the null
-distribution is always the central hypergeometric (OR = 1), no test frame is
-required.
+Computes the two-sided Fisher exact p-value for \eqn{H_0}: OR =
+\code{odds_ratio} by summing all probabilities in the conditional
+distribution of \eqn{U} given \eqn{T = t} that are no greater than the
+observed probability \eqn{P_{\theta_0}(U = s \mid T = t)}. The conditional
+distribution is the Fisher non-central hypergeometric with the specified odds
+ratio, computed via \code{BiasedUrn::dFNCHypergeo()}. When
+\code{odds_ratio = 1} this reduces to the standard central hypergeometric,
+matching the p-value reported by SAS Proc FREQ for \eqn{H_0}: OR = 1.
 }
 \keyword{find}
 \keyword{hypothesis}

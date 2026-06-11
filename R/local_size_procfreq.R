@@ -1,19 +1,20 @@
-# Find local size of SAS Proc Freq test ---------------------------------------
-
-#' Local size of the SAS Proc FREQ "exact" test
-#
-#' The SAS Proc FREQ Fisher exact p-value sums all hypergeometric probabilities
-#' (under H0: OR = 1, i.e. the central hypergeometric) that are no greater than
-#' the observed table probability. Reject H0 if that sum <= alpha. This uses
-#' only base-R dhyper(),  no extra packages needed. Because the null
-#' distribution is always the central hypergeometric (OR = 1), no test frame is
-#' required.
-
-#' @param nuisance Nuisance parameter.
-#' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .odds_ratio The null hypothesis odds ratio being tested. No default.
-#' @param .alpha The nominal significance level α. Defaults to 0.05.
+#' Local size of the SAS Proc FREQ exact test
+#'
+#' Computes the unconditional rejection probability (local size) of the SAS
+#' Proc FREQ exact test for \eqn{H_0}: OR = \eqn{\theta_0} at nuisance
+#' parameter \eqn{p_0}, where
+#' \eqn{p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))}. For each possible table
+#' \eqn{(i, j)}, rejection is determined by \code{sas_procfreq_pvalue()}: the
+#' sum of Fisher non-central hypergeometric probabilities (given
+#' \eqn{T = i + j} and OR = \eqn{\theta_0}) that are no greater than the
+#' observed probability, compared against \eqn{\alpha}.
+#'
+#' @param nuisance The nuisance parameter \eqn{p_0}: success probability in
+#'   group 1 under \eqn{H_0}. Must be in \eqn{[0, 1]}.
+#' @param .m Number of trials in group 1.
+#' @param .n Number of trials in group 2.
+#' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
+#' @param .alpha Nominal significance level \eqn{\alpha}. No default.
 #'
 #' @keywords find local size hypothesis test sas procfreq
 

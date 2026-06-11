@@ -1,15 +1,20 @@
-#' Find optimal gamma0 MFET ----------------------------------------------------------------
+#' Find the optimal \eqn{\gamma_0}
 #'
-#' Find the optimal gamma0 by maximising the size with respect to alpha.
+#' Finds the optimal \eqn{\gamma_0} threshold: the largest value of
+#' \eqn{\gamma_0} such that the actual size of the MFET (the maximum of the
+#' local size over the nuisance parameter \eqn{p_0}) does not exceed
+#' \eqn{\alpha}. Uses a bisection search over the \eqn{2(m + n + 1)} sorted
+#' randomisation probability values from the test frame.
 #'
-#' @param .odds_ratio The null hypothesis odds ratio being tested. No default.
-#' @param .m Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .n Integer input responses and sample sizes. Tests u/m versus v/n. No default.
-#' @param .alpha The nominal significance level α. Defaults to 0.05.
-#' @param .precision Defines the precision by which confidence limits, p-values, and size is determined. Defaults to 1E-03.
-#' @param .method Defines the numerical method used to find the optimum nuisance parameter (maximising actual size) of the test. The default is "zoom", with the second option being "trust" (this uses the trust() function from the trust region package).
-#' @param .maze Number of points at each iteration to select the nuisance parameter with maximum size from.
-#' @param .zoom_iter Number of iterations to zoom in with (in the "zoom" method).
+#' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
+#' @param .m Number of trials in group 1.
+#' @param .n Number of trials in group 2.
+#' @param .alpha Nominal significance level \eqn{\alpha}. No default.
+#' @param .precision Numerical precision. No default.
+#' @param .method Numerical method for maximising the local size: \code{"zoom"}
+#'   or \code{"trust"}.
+#' @param .maze Number of grid points evaluated at each zoom iteration.
+#' @param .zoom_iter Number of zoom iterations (\code{"zoom"} method only).
 #'
 #' @keywords modified fisher exact test optimise gamma0 alpha
 

@@ -2,27 +2,33 @@
 % Please edit documentation in R/power_procfreq.R
 \name{power_procfreq}
 \alias{power_procfreq}
-\title{Find the power of the SAS Proc Freq exact test -----------------------------}
+\title{Power of the SAS Proc FREQ exact test}
 \usage{
 power_procfreq(p, .m, .n, .alpha, .superiority = FALSE)
 }
 \arguments{
-\item{p}{Vector containing (pi1, pi2).}
+\item{p}{Length-2 numeric vector \eqn{(\pi_1, \pi_2)}: success probability
+in group 1 (\eqn{\pi_1}) and group 2 (\eqn{\pi_2}) at which power is
+evaluated.}
 
-\item{.m}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.m}{Number of trials in group 1.}
 
-\item{.n}{Integer input responses and sample sizes. Tests u/m versus v/n. No default.}
+\item{.n}{Number of trials in group 2.}
 
-\item{.alpha}{The nominal significance level α. No default.}
+\item{.alpha}{Nominal significance level \eqn{\alpha}. No default.}
 
-\item{.superiority}{A logical. Defaults to FALSE. Setting this to TRUE will calculate the power for testing superiority.}
+\item{.superiority}{Logical. If \code{TRUE}, power is computed only over
+tables where the observed rate in group 2 exceeds that in group 1.
+Defaults to \code{FALSE}.}
 }
 \description{
-For each (u, v) pair the rejection decision is made using the SAS Proc FREQ
-Fisher exact p-value (sum of central-hypergeometric probabilities, given the
-marginal total t = u + v, that are no greater than the observed probability).
-This mirrors the way local_size_procfreq() determines rejection, and is the
-unconditional power of SAS Proc FREQ's exact test for H0: OR = 1.
+Computes the unconditional power of SAS Proc FREQ's exact test for
+\eqn{H_0}: OR = 1, at response rates \eqn{(\pi_1, \pi_2)}. For each
+possible table \eqn{(u, v)}, the rejection decision uses
+\code{sas_procfreq_pvalue()}: the sum of central hypergeometric
+probabilities given \eqn{T = u + v} that are no greater than the observed
+probability, compared against \eqn{\alpha}. This mirrors the rejection rule
+used in \code{local_size_sas_freq()}.
 }
 \keyword{find}
 \keyword{power}
