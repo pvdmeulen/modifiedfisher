@@ -18,15 +18,18 @@
 
 
 # P-value:
-sas_procfreq_pvalue <- function(s, t, m, n) {
+sas_procfreq_pvalue <- function(s, t, m, n, odds_ratio = 1) {
 
   lower   <- max(0, t - n)
   upper   <- min(m, t)
   support <- lower:upper
 
-  probs          <- stats::dhyper(support, m, n, t)
-  observed_prob  <- stats::dhyper(s,       m, n, t)
+  probs         <- BiasedUrn::dFNCHypergeo(support, m, n, t, odds_ratio)
+  observed_prob <- BiasedUrn::dFNCHypergeo(s,       m, n, t, odds_ratio)
 
   # Sum all probabilities <= observed (small tolerance for floating point)
-  sum(probs[probs <= observed_prob + 1e-10])
+  pvalue <- sum(probs[probs <= observed_prob + 1e-10])
+
+  return(pvalue)
+
 }

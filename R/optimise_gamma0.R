@@ -31,6 +31,9 @@ optimise_gamma0 <- function(.odds_ratio, .m, .n, .alpha, .precision,
   sz0 <- mfet_size(.c = gamind[[g]], .odds_ratio, .m, .n, .df = df,
                    .alpha, .precision, .method, .maze, .zoom_iter)
 
+  # Initialise size_old before the while loop:
+  size_old <- sz0
+
   while(as.integer(g1-g0) > 1){
 
     if(sz0 > .alpha){ g0 <- g } else { g1 <- g }

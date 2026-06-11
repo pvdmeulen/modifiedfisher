@@ -29,7 +29,7 @@ local_size_sas_freq <- function(nuisance, .odds_ratio, .m, .n, .alpha) {
     for (j in 0:.n) {
 
       t      <- i + j
-      p_val  <- sas_procfreq_pvalue(i, t, .m, .n)
+      p_val  <- sas_procfreq_pvalue(i, t, .m, .n, .odds_ratio)
       reject <- as.numeric(p_val <= .alpha)
 
       size <- size +

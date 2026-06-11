@@ -27,14 +27,15 @@ local_size_woolf <- function(nuisance, .odds_ratio, .m, .n, .alpha) {
     for (j in 0:.n) {
 
       # Haldane correction: replace zeros with 0.5 (matches SAS macro)
-      a <- max(i,        0.5)
-      b <- max(.m - i,   0.5)
-      cc <- max(j,       0.5)
-      d <- max(.n - j,   0.5)
+      a <-   max(i,      0.5)
+      b <-   max(.m - i, 0.5)
+      c <-   max(j,      0.5)
+      d <-   max(.n - j, 0.5)
 
-      log_or <- log(a * d / (b * cc))
-      se     <- sqrt(1/a + 1/b + 1/cc + 1/d)
-      reject <- as.numeric(abs(log_or / se) > z_crit)
+      log_or <- log(a * d / (b * c))
+      se     <- sqrt(1/a + 1/b + 1/c + 1/d)
+
+      reject <- as.numeric(abs(log_or - log(.odds_ratio)) / se > z_crit)
 
       size <- size +
         reject *
