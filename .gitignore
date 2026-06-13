@@ -54,3 +54,5 @@ rsconnect/
 
 # NAS backup
 .stignore
+inst/doc
+docs

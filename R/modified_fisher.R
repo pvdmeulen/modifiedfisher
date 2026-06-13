@@ -45,17 +45,15 @@
 #'   \code{local.size.data} data frame to the results for plotting the size of
 #'   the test as a function of the nuisance parameter. Defaults to
 #'   \code{FALSE}.
-#'
-#' @keywords non randomised randomized conservative fisher exact test modified
 #' @rdname modified_fisher_exact_test
+#' @return An object of class \code{htest}.
+#' @family mfet
+#' @seealso [construct_test_frame()] for the underlying test frame of critical values and randomisation probabilities; [optimise_gamma0()] for the gamma0 optimisation; [size_mfet()] for the size of the test maximised over the nuisance parameter; [local_size_mfet()] for the local size at a fixed nuisance parameter value; [power_mfet()] for the power of the test.
 #' @export
-#'
-#' @return Returns an \code{htest} object.
 #' @examples
 #' \dontrun{
 #' # Example here
 #' }
-
 modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
                                        alpha = 0.05,
                                        precision = 1e-03,
@@ -72,16 +70,108 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
                                        power_at_pi2 = 0.75
 ){
 
-  # RECREATE SAS PROGRAMME ======================================================
+  # INPUT VALIDATION ==========================================================
 
-  # require:
-  # biasurn
-  # nlopt
+  ## u, v, m , n --------------------------------------------------------------
+  for (arg_name in c("u", "m", "v", "n")) {
+    val <- get(arg_name)
+    if (!is.numeric(val) || length(val) != 1L || is.na(val)) {
+      stop(sprintf("`%s` must be a single non-missing numeric value.", arg_name))
+    }
+    if (val != round(val)) {
+      stop(sprintf("`%s` must be an integer (got %s).", arg_name, val))
+    }
+    if (val < 0) {
+      stop(sprintf("`%s` must be non-negative (got %s).", arg_name, val))
+    }
+  }
 
-  #require(BiasedUrn)
-  #require(trust) # investigate this package for nloptr option
+  if (m == 0 || n == 0) {
+    stop("`m` and `n` must both be at least 1 (zero-size groups are not supported).")
+  }
 
-  t <- u+v
+  if (u > m) stop(sprintf("`u` (%s) cannot exceed `m` (%s).", u, m))
+  if (v > n) stop(sprintf("`v` (%s) cannot exceed `n` (%s).", v, n))
+
+  ## Odds ratio ---------------------------------------------------------------
+
+  if (!is.numeric(odds_ratio) || length(odds_ratio) != 1L || is.na(odds_ratio)) {
+    stop("`odds_ratio` must be a single non-missing numeric value.")
+  }
+  if (odds_ratio <= 0 || !is.finite(odds_ratio)) {
+    stop(sprintf("`odds_ratio` must be a finite positive number (got %s).", odds_ratio))
+  }
+
+  ## Alpha --------------------------------------------------------------------
+
+  if (!is.numeric(alpha) || length(alpha) != 1L || is.na(alpha)) {
+    stop("`alpha` must be a single non-missing numeric value.")
+  }
+  if (alpha <= 0 || alpha >= 1) {
+    stop(sprintf("`alpha` must be strictly between 0 and 1 (got %s).", alpha))
+  }
+
+  ## Precision ----------------------------------------------------------------
+
+  if (!is.numeric(precision) || length(precision) != 1L || is.na(precision)) {
+    stop("`precision` must be a single non-missing numeric value.")
+  }
+  if (precision <= 0 || precision >= 0.1) {
+    stop(sprintf("`precision` must be a small positive number, typically <= 1e-2 (got %s).", precision))
+  }
+
+  ## Method -------------------------------------------------------------------
+
+  method <- match.arg(method, choices = c("zoom", "trust"))
+
+  ## Zoom method arguments ----------------------------------------------------
+
+  for (arg_name in c("maze", "zoom_iter")) {
+    val <- get(arg_name)
+    if (!is.numeric(val) || length(val) != 1L || is.na(val) || val != round(val) || val < 1) {
+      stop(sprintf("`%s` must be a single positive integer (got %s).", arg_name, val))
+    }
+  }
+
+  if (maze < 3) {
+    warning("`maze` < 3 may produce an unreliable zoom-in optimisation; the SAS macro default is 10.")
+  }
+
+  ## Power at pi1/pi2 ---------------------------------------------------------
+
+  for (arg_name in c("power_at_pi1", "power_at_pi2")) {
+    val <- get(arg_name)
+    if (!is.numeric(val) || length(val) != 1L || is.na(val)) {
+      stop(sprintf("`%s` must be a single non-missing numeric value.", arg_name))
+    }
+    if (val < 0 || val > 1) {
+      stop(sprintf("`%s` must be between 0 and 1 (got %s).", arg_name, val))
+    }
+  }
+
+  ## Logical arguments --------------------------------------------------------
+
+  logical_args <- c("message", "power", "superiority", "conf_int", "pvalue", "local_size_data")
+  for (arg_name in logical_args) {
+    val <- get(arg_name)
+    if (is.character(val) && toupper(val) %in% c("Y", "N")) {
+      stop(sprintf(
+        "`%s` must be TRUE/FALSE, not \"%s\". (Note: this package uses R logicals, not the SAS Y/N convention.)",
+        arg_name, val
+      ))
+    }
+    if (!is.logical(val) || length(val) != 1L || is.na(val)) {
+      stop(sprintf("`%s` must be a single TRUE/FALSE value (got %s).", arg_name, val))
+    }
+  }
+
+  ## Cross argument consistency -----------------------------------------------
+
+  if (!power && (!missing(power_at_pi1) || !missing(power_at_pi2))) {
+    warning("`power_at_pi1`/`power_at_pi2` were supplied but `power = FALSE`; they will be ignored.")
+  }
+
+  # START FUNCTION ============================================================
 
   # Data inputs:
 
@@ -90,16 +180,13 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
   # v -- observed b (# of successes for column 2)
   # n -- observed column sum 2
 
-  ## Check size of input table (original test) --------------------------------
+  # Total successes:
+  t <- u+v
 
-  # Checks here
+  # and set:
+  z <- c(u, t)
 
-  # If size of table is > 2x2, there's an option to simulate p-value
-  # (see original function)
-
-  # If table is 2x2, proceed:
-
-  ## Set some optional results to zero ------------------------------------------
+  ## Initialise results objects -----------------------------------------------
 
   RESULT_pval <- NULL
   RESULT_estimate <- NULL
@@ -112,47 +199,13 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
   DATANAME <- paste0("u = ", u, ", v = ", v, ", m = ", m, ", n = ", n)
   METHOD <- paste0("Non-Conservative Size-\u03b1 Modified Fisher's Exact Test")
 
-  ## Input values -------------------------------------------------------------
-
-  ## Create support - which tables do we need to calculate probability for ----
-
-  # Calculate all possible values for a, given the row and column totals:
-
-  #lower <- max(.t-.n, 0)
-  #upper <- min(.m, .t)
-  #support <- lower:upper
-
-  # HELPER FUNCTIONS ------------------------------------------------------------
-
-  # Generic:
-  # source("R/calc_exp_value.R")
-  # source("R/find_gamma12.R")
-  # source("R/construct_test_frame.R")
-  # #source("R/random_fe_test.R")
-  #
-  # # Modified FE test:
-  # source("R/mod_fe_test.R")
-  # source("R/local_size.R")  # expand to also calc local size for other tests
-  # source("R/mod_fe_size.R")
-  # source("R/optimise_gamma0.R")
-  # source("R/accept.R")      # expand to also output accept/reject for other tests
-  # source("R/local_power.R") # expand to also calc local power for other tests
-
-  # START MAIN FUNCTION =========================================================
-
-  # Require:
-  # m
-  # n
-  # alpha
-  # u
-  # t (u + v)
-
-  # and:
-  z <- c(u, t)
+  ## Construct test frame -----------------------------------------------------
 
   df <- construct_test_frame(.odds_ratio = odds_ratio, .m = m, .n = n,
                              .alpha = alpha, .precision = precision,
                              .message = message)
+
+  # If power is needed, calculate:
 
   if(power == TRUE){
 
@@ -176,6 +229,8 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
   }
 
+  ## Store OR point estimate --------------------------------------------------
+
   # Input values, with +0.5 adjustment if 0:
 
   a <- max(u, 0.5)
@@ -185,12 +240,13 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
   or0 <- (a*d)/(b*c)
   RESULT_estimate <- or0
-  #calc_expected_value(.odds_ratio = 1, m, n, t, precision)
 
   z_alpha <- -stats::qnorm(alpha/2)
 
   upper0 <- exp(log(or0) + z_alpha*sqrt(1/a+1/b+1/c+1/d))
   lower0 <- exp(log(or0) - z_alpha*sqrt(1/a+1/b+1/c+1/d))
+
+  ## MFET - Calculate OR confidence intervals ---------------------------------
 
   if(conf_int){
 
@@ -209,7 +265,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
         df2 <- construct_test_frame(.odds_ratio = or, .m = m, .n = n,
                                     .alpha = alpha, .precision = precision)
 
-        answer <- accept(z, .odds_ratio = or, .m = m, .n = n, .df = df2,
+        answer <- .accept(z, .odds_ratio = or, .m = m, .n = n, .df = df2,
                          .alpha = alpha, .precision = precision,
                          .method = method, .maze = maze, .zoom_iter = zoom_iter)
 
@@ -244,7 +300,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
         df2 <- construct_test_frame(.odds_ratio = or, .m = m, .n = n,
                                     .alpha = alpha, .precision = precision)
 
-        answer <- accept(z, .odds_ratio = or, .m = m, .n = n, .df = df2,
+        answer <- .accept(z, .odds_ratio = or, .m = m, .n = n, .df = df2,
                          .alpha = alpha, .precision = precision,
                          .method = method, .maze = maze, .zoom_iter = zoom_iter)
 
@@ -264,12 +320,16 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
   } # End of conf_int == TRUE
 
+  ## MFET - find optimal gamma ------------------------------------------------
+
   # Find optimal gamma0 for size data and for output later:
 
   opt_gamma0 <- optimise_gamma0(.odds_ratio = odds_ratio, .m = m, .n = n,
                                 .alpha = alpha, .precision = precision,
                                 .method = method, .maze = maze,
                                 .zoom_iter = zoom_iter)
+
+  ## MFET - store size data ---------------------------------------------------
 
   if(local_size_data){
 
@@ -281,11 +341,11 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
       point <- plot_data$pi1[[row]]
 
-      plot_data$size[[row]] <- local_size(point, .gamma0 = opt_gamma0,
-                                          .odds_ratio = odds_ratio,
-                                          .m = m, .n = n, .df = df,
-                                          .alpha = alpha,
-                                          .precision = precision)*100
+      plot_data$size[[row]] <- local_size_mfet(point, .gamma0 = opt_gamma0,
+                                               .odds_ratio = odds_ratio,
+                                               .m = m, .n = n, .df = df,
+                                               .alpha = alpha,
+                                               .precision = precision)*100
 
     }
 
@@ -293,6 +353,8 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
     plot_data$method <- method
 
   }
+
+  ## MFET - Calculate p-value -------------------------------------------------
 
   if(pvalue){
 
@@ -308,7 +370,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
       df3 <- construct_test_frame(.odds_ratio = odds_ratio, .m = m, .n = n,
                                   .alpha = a0, .precision = precision)
 
-      reject <- 1-accept(z, .odds_ratio = odds_ratio, .m = m, .n = n,
+      reject <- 1-.accept(z, .odds_ratio = odds_ratio, .m = m, .n = n,
                          .df = df3, .alpha = a0, .precision = precision,
                          .method = method, .maze = maze, .zoom_iter = zoom_iter)
 
@@ -333,7 +395,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
   RESULT_conf_int <- if(conf_int) c(conf_int_lower, conf_int_upper)
   attr(odds_ratio, "names") <- "odds ratio"
   attr(RESULT_estimate, "names") <- "odds ratio"
-  attr(RESULT_conf_int, "conf.level") <- 1-alpha
+  if (conf_int) attr(RESULT_conf_int, "conf.level") <- 1 - alpha
 
   # Put results into list:
 

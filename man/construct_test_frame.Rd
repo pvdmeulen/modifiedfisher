@@ -30,8 +30,14 @@ the \eqn{\alpha/2} quantiles of the Fisher non-central hypergeometric
 distribution, a spiral search over \eqn{(c_1, c_2)} is used whenever the
 initial solution for \eqn{(\gamma_1, \gamma_2)} falls outside \eqn{[0, 1]}.
 }
-\keyword{construct}
-\keyword{gamma}
-\keyword{randomisation}
-\keyword{testing}
-\keyword{values}
+\seealso{
+\code{\link[=modified_fisher_exact_test]{modified_fisher_exact_test()}} for the main user-facing function; \code{\link[=optimise_gamma0]{optimise_gamma0()}} which uses this frame to find the optimal gamma0; \code{\link[=size_mfet]{size_mfet()}} for the resulting test size.
+
+Other mfet: 
+\code{\link{local_size_mfet}()},
+\code{\link{modified_fisher_exact_test}()},
+\code{\link{optimise_gamma0}()},
+\code{\link{power_mfet}()},
+\code{\link{size_mfet}()}
+}
+\concept{mfet}

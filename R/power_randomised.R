@@ -20,8 +20,9 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
-#' @keywords find power test
-
+#' @export
+#' @keywords internal
+#' @family power
 power_randomised <- function(p, .m, .n, .df, .alpha, .precision,
                              .superiority = FALSE) {
 

@@ -29,8 +29,11 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
-#' @keywords find power test
-
+#' @export
+#' @keywords internal
+#' @family power
+#' @family mfet
+#' @seealso [power_woolf()], [power_procfreq()], [power_randomised()], [power_conservative()] for the power under alternative tests; [local_size_mfet()] for the size of the modified Fisher exact test as a function of the nuisance parameter; [modified_fisher_exact_test()] for the main user-facing function.
 power_mfet <- function(p, .gamma0, .odds_ratio, .m, .n, .df, .alpha,
                        .precision, .superiority){
 
@@ -50,14 +53,14 @@ power_mfet <- function(p, .gamma0, .odds_ratio, .m, .n, .df, .alpha,
       if(.superiority == TRUE){
 
         power <- power + (v/.n > u/.m)*
-          mod_fe_test(z, .df, .gamma0)*
+          .mfet_reject(z, .df, .gamma0)*
           stats::dbinom(x = u, prob = p0, size = .m)*
           stats::dbinom(x = v, prob = p1, size = .n)
 
       } else {
 
         power <- power +
-          mod_fe_test(z, .df, .gamma0)*
+          .mfet_reject(z, .df, .gamma0)*
           stats::dbinom(x = u, prob = p0, size = .m)*
           stats::dbinom(x = v, prob = p1, size = .n)
 

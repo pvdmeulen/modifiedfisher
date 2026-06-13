@@ -16,8 +16,9 @@
 #' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
 #' @param .alpha Nominal significance level \eqn{\alpha}. No default.
 #'
-#' @keywords find local size hypothesis test woolf asymptotic
-
+#' @export
+#' @keywords internal
+#' @family size
 local_size_woolf <- function(nuisance, .odds_ratio, .m, .n, .alpha) {
 
   p0 <- min(max(0, nuisance), 1)

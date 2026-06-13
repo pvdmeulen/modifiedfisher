@@ -28,10 +28,12 @@ where \eqn{\hat{\theta} = u(n-v) / ((m-u)v)}. Uses the Haldane correction
 (replacing zero cells with 0.5) to handle tables where one or more cells
 are zero, matching the SAS macro.
 }
-\keyword{asymptotic}
-\keyword{find}
-\keyword{hypothesis}
-\keyword{local}
-\keyword{size}
-\keyword{test}
-\keyword{woolf}
+\seealso{
+Other size: 
+\code{\link{local_size_mfet}()},
+\code{\link{local_size_procfreq}()},
+\code{\link{local_size_randomised}()},
+\code{\link{size_mfet}()}
+}
+\concept{size}
+\keyword{internal}

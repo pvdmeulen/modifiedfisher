@@ -40,10 +40,14 @@ local size over the nuisance parameter \eqn{p_0}) does not exceed
 \eqn{\alpha}. Uses a bisection search over the \eqn{2(m + n + 1)} sorted
 randomisation probability values from the test frame.
 }
-\keyword{alpha}
-\keyword{exact}
-\keyword{fisher}
-\keyword{gamma0}
-\keyword{modified}
-\keyword{optimise}
-\keyword{test}
+\seealso{
+\code{\link[=modified_fisher_exact_test]{modified_fisher_exact_test()}} for the main user-facing function; \code{\link[=construct_test_frame]{construct_test_frame()}} for the test frame passed to this function; \code{\link[=size_mfet]{size_mfet()}} for the size function being maximised.
+
+Other mfet: 
+\code{\link{construct_test_frame}()},
+\code{\link{local_size_mfet}()},
+\code{\link{modified_fisher_exact_test}()},
+\code{\link{power_mfet}()},
+\code{\link{size_mfet}()}
+}
+\concept{mfet}

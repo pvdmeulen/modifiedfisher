@@ -19,22 +19,21 @@
 #'   only when their randomisation probability exceeds this value. Typically
 #'   the output of \code{optimise_gamma0()}.
 #'
-#' @keywords modified fisher exact test non conservative randomised randomized
-
-mod_fe_test <- function(z, .df, .gamma0){
+#' @noRd
+.mfet_reject <- function(z, .df, .gamma0){
 
   s <- z[[1]]
   i <- z[[2]]
 
   if(s > .df$c1[[i+1]] & s < .df$c2[[i+1]]){ opttest <- 0 }
 
-  if(s == .df$c1[[i+1]]){ opttest <- .df$gamma1[[i+1]] > .gamma0}
-  if(s == .df$c2[[i+1]]){ opttest <- .df$gamma2[[i+1]] > .gamma0}
+  if(s == .df$c1[[i+1]]){ opttest <- as.numeric(.df$gamma1[[i+1]] > .gamma0) }
+  if(s == .df$c2[[i+1]]){ opttest <- as.numeric(.df$gamma2[[i+1]] > .gamma0) }
 
   if(s < .df$c1[[i+1]] | s > .df$c2[[i+1]]){ opttest <- 1 }
 
   if(.df$c1[[i+1]] == .df$c2[[i+1]] & s == .df$c1[[i+1]]){
-    opttest <- (.df$gamma1[[i+1]]+.df$gamma2[[i+1]]) > .gamma0
+    opttest <- as.numeric((.df$gamma1[[i+1]]+.df$gamma2[[i+1]]) > .gamma0)
   }
 
   return(opttest)

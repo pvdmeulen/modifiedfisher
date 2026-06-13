@@ -17,9 +17,10 @@
 #' @param .message A logical. Defaults to \code{FALSE}. Setting this to
 #'   \code{TRUE} will print progress messages; useful for debugging.
 #'
-#' @keywords construct randomisation values testing gamma
+#' @export
+#' @family mfet
+#' @seealso [modified_fisher_exact_test()] for the main user-facing function; [optimise_gamma0()] which uses this frame to find the optimal gamma0; [size_mfet()] for the resulting test size.
 #' @importFrom BiasedUrn qFNCHypergeo
-
 construct_test_frame <- function(.odds_ratio, .m, .n, .alpha, .precision,
                                  .message = FALSE){
 
@@ -117,9 +118,9 @@ construct_test_frame <- function(.odds_ratio, .m, .n, .alpha, .precision,
       c1 <- d1
       c2 <- d2
 
-      gamma <- find_gamma(.t = s, .odds_ratio = or, c1 = c1, c2 = c2,
-                          .m = .m, .n = .n, .alpha = .alpha,
-                          .precision = .precision)
+      gamma <- .find_gamma12(.t = s, .odds_ratio = or, c1 = c1, c2 = c2,
+                            .m = .m, .n = .n, .alpha = .alpha,
+                            .precision = .precision)
 
       # Test if gamma is 0 < gamma < 1:
 
@@ -183,9 +184,9 @@ construct_test_frame <- function(.odds_ratio, .m, .n, .alpha, .precision,
                 c1 <- i
                 c2 <- j
 
-                gamma <- find_gamma(.t = s, .odds_ratio = or,
-                                    c1 = c1, c2 = c2, .m = .m, .n = .n,
-                                    .alpha = .alpha, .precision = .precision)
+                gamma <- .find_gamma12(.t = s, .odds_ratio = or,
+                                      c1 = c1, c2 = c2, .m = .m, .n = .n,
+                                      .alpha = .alpha, .precision = .precision)
 
                 check <- (0 <= gamma[[1]] & gamma[[1]] <= 1 &
                             0 <= gamma[[2]] & gamma[[2]] <= 1)

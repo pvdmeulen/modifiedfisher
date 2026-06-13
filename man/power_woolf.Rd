@@ -29,8 +29,12 @@ Computes the unconditional power of Woolf's asymptotic Wald test for
 where \eqn{\hat{\theta} = u(n-v) / ((m-u)v)}. Uses the Haldane correction
 (replacing zero cells with 0.5) for tables where one or more cells are zero.
 }
-\keyword{asymptotic}
-\keyword{find}
-\keyword{power}
-\keyword{test}
-\keyword{woolf}
+\seealso{
+Other power: 
+\code{\link{power_conservative}()},
+\code{\link{power_mfet}()},
+\code{\link{power_procfreq}()},
+\code{\link{power_randomised}()}
+}
+\concept{power}
+\keyword{internal}

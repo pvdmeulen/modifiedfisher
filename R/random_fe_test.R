@@ -16,8 +16,7 @@
 #'   containing critical values \eqn{c_1}, \eqn{c_2} and randomisation
 #'   probabilities \eqn{\gamma_1}, \eqn{\gamma_2} for every possible total \eqn{T}.
 #'
-#' @keywords randomised randomized fisher exact test
-
+#' @noRd
 random_fe_test <- function(z, .df){
 
   # WIP!!

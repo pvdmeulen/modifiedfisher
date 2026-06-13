@@ -5,7 +5,7 @@
 #' \eqn{T = t}, under the Fisher non-central hypergeometric distribution with
 #' odds ratio \eqn{\theta_0}. That is,
 #' \eqn{\sum_s s \cdot P_{\theta_0}(S = s \mid T = t)}
-#' over the support of \eqn{S}. Used by \code{find_gamma()} when solving for
+#' over the support of \eqn{S}. Used by \code{.find_gamma12()} when solving for
 #' the randomisation probabilities \eqn{\gamma_1} and \eqn{\gamma_2}.
 #'
 #' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
@@ -17,10 +17,9 @@
 #' @param .precision Numerical precision passed to
 #'   \code{BiasedUrn::dFNCHypergeo()}. No default.
 #'
-#' @keywords calculate expected value odds ratio theta
+#' @noRd
 #' @importFrom BiasedUrn dFNCHypergeo
-
-calc_expected_value <- function(.odds_ratio, .m, .n, .t, .precision){
+.calc_expected_value <- function(.odds_ratio, .m, .n, .t, .precision){
 
   lower <- max(.t-.n, 0)
   upper <- min(.m, .t)

@@ -21,8 +21,9 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
-#' @keywords find power test
-
+#' @export
+#' @keywords internal
+#' @family power
 power_conservative <- function(p, .m, .n, .df, .alpha, .precision,
                                .superiority = FALSE) {
 
@@ -35,7 +36,7 @@ power_conservative <- function(p, .m, .n, .df, .alpha, .precision,
       z <- c(u, u + v)
 
       # gamma0 = 1 means reject only when strictly outside [c1, c2]
-      reject <- mod_fe_test(z, .df, .gamma0 = 1)
+      reject <- .mfet_reject(z, .df, .gamma0 = 1)
 
       contribution <- reject *
         stats::dbinom(u, size = .m, prob = p0) *

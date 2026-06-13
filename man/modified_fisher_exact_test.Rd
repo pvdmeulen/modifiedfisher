@@ -80,7 +80,7 @@ power. Defaults to 0.5.}
 power. Defaults to 0.75.}
 }
 \value{
-Returns an \code{htest} object.
+An object of class \code{htest}.
 }
 \description{
 Computes the non-conservative, size-\eqn{\alpha} modified Fisher exact test
@@ -98,11 +98,14 @@ rate.
 # Example here
 }
 }
-\keyword{conservative}
-\keyword{exact}
-\keyword{fisher}
-\keyword{modified}
-\keyword{non}
-\keyword{randomised}
-\keyword{randomized}
-\keyword{test}
+\seealso{
+\code{\link[=construct_test_frame]{construct_test_frame()}} for the underlying test frame of critical values and randomisation probabilities; \code{\link[=optimise_gamma0]{optimise_gamma0()}} for the gamma0 optimisation; \code{\link[=size_mfet]{size_mfet()}} for the size of the test maximised over the nuisance parameter; \code{\link[=local_size_mfet]{local_size_mfet()}} for the local size at a fixed nuisance parameter value; \code{\link[=power_mfet]{power_mfet()}} for the power of the test.
+
+Other mfet: 
+\code{\link{construct_test_frame}()},
+\code{\link{local_size_mfet}()},
+\code{\link{optimise_gamma0}()},
+\code{\link{power_mfet}()},
+\code{\link{size_mfet}()}
+}
+\concept{mfet}

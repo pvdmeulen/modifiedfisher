@@ -3,7 +3,7 @@
 #' Computes the unconditional power of SAS Proc FREQ's exact test for
 #' \eqn{H_0}: OR = 1, at response rates \eqn{(\pi_1, \pi_2)}. For each
 #' possible table \eqn{(u, v)}, the rejection decision uses
-#' \code{sas_procfreq_pvalue()}: the sum of central hypergeometric
+#' \code{pvalue_procfreq()}: the sum of central hypergeometric
 #' probabilities given \eqn{T = u + v} that are no greater than the observed
 #' probability, compared against \eqn{\alpha}. This mirrors the rejection rule
 #' used in \code{local_size_sas_freq()}.
@@ -18,8 +18,9 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
-#' @keywords find power test sas procfreq
-
+#' @export
+#' @keywords internal
+#' @family power
 power_procfreq <- function(p, .m, .n, .alpha, .superiority = FALSE) {
 
   p0    <- p[[1]]
@@ -31,7 +32,7 @@ power_procfreq <- function(p, .m, .n, .alpha, .superiority = FALSE) {
 
       # Rejection rule: Fisher exact p-value under H0: OR = 1 (central hypergeometric)
       t      <- u + v
-      p_val  <- sas_procfreq_pvalue(u, t, .m, .n)
+      p_val  <- pvalue_procfreq(u, t, .m, .n)
       reject <- as.numeric(p_val <= .alpha)
 
       contrib <- reject *

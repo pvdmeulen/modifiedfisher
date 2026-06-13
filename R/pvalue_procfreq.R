@@ -17,9 +17,10 @@
 #' @param n Number of trials in group 2. No default.
 #' @param odds_ratio Null hypothesis odds ratio \eqn{\theta_0}. Defaults to 1.
 #'
-#' @keywords find local size hypothesis test sas procfreq
-
-sas_procfreq_pvalue <- function(s, t, m, n, odds_ratio = 1) {
+#' @export
+#' @keywords internal
+#' @seealso [local_size_procfreq()] for the local size of the SAS Proc FREQ exact test; [power_procfreq()] for the power of the SAS Proc FREQ exact test; [modified_fisher_exact_test()] for the main user-facing function.
+pvalue_procfreq <- function(s, t, m, n, odds_ratio = 1) {
 
   lower   <- max(0, t - n)
   upper   <- min(m, t)

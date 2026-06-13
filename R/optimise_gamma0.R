@@ -16,8 +16,9 @@
 #' @param .maze Number of grid points evaluated at each zoom iteration.
 #' @param .zoom_iter Number of zoom iterations (\code{"zoom"} method only).
 #'
-#' @keywords modified fisher exact test optimise gamma0 alpha
-
+#' @export
+#' @family mfet
+#' @seealso [modified_fisher_exact_test()] for the main user-facing function; [construct_test_frame()] for the test frame passed to this function; [size_mfet()] for the size function being maximised.
 optimise_gamma0 <- function(.odds_ratio, .m, .n, .alpha, .precision,
                             .method, .maze, .zoom_iter){
 
@@ -33,7 +34,7 @@ optimise_gamma0 <- function(.odds_ratio, .m, .n, .alpha, .precision,
   g1 <- 2*(.m+.n+1)
   g <- .m+.n+1
 
-  sz0 <- mfet_size(.c = gamind[[g]], .odds_ratio, .m, .n, .df = df,
+  sz0 <- size_mfet(.c = gamind[[g]], .odds_ratio, .m, .n, .df = df,
                    .alpha, .precision, .method, .maze, .zoom_iter)
 
   # Initialise size_old before the while loop:
@@ -51,7 +52,7 @@ optimise_gamma0 <- function(.odds_ratio, .m, .n, .alpha, .precision,
     }
 
     g <- as.integer((g0+g1)/2)
-    sz0 <- mfet_size(.c = gamind[[g]], .odds_ratio, .m, .n, .df = df,
+    sz0 <- size_mfet(.c = gamind[[g]], .odds_ratio, .m, .n, .df = df,
                      .alpha, .precision, .method, .maze, .zoom_iter)
 
     if( g1-g0 == 1 ) {

@@ -2,7 +2,7 @@
 #'
 #' Computes the unconditional rejection probability (local size) of the fully
 #' randomised UMPU Fisher exact test at nuisance parameter \eqn{p_0}, where
-#' \eqn{p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))}. Unlike \code{local_size()},
+#' \eqn{p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))}. Unlike \code{mfet_local_size()},
 #' which applies a \eqn{\gamma_0} threshold and returns 0 or 1 at the boundary,
 #' this function uses \eqn{\gamma_1} and \eqn{\gamma_2} directly as rejection
 #' probabilities, reflecting the true expected size of the randomised test.
@@ -18,8 +18,9 @@
 #' @param .alpha Nominal significance level \eqn{\alpha}. No default.
 #' @param .precision Numerical precision. No default.
 #'
-#' @keywords find local size hypothesis test randomised randomized
-
+#' @export
+#' @keywords internal
+#' @family size
 local_size_randomised <- function(nuisance, .m, .n, .df, .odds_ratio,
                                   .alpha, .precision) {
 

@@ -20,11 +20,10 @@
 #' @param .alpha Nominal significance level \eqn{\alpha}. No default.
 #' @param .precision Numerical precision. No default.
 #'
-#' @keywords construct randomisation values testing gamma
+#' @noRd
 #' @importFrom BiasedUrn dFNCHypergeo
-
-find_gamma <- function(c1, c2, .odds_ratio, .m, .n, .t, .alpha,
-                       .precision){
+.find_gamma12 <- function(c1, c2, .odds_ratio, .m, .n, .t, .alpha,
+                         .precision){
 
   # requires .m = m, .n = n, .t (t), .odds_ratio = odds_ratio,
   # and critical values c1 and c2
@@ -39,7 +38,7 @@ find_gamma <- function(c1, c2, .odds_ratio, .m, .n, .t, .alpha,
   if(.odds_ratio == 1){
     exp_value <- .m/(.m+.n)*.t
   } else {
-    exp_value <- calc_expected_value(.odds_ratio, .m, .n,
+    exp_value <- .calc_expected_value(.odds_ratio, .m, .n,
                                      .t, .precision)
   }
 

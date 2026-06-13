@@ -6,70 +6,150 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Non-Conservative Size-α Modified Fisher's Exact Test
+# modifiedfisher: Non-Conservative Size-α Modified Fisher Exact Test
+
 <!-- badges: start -->
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![R-CMD-check](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-```{r options, echo = FALSE, message=FALSE, include=FALSE}
+```{r options, echo = FALSE, message = FALSE, include = FALSE}
 options(cli.ignore_unknown_rstudio_theme = TRUE)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  tidy = TRUE,
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
-
 ```
+
+The `modifiedfisher` package implements the non-randomised, non-conservative,
+size-α modified Fisher exact test (MFET) for comparing two binomial proportions,
+as introduced by van der Meulen (2008) and extended with agreeing test-based
+p-values, confidence intervals, and power in van der Meulen, Raymond, and van
+der Meulen (2021).
+
+The classical Fisher exact test is the uniformly most powerful unbiased (UMPU)
+test for two independent binomial proportions, but requires randomisation at the
+critical values to achieve size α exactly — making it impractical without a
+natural p-value or confidence interval. The standard non-randomised alternatives
+are unsatisfactory: rejecting only at strictly extreme values is needlessly
+conservative (as in the SAS Proc FREQ exact test), while the mid p-value and
+Woolf's asymptotic test do not strictly control the Type I error rate. The MFET
+resolves this by additionally rejecting when the randomisation probability at a
+critical value exceeds a data-driven threshold γ₀, chosen to bring the actual
+size as close to α as possible without exceeding it. P-values and confidence
+intervals are both derived directly from this test, so they agree by
+construction.
 
 ## Installation
 
-You can install the latest version of this `modifiedfisher` package by using `devtools`:
-
 ```{r installation, echo = TRUE, eval = FALSE}
+# Install from GitHub:
 devtools::install_github("pvdmeulen/modifiedfisher")
 ```
 
-## Examples
+## Quick start
 
-The modified Fisher Exact Test (see more information below) can be called using the `modified_fisher_exact_test()` function:
+The main function is `modified_fisher_exact_test()`. It takes the number of
+successes (`u`, `v`) and number of trials (`m`, `n`) in each group, and the
+odds ratio under the null hypothesis (`odds_ratio`):
 
 ```{r example1, echo = TRUE, eval = TRUE}
 library(modifiedfisher)
-modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1, alpha = 0.05)
+
+# Example 2 from Table 2 in van der Meulen et al. (2021):
+# 13/41 vs 6/47, testing H0: OR = 1
+result <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
+                                     odds_ratio = 1)
+result
 ```
 
-The above example uses $m = 12$ and $n = 11$, echoing Figure 1(a) and Table 2 in the paper linked below. As you can see, the p-value, estimated odds ratio, and confidence intervals match the paper's. A similar size plot can be constructed by setting the `local_size_data` argument to `TRUE`, and using the resulting local size dataframe to construct the plot:
+The returned object is of class `htest`, so standard components are accessible
+directly:
 
-```{r example2, echo = TRUE, eval = TRUE}
-test_result <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1, alpha = 0.05, local_size_data = TRUE)
+```{r htest_components, echo = TRUE, eval = TRUE}
+result$estimate   # odds ratio estimate
+result$p.value    # two-sided p-value
+result$conf.int   # 95% confidence interval
 ```
 
-The data is now stored in the `test_result$local.size.data` object, with the first five rows given by:
+These match Table 2 of the paper (OR = 3.173, p = 0.034, 95% CI 1.082–10.25).
 
-```{r print_data, echo = FALSE, eval = TRUE}
-knitr::kable(head(test_result$local.size.data))
+## Comparing with other tests
+
+The table below reproduces Table 2 from the paper, comparing the MFET against
+Woolf's asymptotic test and the SAS Proc FREQ exact test across four worked
+examples. The disagreement between the SAS Proc FREQ p-value and confidence
+interval in Example 2 (p < 0.05 but CI includes OR = 1) illustrates the
+consistency advantage of the MFET's test-based approach.
+
+| Example | Test | OR | p-value | 95% CI |
+|---|---|---|---|---|
+| 5/12 vs 7/11 | Modified FE | 0.408 | 0.321 | 0.716 – 2.210 |
+| | Woolf | 0.408 | 0.296 | 0.760 – 2.193 |
+| | SAS Proc FREQ | 0.408 | 0.414 | 0.550 – 2.871 |
+| 13/41 vs 6/47 | Modified FE | 3.173 | **0.034** | **1.082 – 10.25** |
+| | Woolf | 3.173 | 0.036 | 1.077 – 9.34 |
+| | SAS Proc FREQ | 3.173 | 0.039 | 0.969 – 11.31 |
+| 37/65 vs 28/71 | Modified FE | 2.029 | 0.0439 | 1.023 – 4.083 |
+| | Woolf | 2.029 | 0.0425 | 1.024 – 4.021 |
+| | SAS Proc FREQ | 2.029 | 0.0584 | 0.970 – 4.258 |
+| 72/128 vs 58/142 | Modified FE | 1.804 | 0.0175 | 1.108 – 2.936 |
+| | Woolf | 1.804 | 0.0167 | 1.113 – 2.925 |
+| | SAS Proc FREQ | 1.804 | 0.0203 | 1.082 – 3.018 |
+
+## Diagnosing size control
+
+Setting `local_size_data = TRUE` attaches a data frame of the local size,
+evaluated across the nuisance parameter space, to the returned object. This is
+the diagnostic plot recommended in the paper for confirming that the size
+optimisation has not been trapped at a local maximum:
+
+```{r size_plot_data, echo = TRUE, eval = TRUE, message = FALSE, warning = FALSE}
+result_diag <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
+                                          odds_ratio = 1,
+                                          local_size_data = TRUE)
+
+alpha <- 0.05
+
+head(result_diag$local.size.data)
 ```
 
-Plotting this leads to a similar plot as Figure 1(a):
-
-```{r plot_data, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+```{r size_plot, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
 library(ggplot2)
-library(ggdark)
+library(svglite)
 
-plot <- ggplot(data = test_result$local.size.data, aes(x = pi1, y = size)) +
+# A custom variant of theme_bw(), replicating ggdark::dark_theme_bw()
+# without depending on the (CRAN-archived) ggdark package. This inverts
+# the light/dark elements of theme_bw(): white text/lines on a dark background,
+# with grid lines a shade lighter than the background for contrast.
+theme_bw_dark <- function(base_size = 11, base_family = "") {
+  theme_bw(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      panel.background = element_rect(fill = "#0D1116", colour = NA),
+      plot.background  = element_rect(fill = "#0D1116", colour = NA),
+      legend.background = element_rect(fill = "#0D1116", colour = NA),
+      legend.key = element_rect(fill = "#0D1116", colour = NA),
+      panel.border = element_rect(fill = NA, colour = "grey60"),
+      panel.grid = element_line(colour = "grey25"),
+      axis.text = element_text(colour = "grey85"),
+      axis.title = element_text(colour = "grey95"),
+      axis.ticks = element_line(colour = "grey60"),
+      plot.title = element_text(colour = "grey95"),
+      plot.subtitle = element_text(colour = "grey85"),
+      legend.text = element_text(colour = "grey85"),
+      legend.title = element_text(colour = "grey95")
+    )
+}
+
+plot <- ggplot(data = result_diag$local.size.data, aes(x = pi1, y = size)) +
     geom_line(colour = "#DB5461", linewidth = 1) +
-    #scale_y_continuous(limits = c(-4, 4*alpha*100)) +
-    geom_hline(yintercept = 0.05*100, linetype = 2, colour = "grey30",
-               linewidth = 0.4) +
-    coord_cartesian(ylim = c(0, 1.05*0.05*100)) +
-    #scale_color_brewer(palette = "Dark2") +
+    coord_cartesian(ylim = c(0, 1.05 * alpha * 100)) +
     labs(
       title = "Size of Modified Fisher Exact Test",
-      subtitle = latex2exp::TeX(paste0("\\textit{$m=", 12, ",\\,n=", 11,
+      subtitle = latex2exp::TeX(paste0("\\textit{$m=", 41, ",\\,n=", 47,
                                        ",\\,H_{0}=", 1, "$}")),
       y = "Size (%)",
       x = bquote(pi[.("1")])
@@ -87,40 +167,55 @@ plot <- ggplot(data = test_result$local.size.data, aes(x = pi1, y = size)) +
     )
 
 light_plot <- plot +
-  theme_bw()
+  theme_bw() +
+  geom_hline(yintercept = alpha * 100, linetype = 2, colour = "grey30",
+             linewidth = 0.4)
 
 dark_plot <- plot +
-  ggdark::dark_theme_bw() +
-  theme(
-    panel.background = element_rect(fill = "#0D1116"),
-    plot.background = element_rect(fill = "#0D1116")
-  )
+  theme_bw_dark() +
+  geom_hline(yintercept = alpha * 100, linetype = 2, colour = "grey70",
+             linewidth = 0.4)
 
 ggsave(light_plot, filename = "man/figures/README-light_plot_data-1.svg",
-       width = 160, height = 120,  units = "mm", bg = "transparent",
+       width = 160, height = 120, units = "mm", bg = "transparent",
        dpi = "retina")
 
 ggsave(dark_plot, filename = "man/figures/README-dark_plot_data-1.svg",
-       width = 160, height = 120,  units = "mm", bg = "transparent",
+       width = 160, height = 120, units = "mm", bg = "#0D1116",
        dpi = "retina")
-
-#knitr::include_graphics("man/figures/README-plot_data-1.svg")
 ```
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="man/figures/README-dark_plot_data-1.svg">
   <source media="(prefers-color-scheme: light)" srcset="man/figures/README-light_plot_data-1.svg">
-  <img alt="Shows a graph with test size on the y-axis and nuisance parameter pi_1 between zero and one on the x-axis, with a line showing the relationship between the two. The line is shaped like two humps, with the maximum being rouhgly 4%.">
+  <img alt="Plot of the local size of the modified Fisher exact test as a function of the nuisance parameter pi1, with a horizontal reference line at alpha = 0.05. The size reaches but does not exceed the reference line over a broad central region.">
 </picture>
 
-## The Modified Fisher Exact Test
+The size should reach but not exceed the dashed α reference line, confirming
+non-conservative size control across the full range of the nuisance parameter.
 
-### [Read the article here](https://www.researchgate.net/publication/351111885_Consistent_Confidence_Limits_P_Values_and_Power_of_the_Non-Conservative_Size_-a_Modified_Fisher_Exact_Test)
+## Learn more
 
-- Add brief rationale and explanation of theory
+The package vignette covers additional features in detail:
 
-## Next steps
+- Testing a null hypothesis other than OR = 1
+- Controlling numerical precision and choosing the optimisation method
+- Power calculations, including for superiority testing
+- Accessing the test frame (critical values and randomisation probabilities)
+- Reproducing the size and power comparison plots from the paper using the
+  exported `local_size_*()` and `power_*()` functions
 
-- Implement checks and unit tests
-- Document functions in a consistent way with article / SAS macro
-- Add randomised Fisher Exact Test option
+```{r vignette, echo = TRUE, eval = FALSE}
+vignette("modifiedfisher")
+```
+
+## References
+
+van der Meulen EA, Raymond K, van der Meulen PJ (2021). Consistent Confidence
+Limits, P Values, and Power of the Non-Conservative, Size-α Modified Fisher
+Exact Test. *Journal of Biostatistics and Biometric Applications*, 6(1):102.
+<https://doi.org/10.13140/RG.2.2.34661.73448>
+
+van der Meulen EA (2008). A Nonrandomized, Nonconservative Version of the
+Fisher Exact Test. *Communications in Statistics — Theory and Methods*,
+37:699–708.

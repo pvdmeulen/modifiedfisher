@@ -34,6 +34,12 @@ test at response rates \eqn{(\pi_1, \pi_2)}. Uses \eqn{\gamma_1} and
 the boundary, rather than applying a \eqn{\gamma_0} threshold. The test
 frame should be built for the relevant null odds ratio.
 }
-\keyword{find}
-\keyword{power}
-\keyword{test}
+\seealso{
+Other power: 
+\code{\link{power_conservative}()},
+\code{\link{power_mfet}()},
+\code{\link{power_procfreq}()},
+\code{\link{power_woolf}()}
+}
+\concept{power}
+\keyword{internal}

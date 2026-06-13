@@ -35,6 +35,12 @@ equivalent to setting \eqn{\gamma_0 = 1} in the MFET so that boundary
 values are never rejected. The test frame should be built for the relevant
 null odds ratio.
 }
-\keyword{find}
-\keyword{power}
-\keyword{test}
+\seealso{
+Other power: 
+\code{\link{power_mfet}()},
+\code{\link{power_procfreq}()},
+\code{\link{power_randomised}()},
+\code{\link{power_woolf}()}
+}
+\concept{power}
+\keyword{internal}

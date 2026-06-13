@@ -25,13 +25,17 @@ Defaults to \code{FALSE}.}
 Computes the unconditional power of SAS Proc FREQ's exact test for
 \eqn{H_0}: OR = 1, at response rates \eqn{(\pi_1, \pi_2)}. For each
 possible table \eqn{(u, v)}, the rejection decision uses
-\code{sas_procfreq_pvalue()}: the sum of central hypergeometric
+\code{pvalue_procfreq()}: the sum of central hypergeometric
 probabilities given \eqn{T = u + v} that are no greater than the observed
 probability, compared against \eqn{\alpha}. This mirrors the rejection rule
 used in \code{local_size_sas_freq()}.
 }
-\keyword{find}
-\keyword{power}
-\keyword{procfreq}
-\keyword{sas}
-\keyword{test}
+\seealso{
+Other power: 
+\code{\link{power_conservative}()},
+\code{\link{power_mfet}()},
+\code{\link{power_randomised}()},
+\code{\link{power_woolf}()}
+}
+\concept{power}
+\keyword{internal}
