@@ -1,0 +1,9 @@
+pandoc: 3.8.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  articles/background-and-comparison: background-and-comparison.html
+  modifiedfisher: modifiedfisher.html
+  articles/overview-of-algorithm: overview-of-algorithm.html
+  articles/reproducing-paper-figures: reproducing-paper-figures.html
+last_built: 2026-06-15T20:06Z
