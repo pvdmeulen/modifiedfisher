@@ -1,6 +1,4 @@
-# url: set this once the site is hosted, e.g.
-#   https://pvdmeulen.github.io/modifiedfisher/
-# Until then it can be omitted; pkgdown builds fine without it.
+url: https://pvdmeulen.github.io/modifiedfisher/
 
 template:
   bootstrap: 5
@@ -48,3 +46,5 @@ reference:
   - local_size_randomised
   - power_randomised
   - power_conservative
+
+
