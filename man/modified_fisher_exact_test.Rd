@@ -80,7 +80,18 @@ power. Defaults to 0.5.}
 power. Defaults to 0.75.}
 }
 \value{
-An object of class \code{htest}.
+An object of class \code{htest}: a list with components
+\code{p.value} (the two-sided test-based p-value, if \code{pvalue = TRUE}),
+\code{estimate} (the sample odds ratio), \code{conf.int} (the two-sided
+\eqn{(1 - \alpha)} confidence interval for the odds ratio, if
+\code{conf_int = TRUE}), \code{null.value} (the null odds ratio),
+\code{alternative}, \code{method}, and \code{data.name}. It additionally
+carries \code{support.data} (the test frame from
+\code{construct_test_frame()}), \code{gamma0} (the optimal threshold),
+\code{power} (the power at \code{power_at_pi1} and \code{power_at_pi2}, if
+\code{power = TRUE}), \code{local.size.data} (a data frame for plotting the
+size as a function of the nuisance parameter, if \code{local_size_data =
+  TRUE}), and \code{fn_args} (the arguments used).
 }
 \description{
 Computes the non-conservative, size-\eqn{\alpha} modified Fisher exact test
@@ -94,18 +105,27 @@ the standard Fisher exact test while strictly controlling the Type I error
 rate.
 }
 \examples{
-\dontrun{
-# Example here
+# Example 1 of van der Meulen, Raymond & van der Meulen (2021):
+# 5/12 successes versus 7/11, testing H0: OR = 1 at alpha = 0.05.
+modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1)
+
+\donttest{
+# The size of the test as a function of the nuisance parameter can be
+# returned for diagnostic plotting (slower, as the size is evaluated on a
+# grid of 101 nuisance-parameter values):
+res <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11,
+                                  odds_ratio = 1, local_size_data = TRUE)
+head(res$local.size.data)
 }
 }
 \seealso{
-\code{\link[=construct_test_frame]{construct_test_frame()}} for the underlying test frame of critical values and randomisation probabilities; \code{\link[=optimise_gamma0]{optimise_gamma0()}} for the gamma0 optimisation; \code{\link[=size_mfet]{size_mfet()}} for the size of the test maximised over the nuisance parameter; \code{\link[=local_size_mfet]{local_size_mfet()}} for the local size at a fixed nuisance parameter value; \code{\link[=power_mfet]{power_mfet()}} for the power of the test.
+\code{\link[=construct_test_frame]{construct_test_frame()}} for the underlying test frame of critical values and randomisation probabilities; \code{\link[=optimise_gamma0]{optimise_gamma0()}} for the gamma0 optimisation; \code{\link[=size_modified]{size_modified()}} for the size of the test maximised over the nuisance parameter; \code{\link[=local_size_modified]{local_size_modified()}} for the local size at a fixed nuisance parameter value; \code{\link[=power_modified]{power_modified()}} for the power of the test.
 
-Other mfet: 
+Other modified: 
 \code{\link{construct_test_frame}()},
-\code{\link{local_size_mfet}()},
+\code{\link{local_size_modified}()},
 \code{\link{optimise_gamma0}()},
-\code{\link{power_mfet}()},
-\code{\link{size_mfet}()}
+\code{\link{power_modified}()},
+\code{\link{size_modified}()}
 }
-\concept{mfet}
+\concept{modified}

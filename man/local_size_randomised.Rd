@@ -24,20 +24,30 @@ probabilities \eqn{\gamma_1}, \eqn{\gamma_2} for every possible total \eqn{T}.}
 
 \item{.precision}{Numerical precision. No default.}
 }
+\value{
+A single numeric value: the local size of the randomised UMPU Fisher
+exact test at the given nuisance parameter, in \eqn{[0, 1]}.
+}
 \description{
 Computes the unconditional rejection probability (local size) of the fully
 randomised UMPU Fisher exact test at nuisance parameter \eqn{p_0}, where
-\eqn{p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))}. Unlike \code{mfet_local_size()},
+\eqn{p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))}. Unlike \code{local_size_modified()},
 which applies a \eqn{\gamma_0} threshold and returns 0 or 1 at the boundary,
 this function uses \eqn{\gamma_1} and \eqn{\gamma_2} directly as rejection
 probabilities, reflecting the true expected size of the randomised test.
 }
+\examples{
+df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+                           .alpha = 0.05, .precision = 1e-3)
+local_size_randomised(nuisance = 0.5, .m = 6, .n = 4, .df = df,
+                      .odds_ratio = 1, .alpha = 0.05, .precision = 1e-3)
+}
 \seealso{
 Other size: 
-\code{\link{local_size_mfet}()},
-\code{\link{local_size_procfreq}()},
-\code{\link{local_size_woolf}()},
-\code{\link{size_mfet}()}
+\code{\link{local_size_asymptotic}()},
+\code{\link{local_size_modified}()},
+\code{\link{local_size_probability}()},
+\code{\link{size_modified}()}
 }
 \concept{size}
 \keyword{internal}

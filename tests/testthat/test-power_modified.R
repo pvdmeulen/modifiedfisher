@@ -1,6 +1,6 @@
 # Test - power is non-decreasing ----------------------------------------------
 
-test_that("mfet_power is monotonically non-decreasing in pi2 for fixed pi1", {
+test_that("modified_power is monotonically non-decreasing in pi2 for fixed pi1", {
 
   m <- 12
   n <- 11
@@ -19,7 +19,7 @@ test_that("mfet_power is monotonically non-decreasing in pi2 for fixed pi1", {
 
   powers <- sapply(pi2_grid, function(pi2) {
 
-    modifiedfisher:::power_mfet(p = c(pi1, pi2), .gamma0 = g0, .odds_ratio = odds_ratio,
+    modifiedfisher:::power_modified(p = c(pi1, pi2), .gamma0 = g0, .odds_ratio = odds_ratio,
                                 .m = m, .n = n, .df = df, .alpha = alpha, .precision = 1e-3,
                                 .superiority = FALSE)
 
@@ -29,7 +29,7 @@ test_that("mfet_power is monotonically non-decreasing in pi2 for fixed pi1", {
   expect_true(all(diff(powers) >= -1e-8))
 
   # And power at pi2 = pi1 should be close to alpha (size), not power
-  power_at_null <- modifiedfisher:::power_mfet(p = c(pi1, pi1), .gamma0 = g0,
+  power_at_null <- modifiedfisher:::power_modified(p = c(pi1, pi1), .gamma0 = g0,
                                                .odds_ratio = odds_ratio,
                                                .m = m, .n = n, .df = df,
                                                .alpha = alpha, .precision = 1e-3,
@@ -39,7 +39,7 @@ test_that("mfet_power is monotonically non-decreasing in pi2 for fixed pi1", {
 
 # Test - power increases with sample size -------------------------------------
 
-test_that("power_mfet increases with sample size for a fixed effect size", {
+test_that("power_modified increases with sample size for a fixed effect size", {
   alpha <- 0.05
   odds_ratio <- 1
   pi1 <- 0.2
@@ -56,7 +56,7 @@ test_that("power_mfet increases with sample size for a fixed effect size", {
                                            .alpha = alpha, .precision = 1e-3,
                                            .method = "zoom", .maze = 19, .zoom_iter = 6)
 
-    modifiedfisher:::power_mfet(p = c(pi1, pi2), .gamma0 = g0, .odds_ratio = odds_ratio,
+    modifiedfisher:::power_modified(p = c(pi1, pi2), .gamma0 = g0, .odds_ratio = odds_ratio,
                                 .m = m, .n = n, .df = df, .alpha = alpha, .precision = 1e-3,
                                 .superiority = FALSE)
 

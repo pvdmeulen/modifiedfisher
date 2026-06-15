@@ -3,10 +3,10 @@
 #' Computes the unconditional power of SAS Proc FREQ's exact test for
 #' \eqn{H_0}: OR = 1, at response rates \eqn{(\pi_1, \pi_2)}. For each
 #' possible table \eqn{(u, v)}, the rejection decision uses
-#' \code{pvalue_procfreq()}: the sum of central hypergeometric
+#' \code{pvalue_probability()}: the sum of central hypergeometric
 #' probabilities given \eqn{T = u + v} that are no greater than the observed
 #' probability, compared against \eqn{\alpha}. This mirrors the rejection rule
-#' used in \code{local_size_sas_freq()}.
+#' used in \code{local_size_probability()}.
 #'
 #' @param p Length-2 numeric vector \eqn{(\pi_1, \pi_2)}: success probability
 #'   in group 1 (\eqn{\pi_1}) and group 2 (\eqn{\pi_2}) at which power is
@@ -18,10 +18,14 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
+#' @return A single numeric value: the power of the SAS Proc FREQ exact test at
+#'   the response rates \eqn{(\pi_1, \pi_2)}, in \eqn{[0, 1]}.
+#' @examples
+#' power_probability(p = c(0.2, 0.6), .m = 6, .n = 4, .alpha = 0.05)
 #' @export
 #' @keywords internal
 #' @family power
-power_procfreq <- function(p, .m, .n, .alpha, .superiority = FALSE) {
+power_probability <- function(p, .m, .n, .alpha, .superiority = FALSE) {
 
   p0    <- p[[1]]
   p1    <- p[[2]]
@@ -32,7 +36,7 @@ power_procfreq <- function(p, .m, .n, .alpha, .superiority = FALSE) {
 
       # Rejection rule: Fisher exact p-value under H0: OR = 1 (central hypergeometric)
       t      <- u + v
-      p_val  <- pvalue_procfreq(u, t, .m, .n)
+      p_val  <- pvalue_probability(u, t, .m, .n)
       reject <- as.numeric(p_val <= .alpha)
 
       contrib <- reject *

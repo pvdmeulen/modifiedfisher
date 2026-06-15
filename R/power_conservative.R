@@ -21,6 +21,14 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
+#' @return A single numeric value: the power of the conservative (non-randomised)
+#'   Fisher exact test at the response rates \eqn{(\pi_1, \pi_2)}, in
+#'   \eqn{[0, 1]}.
+#' @examples
+#' df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+#'                            .alpha = 0.05, .precision = 1e-3)
+#' power_conservative(p = c(0.2, 0.6), .m = 6, .n = 4, .df = df,
+#'                    .alpha = 0.05, .precision = 1e-3)
 #' @export
 #' @keywords internal
 #' @family power
@@ -36,7 +44,7 @@ power_conservative <- function(p, .m, .n, .df, .alpha, .precision,
       z <- c(u, u + v)
 
       # gamma0 = 1 means reject only when strictly outside [c1, c2]
-      reject <- .mfet_reject(z, .df, .gamma0 = 1)
+      reject <- .modified_reject(z, .df, .gamma0 = 1)
 
       contribution <- reject *
         stats::dbinom(u, size = .m, prob = p0) *

@@ -20,6 +20,13 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
+#' @return A single numeric value: the power of the randomised UMPU Fisher exact
+#'   test at the response rates \eqn{(\pi_1, \pi_2)}, in \eqn{[0, 1]}.
+#' @examples
+#' df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+#'                            .alpha = 0.05, .precision = 1e-3)
+#' power_randomised(p = c(0.2, 0.6), .m = 6, .n = 4, .df = df,
+#'                  .alpha = 0.05, .precision = 1e-3)
 #' @export
 #' @keywords internal
 #' @family power

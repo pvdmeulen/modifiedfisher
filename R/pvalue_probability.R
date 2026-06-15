@@ -17,10 +17,16 @@
 #' @param n Number of trials in group 2. No default.
 #' @param odds_ratio Null hypothesis odds ratio \eqn{\theta_0}. Defaults to 1.
 #'
+#' @return A single numeric value: the two-sided conditional exact p-value, in
+#'   \eqn{[0, 1]}.
+#' @examples
+#' # Two-sided exact p-value for 5/12 vs 7/11 under H0: OR = 1
+#' # (here t = u + v = 5 + 7 = 12):
+#' pvalue_probability(s = 5, t = 12, m = 12, n = 11, odds_ratio = 1)
 #' @export
 #' @keywords internal
-#' @seealso [local_size_procfreq()] for the local size of the SAS Proc FREQ exact test; [power_procfreq()] for the power of the SAS Proc FREQ exact test; [modified_fisher_exact_test()] for the main user-facing function.
-pvalue_procfreq <- function(s, t, m, n, odds_ratio = 1) {
+#' @seealso [local_size_probability()] for the local size of the SAS Proc FREQ exact test; [power_probability()] for the power of the SAS Proc FREQ exact test; [modified_fisher_exact_test()] for the main user-facing function.
+pvalue_probability <- function(s, t, m, n, odds_ratio = 1) {
 
   lower   <- max(0, t - n)
   upper   <- min(m, t)

@@ -17,10 +17,14 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
+#' @return A single numeric value: the power of Woolf's asymptotic test at the
+#'   response rates \eqn{(\pi_1, \pi_2)}, in \eqn{[0, 1]}.
+#' @examples
+#' power_asymptotic(p = c(0.2, 0.6), .m = 6, .n = 4, .alpha = 0.05)
 #' @export
 #' @keywords internal
 #' @family power
-power_woolf <- function(p, .m, .n, .alpha, .superiority = FALSE) {
+power_asymptotic <- function(p, .m, .n, .alpha, .superiority = FALSE) {
 
   p0    <- p[[1]]
   p1    <- p[[2]]

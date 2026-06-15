@@ -1,4 +1,50 @@
-url: ~
+# url: set this once the site is hosted, e.g.
+#   https://pvdmeulen.github.io/modifiedfisher/
+# Until then it can be omitted; pkgdown builds fine without it.
+
 template:
   bootstrap: 5
+  bootswatch: flatly
+  light-switch: true
+  math-rendering: mathjax
 
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github]
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - matches("background-and-comparison")
+  - matches("overview-of-algorithm")
+  - matches("reproducing-paper-figures")
+  - matches("modifiedfisher")
+
+reference:
+- title: Modified Fisher exact test
+  desc: The main user-facing test.
+  contents:
+  - modified_fisher_exact_test
+
+- title: Building blocks
+  desc: Internal steps of the algorithm, exported for advanced use.
+  contents:
+  - construct_test_frame
+  - optimise_gamma0
+  - local_size_modified
+  - size_modified
+  - power_modified
+
+- title: Comparison tests
+  desc: Size and power of the alternative tests, for benchmarking.
+  contents:
+  - local_size_asymptotic
+  - power_asymptotic
+  - local_size_probability
+  - power_probability
+  - pvalue_probability
+  - local_size_randomised
+  - power_randomised
+  - power_conservative

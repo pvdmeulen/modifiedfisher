@@ -16,10 +16,15 @@
 #' @param .odds_ratio The null hypothesis odds ratio \eqn{\theta_0}. No default.
 #' @param .alpha Nominal significance level \eqn{\alpha}. No default.
 #'
+#' @return A single numeric value: the local size of Woolf's asymptotic test at
+#'   the given nuisance parameter, in \eqn{[0, 1]}.
+#' @examples
+#' local_size_asymptotic(nuisance = 0.5, .odds_ratio = 1, .m = 6, .n = 4,
+#'                  .alpha = 0.05)
 #' @export
 #' @keywords internal
 #' @family size
-local_size_woolf <- function(nuisance, .odds_ratio, .m, .n, .alpha) {
+local_size_asymptotic <- function(nuisance, .odds_ratio, .m, .n, .alpha) {
 
   p0 <- min(max(0, nuisance), 1)
   p1 <- p0 / (p0 + .odds_ratio * (1 - p0))

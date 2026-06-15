@@ -2,7 +2,7 @@
 #'
 #' Computes the first derivative of the local size with respect to the nuisance
 #' parameter \eqn{p_0}, using the analytic derivative of the binomial PMF.
-#' Used by \code{size_mfet()} when \code{method = "trust"} to supply the
+#' Used by \code{size_modified()} when \code{method = "trust"} to supply the
 #' gradient to the trust-region optimiser.
 #'
 #' @param nuisance The nuisance parameter \eqn{p_0}: success probability in
@@ -20,7 +20,7 @@
 #' @param .precision Numerical precision. No default.
 #'
 #' @noRd
-.local_size_gradient_mfet <- function(nuisance, .gamma0, .odds_ratio, .m, .n,
+.local_size_gradient_modified <- function(nuisance, .gamma0, .odds_ratio, .m, .n,
                                       .df, .alpha, .precision){
 
   p0 <- nuisance[[1]]
@@ -56,7 +56,7 @@
       total <- term1*stats::dbinom(x = j, prob = p1, size = .n) +
         term2*stats::dbinom(x = i, prob = p0, size = .m)*dp1dp0
 
-      locsizegrad <- locsizegrad + .mfet_reject(x, .df, .gamma0)*total
+      locsizegrad <- locsizegrad + .modified_reject(x, .df, .gamma0)*total
 
     }
 
@@ -112,7 +112,7 @@
 #       total <- term1*dbinom(x = j, prob = p1, size = .n) +
 #         term2*dbinom(x = i, prob = p0, size = .m)*dp1dp0
 #
-#       locsizehessian <- locsizehessian + .mfet_reject(x, .df, .gamma0)*total
+#       locsizehessian <- locsizehessian + .modified_reject(x, .df, .gamma0)*total
 #
 #     }
 #

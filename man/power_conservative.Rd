@@ -27,6 +27,11 @@ probabilities \eqn{\gamma_1}, \eqn{\gamma_2} for every possible total \eqn{T}.}
 tables where the observed rate in group 2 exceeds that in group 1.
 Defaults to \code{FALSE}.}
 }
+\value{
+A single numeric value: the power of the conservative (non-randomised)
+Fisher exact test at the response rates \eqn{(\pi_1, \pi_2)}, in
+\eqn{[0, 1]}.
+}
 \description{
 Computes the unconditional power of the conservative (non-randomised) Fisher
 exact test at response rates \eqn{(\pi_1, \pi_2)}. Rejects \eqn{H_0} only
@@ -35,12 +40,18 @@ equivalent to setting \eqn{\gamma_0 = 1} in the MFET so that boundary
 values are never rejected. The test frame should be built for the relevant
 null odds ratio.
 }
+\examples{
+df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+                           .alpha = 0.05, .precision = 1e-3)
+power_conservative(p = c(0.2, 0.6), .m = 6, .n = 4, .df = df,
+                   .alpha = 0.05, .precision = 1e-3)
+}
 \seealso{
 Other power: 
-\code{\link{power_mfet}()},
-\code{\link{power_procfreq}()},
-\code{\link{power_randomised}()},
-\code{\link{power_woolf}()}
+\code{\link{power_asymptotic}()},
+\code{\link{power_modified}()},
+\code{\link{power_probability}()},
+\code{\link{power_randomised}()}
 }
 \concept{power}
 \keyword{internal}

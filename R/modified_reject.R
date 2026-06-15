@@ -20,7 +20,7 @@
 #'   the output of \code{optimise_gamma0()}.
 #'
 #' @noRd
-.mfet_reject <- function(z, .df, .gamma0){
+.modified_reject <- function(z, .df, .gamma0){
 
   s <- z[[1]]
   i <- z[[2]]

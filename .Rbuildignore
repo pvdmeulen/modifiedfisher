@@ -2,6 +2,16 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^\.github$
-^_pkgdown\.yml$
 ^docs$
+
+
+^\.DS_Store$
+^.*/\.DS_Store$
+^data-raw$
+
+^_pkgdown\.yml$
 ^pkgdown$
+^index\.Rmd$
+^index\.md$
+^index\.html$
+^vignettes/articles$

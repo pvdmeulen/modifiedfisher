@@ -1,4 +1,4 @@
-#' Randomised (UMPU) Fisher exact test — work in progress
+#' Randomised (UMPU) Fisher exact test -- work in progress
 #'
 #' Intended to implement the fully randomised UMPU Fisher exact test, in which
 #' boundary values \eqn{u = c_1} and \eqn{u = c_2} are rejected with

@@ -18,202 +18,160 @@ knitr::opts_chunk$set(
 library(modifiedfisher)
 ```
 
-## Introduction
+The **non-conservative, size-$\alpha$ modified Fisher exact test** (MFET)
+rejects the null at a critical value only when the corresponding randomisation
+probability exceeds a threshold $\gamma_0$, chosen so the test's size (maximised
+over the nuisance parameter) is as large as possible without exceeding $\alpha$.
+This makes it less conservative than the standard Fisher exact test while still
+strictly controlling the Type I error rate. For why this matters and how it
+compares to other tests, see the
+[Background and comparison](background-and-comparison.html) article; for how it
+is built, see [Overview of algorithm](overview-of-algorithm.html).
 
-The classical Fisher exact test is the uniformly most powerful unbiased
-(UMPU) test for comparing two binomial proportions, but its UMPU property
-relies on randomisation at the critical values. A non-randomised test is
-of more practical use, but the usual non-randomised versions either fail to
-control the Type I error rate strictly (e.g. the mid p-value, or Woolf's
-asymptotic test) or are needlessly conservative (e.g. the SAS Proc FREQ
-exact test).
-
-The **non-conservative, size-$\alpha$ modified Fisher exact test**
-(MFET) addresses this gap. It is derived from the randomised Fisher exact
-test by rejecting the null at a critical value only if the corresponding
-randomisation probability exceeds a threshold $\gamma_0$. The value of
-$\gamma_0$ is chosen so that the actual size of the test, maximised over
-the nuisance parameter, is as large as possible while remaining no greater
-than $\alpha$. This makes the test less conservative than the standard
-Fisher exact test while still strictly controlling the Type I error rate.
-
-This vignette walks through the main features of `modified_fisher_exact_test()`
-using the worked examples from van der Meulen, Raymond and van der Meulen
-(2021), *Consistent Confidence Limits, P Values, and Power of the
-Non-Conservative, Size-$\alpha$ Modified Fisher Exact Test*.
+This vignette is a tour of `modified_fisher_exact_test()`, using the worked
+examples from van der Meulen, Raymond and van der Meulen (2021).
 
 ## Basic usage
 
-The test compares two independent binomial proportions, $u/m$ and
-$v/n$. The null hypothesis is $H_0: \theta = \theta_0$, where
-$\theta$ is the log odds ratio. By default, `odds_ratio = 1`, i.e. the
-test is for equality of proportions.
+The test compares two independent binomial proportions $u/m$ and $v/n$, testing
+$H_0: \theta = \theta_0$ where $\theta$ is the log odds ratio. By default
+`odds_ratio = 1` (equality of proportions).
 
-We reproduce Example 2 from Table 2 in the original paper: 13 successes out of
-41 trials in group 1, versus 6 successes out of 47 trials in group 2.
+We reproduce Example 2 from the paper's Table 2: 13 of 41 versus 6 of 47.
 
 ```{r}
-result <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47, odds_ratio = 1, local_size_data = TRUE)
-
+result <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
+                                     odds_ratio = 1, local_size_data = TRUE)
 result
 ```
 
-The returned object is of class `htest`, so the familiar components
-(`$p.value`, `$estimate`, `$conf.int`) are all available directly:
+The result is an `htest`, so the usual components are available directly, and
+they match Table 2 (odds ratio 3.173, p-value 0.034, 95% CI 1.082 to 10.25):
 
 ```{r}
 result$estimate
-
 result$p.value
-
 result$conf.int
 ```
 
-These match Table 2 of the paper: an odds ratio estimate of 3.173, a two-sided p-value of 0.034, and a 95% confidence interval of (1.082, 10.25).
+### P-values and confidence intervals agree
 
-### Agreement between p-values and confidence intervals
+Both are derived from the same test, so `odds_ratio` is rejected at level
+`alpha` if and only if it falls outside `conf.int`. The two can never disagree.
+This is not true of `stats::fisher.test()` or the SAS Proc FREQ exact test,
+whose p-values and intervals are built separately and can conflict. The
+[Background and comparison](background-and-comparison.html) article shows a
+worked case.
 
-A central feature of the MFET is that its p-values and confidence intervals are constructed to *agree by definition*, because both are derived from the same underlying test. The null hypothesis value `odds_ratio` is rejected at level `alpha` if and only if it falls outside the `conf.int`:
+## A different null hypothesis
 
-```{r}
-alpha <- 0.05
-
-rejects_null <- result$p.value < alpha
-one_outside_ci <- !(1 >= result$conf.int[1] && 1 <= result$conf.int[2])
-
-rejects_null
-one_outside_ci
-```
-
-This is in contrast to, for example, the SAS Proc FREQ exact test, where the p-value is based on a sum of conditional tail probabilities but the confidence interval is constructed separately using equal-tail one-sided p-values, meaning these can disagree (see Table 2 Example 2 in the paper, where the SAS Proc FREQ confidence interval includes an odds ratio of 1 despite a p-value below 0.05).
-
-## Testing a different null hypothesis
-
-The `odds_ratio` argument specifies $\theta_0$, the value of the odds ratio under $H_0$. It need not be 1. For example, to test whether the odds ratio differs from 2:
+`odds_ratio` sets $\theta_0$ and need not be 1. The estimate and confidence
+interval do not depend on it; only the p-value and `$null.value` change.
 
 ```{r}
-result_or2 <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47, odds_ratio = 2)
-
+result_or2 <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
+                                         odds_ratio = 2)
 result_or2$p.value
 result_or2$conf.int
 ```
 
-The point estimate and confidence interval do not depend on `odds_ratio`: only the p-value (which tests $H_0: \theta = \theta_0$) and the `$null.value` element change.
+## Precision and optimisation method
 
-## Controlling precision and choosing the optimisation method
+Two arguments control the numerics:
 
-Two arguments control the numerical behaviour of the test:
-
-- `precision` sets the tolerance for the bisection searches used to find
-  confidence limits and p-values (default `1e-03`).
-- `method` selects how the actual size of the test is maximised over the nuisance parameter at each step of those bisection searches. The default, `"zoom"`, iteratively refines a grid search and is generally fastest. The alternative, `"trust"`, uses a trust-region optimiser (from the **trust** package) with an analytic gradient.
+- `precision` is the tolerance for the bisection searches behind the confidence
+  limits and p-value (default `1e-3`). A smaller value is more accurate but
+  needs more size evaluations, which is the expensive step.
+- `method` selects how the size is maximised over the nuisance parameter. The
+  default `"zoom"` refines a grid search and is usually fastest; `"trust"` uses
+  a trust-region optimiser with an analytic gradient. They agree to within
+  `precision`. For `"zoom"`, `maze` sets the grid points per iteration and
+  `zoom_iter` the number of refinements.
 
 ```{r}
-result_trust <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47, odds_ratio = 1, method = "trust")
-
+result_trust <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
+                                           odds_ratio = 1, method = "trust")
 result_trust$p.value
-result_trust$conf.int
 ```
 
-The two methods should agree to within `precision`. Increasing the `precision` (i.e. setting a lower value like `1e-6`) increases the accuracy of the bisection at the cost of additional evaluations of the test's size, which is the most computationally expensive step. The `maze` and `zoom_iter` arguments further control the `"zoom"`vmethod specifically: `maze` is the number of grid points evaluated at each iteration, and `zoom_iter` is the number of refinement iterations.
+## Power
 
-## Power calculations
-
-By default, `modified_fisher_exact_test()` also returns the power of the test, evaluated at two user-specified response rates `power_at_pi1` and `power_at_pi2` (defaults to 0.5 and 0.75, respectively), under the null `odds_ratio` used to build the test frame (typically `odds_ratio = 1`):
+By default the test also returns its power at two response rates `power_at_pi1`
+and `power_at_pi2`, under the null `odds_ratio` used to build the test frame.
+This is the unconditional probability of rejecting $H_0$ at those true rates and
+sample sizes.
 
 ```{r}
-result_power <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47, odds_ratio = 1, power_at_pi1 = 0.3, power_at_pi2 = 0.6)
-
+result_power <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
+                                           odds_ratio = 1,
+                                           power_at_pi1 = 0.3, power_at_pi2 = 0.6)
 result_power$power
 ```
 
-This is the unconditional probability of rejecting $H_0:$ OR = 1 when the true response rates are 0.3 in group 1 and 0.6 in group 2, for the sample sizes `m = 41` and `n = 47` used in this call.
-
-If the power calculation is not needed, setting `power = FALSE` skips it, which can meaningfully reduce computation time for larger sample sizes.
-
-### Testing superiority
-
-Setting `superiority = TRUE` restricts the power calculation to the sub-region where the observed response rate in group 2 exceeds that in group 1 (i.e. a positive observed effect), which is appropriate when the alternative hypothesis of interest is one-directional:
+Set `power = FALSE` to skip this, which saves time for larger samples. Setting
+`superiority = TRUE` restricts the calculation to a positive observed effect
+(one-directional alternative), which the paper notes changes power only slightly
+for relevant effect sizes.
 
 ```{r}
-result_superiority <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47, odds_ratio = 1, power_at_pi1 = 0.3, power_at_pi2 = 0.6, superiority = TRUE)
-
-result_superiority$power
+result_sup <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
+                                         odds_ratio = 1,
+                                         power_at_pi1 = 0.3, power_at_pi2 = 0.6,
+                                         superiority = TRUE)
+result_sup$power
 ```
 
-As noted in the paper, this restriction typically has only a small effect on power for clinically relevant effect sizes.
+## Diagnostic: plotting the size
 
-## Diagnosing the test: plotting the size
-
-Because the size of the MFET is determined numerically (by maximising the local size over the nuisance parameter, subject to it not exceeding `alpha`), the paper recommends plotting the size as a function of the nuisance parameter as a diagnostic check (particularly to confirm that no local optimum has been mistaken for a global optimum).
-
-Setting `local_size_data = TRUE` (like in the earlier function call) attaches a data frame of the local size, evaluated at 101 equally spaced values of the nuisance parameter $p_0 \in [0, 1]$, to the returned object:
+The size of the MFET is found numerically, so it is worth confirming the
+optimiser has not mistaken a local peak for the global one. `local_size_data =
+TRUE` attaches the local size at 101 values of the nuisance parameter $\pi_1$:
 
 ```{r}
 head(result$local.size.data)
 ```
 
-This can be plotted directly:
-
-```{r, fig.alt = "Plot of the local size of the modified Fisher exact test as a function of the nuisance parameter pi1, with a horizontal reference line at alpha = 0.05"}
+```{r, fig.alt = "Local size of the modified Fisher exact test against the nuisance parameter, with a reference line at alpha."}
 plot(size ~ pi1, data = result$local.size.data,
      type = "l", col = "firebrick", lwd = 2,
-     xlab = expression(pi[1]), ylab = "Size (%)",
-     main = "Size of the modified Fisher exact test")
-abline(h = alpha * 100, lty = 2)
+     xlab = expression(pi[1]), ylab = "Size (%)")
+abline(h = 0.05 * 100, lty = 2)
 ```
 
-The size should remain at or below the dashed reference line ($\alpha \times 100\%$) across the full range of $\pi_1$, reaching it (but not exceeding it) over a broad central region; this is the non-conservative behaviour that gives the MFET its power advantage over, for example, the Proc FREQ exact test in SAS.
+The curve should stay at or below $\alpha \times 100\%$ throughout, touching it
+across a broad central region. That is the non-conservative behaviour behind the
+MFET's power advantage.
 
-## The gamma0 threshold and the test frame
+## Internals: gamma0 and the test frame
 
-Two further elements of the returned object give access to the internal machinery of the test, which may be of interest for advanced use or for verifying results against the original SAS/IML macro.
-
-`$gamma0` is the optimal threshold $\gamma_0$: a critical value is only rejected if its randomisation probability exceeds this threshold.
+For advanced use or for checking against the original SAS/IML macro, the result
+exposes the threshold and the full test frame. `$gamma0` is the optimal
+$\gamma_0$; `$support.data` holds, for every total $T$, the critical values
+$c_1, c_2$ and randomisation probabilities $\gamma_1, \gamma_2$.
 
 ```{r}
 result$gamma0
-```
-
-`$support.data` is the full test frame: for every possible total $T = 0, \ldots, m+n$, the critical values $c_1, c_2$ and the randomisation probabilities $\gamma_1, \gamma_2$ that define the randomised Fisher exact test from which the MFET is derived.
-
-```{r}
 head(result$support.data)
 ```
 
-A critical value is included in the MFET's rejection region if and only if its randomisation probability exceeds `$gamma0`. For example, the boundary values rejected by the MFET (but not by the conservative non-randomised Fisher exact test) are those where `gamma1 > gamma0` or `gamma2 > gamma0`:
+The boundary outcomes the MFET rejects (but the conservative test does not) are
+exactly those with a randomisation probability above the threshold:
 
 ```{r}
-gamma0 <- result$gamma0
-df <- result$support.data
-
-subset(df, gamma1 > gamma0 | gamma2 > gamma0)
+subset(result$support.data, gamma1 > result$gamma0 | gamma2 > result$gamma0)
 ```
 
-## Comparison with other tests
-
-The paper compares the MFET against three alternatives: the conservative (non-randomised) Fisher exact test, Woolf's asymptotic test, and the SAS Proc FREQ exact test (based on summing conditional tail probabilities).
-
-Helper functions for the size and power of these alternatives are also available in this package (accessed through `modifiedfisher:::`):
-
-- `local_size_woolf()` and `power_woolf()` for Woolf's test, and
-- `local_size_procfreq()` and `power_procfreq()` for the SAS Proc FREQ exact test.
-
-These are primarily intended for reproducing the size and power comparison plots in the paper (Figures 1-6), and are documented separately.
-
-## Summary
-
-`modified_fisher_exact_test()` provides:
-
-- A two-sided p-value for $H_0: \theta = \theta_0$, for any $\theta_0$ (not just $\theta_0 = 1$).
-- A two-sided $(1-\alpha)$ confidence interval for the odds ratio, guaranteed to agree with the p-value.
-- The power of the test at user-specified response rates, optionally restricted to a superiority sub-region.
-- Diagnostic data (`local.size.data`) for confirming size control across the nuisance parameter space.
-
-All of this is achieved while strictly controlling the Type I error rate at the nominal level `alpha`, in a less conservative way than the commonly used SAS Proc FREQ exact test.
+The mechanics of this are covered in
+[Overview of algorithm](overview-of-algorithm.html), and the size and power of
+the comparison tests in
+[Reproducing the paper's figures](reproducing-paper-figures.html).
 
 ## References
 
-van der Meulen EA, Raymond K, van der Meulen PJ (2021). Consistent Confidence Limits, P Values, and Power of the Non-Conservative, Size-$\alpha$ Modified Fisher Exact Test. *Journal of Biostatistics and Biometric Applications*, 6(1):102.
+van der Meulen EA, Raymond K, van der Meulen PJ (2021). Consistent Confidence
+Limits, P Values, and Power of the Non-Conservative, Size-$\alpha$ Modified
+Fisher Exact Test. *Journal of Biostatistics and Biometric Applications*,
+6(1):102.
 
-van der Meulen EA (2008). A Nonrandomized, Nonconservative Version of the Fisher Exact Test. *Communications in Statistics - Theory and Methods*, 37:699-708.
+van der Meulen EA (2008). A Nonrandomized, Nonconservative Version of the Fisher
+Exact Test. *Communications in Statistics - Theory and Methods*, 37:699-708.

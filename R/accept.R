@@ -3,7 +3,7 @@
 #' Determines whether \eqn{H_0}: OR = \code{.odds_ratio} is accepted for the
 #' observed table \eqn{z = (u, t = u + v)}. First finds the optimal
 #' \eqn{\gamma_0} via \code{optimise_gamma0()}, then evaluates the MFET
-#' rejection indicator via \code{.mfet_reject()}. Returns 1 (accept) or
+#' rejection indicator via \code{.modified_reject()}. Returns 1 (accept) or
 #' 0 (reject). Used in the bisection searches for confidence limits and
 #' p-values in \code{modified_fisher_exact_test()}, and not exported.
 #'
@@ -32,7 +32,7 @@
   gamma0 <- optimise_gamma0(.odds_ratio, .m, .n, .alpha, .precision,
                             .method, .maze, .zoom_iter)
 
-  accept <- 1 - .mfet_reject(z, .df, gamma0)
+  accept <- 1 - .modified_reject(z, .df, gamma0)
 
   return(accept)
 

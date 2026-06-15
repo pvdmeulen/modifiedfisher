@@ -33,6 +33,9 @@ or \code{"trust"}.}
 
 \item{.zoom_iter}{Number of zoom iterations (\code{"zoom"} method only).}
 }
+\value{
+A single numeric value: the optimal threshold \eqn{\gamma_0}.
+}
 \description{
 Finds the optimal \eqn{\gamma_0} threshold: the largest value of
 \eqn{\gamma_0} such that the actual size of the MFET (the maximum of the
@@ -40,14 +43,19 @@ local size over the nuisance parameter \eqn{p_0}) does not exceed
 \eqn{\alpha}. Uses a bisection search over the \eqn{2(m + n + 1)} sorted
 randomisation probability values from the test frame.
 }
-\seealso{
-\code{\link[=modified_fisher_exact_test]{modified_fisher_exact_test()}} for the main user-facing function; \code{\link[=construct_test_frame]{construct_test_frame()}} for the test frame passed to this function; \code{\link[=size_mfet]{size_mfet()}} for the size function being maximised.
-
-Other mfet: 
-\code{\link{construct_test_frame}()},
-\code{\link{local_size_mfet}()},
-\code{\link{modified_fisher_exact_test}()},
-\code{\link{power_mfet}()},
-\code{\link{size_mfet}()}
+\examples{
+optimise_gamma0(.odds_ratio = 1, .m = 6, .n = 4, .alpha = 0.05,
+                .precision = 1e-3, .method = "zoom", .maze = 10,
+                .zoom_iter = 6)
 }
-\concept{mfet}
+\seealso{
+\code{\link[=modified_fisher_exact_test]{modified_fisher_exact_test()}} for the main user-facing function; \code{\link[=construct_test_frame]{construct_test_frame()}} for the test frame passed to this function; \code{\link[=size_modified]{size_modified()}} for the size function being maximised.
+
+Other modified: 
+\code{\link{construct_test_frame}()},
+\code{\link{local_size_modified}()},
+\code{\link{modified_fisher_exact_test}()},
+\code{\link{power_modified}()},
+\code{\link{size_modified}()}
+}
+\concept{modified}

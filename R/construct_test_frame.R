@@ -17,9 +17,20 @@
 #' @param .message A logical. Defaults to \code{FALSE}. Setting this to
 #'   \code{TRUE} will print progress messages; useful for debugging.
 #'
+#' @return A data frame with \code{m + n + 1} rows, one per possible total
+#'   \eqn{T = 0, \ldots, m + n}, and columns \code{t} (the total), \code{c1}
+#'   and \code{c2} (lower and upper critical values), \code{d1} and \code{d2}
+#'   (the \eqn{\alpha/2} quantiles used as starting points), and \code{gamma1}
+#'   and \code{gamma2} (the randomisation probabilities at \code{c1} and
+#'   \code{c2}).
+#' @examples
+#' # Critical values and randomisation probabilities for m = 6, n = 4
+#' # (reproduces Table 1 of van der Meulen et al., 2021):
+#' construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+#'                      .alpha = 0.05, .precision = 1e-3)
 #' @export
-#' @family mfet
-#' @seealso [modified_fisher_exact_test()] for the main user-facing function; [optimise_gamma0()] which uses this frame to find the optimal gamma0; [size_mfet()] for the resulting test size.
+#' @family modified
+#' @seealso [modified_fisher_exact_test()] for the main user-facing function; [optimise_gamma0()] which uses this frame to find the optimal gamma0; [size_modified()] for the resulting test size.
 #' @importFrom BiasedUrn qFNCHypergeo
 construct_test_frame <- function(.odds_ratio, .m, .n, .alpha, .precision,
                                  .message = FALSE){

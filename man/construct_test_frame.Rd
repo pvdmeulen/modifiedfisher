@@ -21,6 +21,14 @@ construct_test_frame(.odds_ratio, .m, .n, .alpha, .precision, .message = FALSE)
 \item{.message}{A logical. Defaults to \code{FALSE}. Setting this to
 \code{TRUE} will print progress messages; useful for debugging.}
 }
+\value{
+A data frame with \code{m + n + 1} rows, one per possible total
+\eqn{T = 0, \ldots, m + n}, and columns \code{t} (the total), \code{c1}
+and \code{c2} (lower and upper critical values), \code{d1} and \code{d2}
+(the \eqn{\alpha/2} quantiles used as starting points), and \code{gamma1}
+and \code{gamma2} (the randomisation probabilities at \code{c1} and
+\code{c2}).
+}
 \description{
 Constructs a data frame of critical values (\eqn{c_1}, \eqn{c_2}) and
 randomisation probabilities (\eqn{\gamma_1}, \eqn{\gamma_2}) for every
@@ -30,14 +38,20 @@ the \eqn{\alpha/2} quantiles of the Fisher non-central hypergeometric
 distribution, a spiral search over \eqn{(c_1, c_2)} is used whenever the
 initial solution for \eqn{(\gamma_1, \gamma_2)} falls outside \eqn{[0, 1]}.
 }
+\examples{
+# Critical values and randomisation probabilities for m = 6, n = 4
+# (reproduces Table 1 of van der Meulen et al., 2021):
+construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+                     .alpha = 0.05, .precision = 1e-3)
+}
 \seealso{
-\code{\link[=modified_fisher_exact_test]{modified_fisher_exact_test()}} for the main user-facing function; \code{\link[=optimise_gamma0]{optimise_gamma0()}} which uses this frame to find the optimal gamma0; \code{\link[=size_mfet]{size_mfet()}} for the resulting test size.
+\code{\link[=modified_fisher_exact_test]{modified_fisher_exact_test()}} for the main user-facing function; \code{\link[=optimise_gamma0]{optimise_gamma0()}} which uses this frame to find the optimal gamma0; \code{\link[=size_modified]{size_modified()}} for the resulting test size.
 
-Other mfet: 
-\code{\link{local_size_mfet}()},
+Other modified: 
+\code{\link{local_size_modified}()},
 \code{\link{modified_fisher_exact_test}()},
 \code{\link{optimise_gamma0}()},
-\code{\link{power_mfet}()},
-\code{\link{size_mfet}()}
+\code{\link{power_modified}()},
+\code{\link{size_modified}()}
 }
-\concept{mfet}
+\concept{modified}

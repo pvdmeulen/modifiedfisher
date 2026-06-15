@@ -29,12 +29,24 @@
 #'   tables where the observed rate in group 2 exceeds that in group 1.
 #'   Defaults to \code{FALSE}.
 #'
+#' @return A single numeric value: the power of the MFET at the response rates
+#'   \eqn{(\pi_1, \pi_2)}, in \eqn{[0, 1]}.
+#' @examples
+#' df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+#'                            .alpha = 0.05, .precision = 1e-3)
+#' g0 <- optimise_gamma0(.odds_ratio = 1, .m = 6, .n = 4, .alpha = 0.05,
+#'                       .precision = 1e-3, .method = "zoom", .maze = 10,
+#'                       .zoom_iter = 6)
+#' # Power against pi1 = 0.2, pi2 = 0.6:
+#' power_modified(p = c(0.2, 0.6), .gamma0 = g0, .odds_ratio = 1, .m = 6,
+#'            .n = 4, .df = df, .alpha = 0.05, .precision = 1e-3,
+#'            .superiority = FALSE)
 #' @export
 #' @keywords internal
 #' @family power
-#' @family mfet
-#' @seealso [power_woolf()], [power_procfreq()], [power_randomised()], [power_conservative()] for the power under alternative tests; [local_size_mfet()] for the size of the modified Fisher exact test as a function of the nuisance parameter; [modified_fisher_exact_test()] for the main user-facing function.
-power_mfet <- function(p, .gamma0, .odds_ratio, .m, .n, .df, .alpha,
+#' @family modified
+#' @seealso [power_asymptotic()], [power_probability()], [power_randomised()], [power_conservative()] for the power under alternative tests; [local_size_modified()] for the size of the modified Fisher exact test as a function of the nuisance parameter; [modified_fisher_exact_test()] for the main user-facing function.
+power_modified <- function(p, .gamma0, .odds_ratio, .m, .n, .df, .alpha,
                        .precision, .superiority){
 
   p0 <- p[[1]]
@@ -53,14 +65,14 @@ power_mfet <- function(p, .gamma0, .odds_ratio, .m, .n, .df, .alpha,
       if(.superiority == TRUE){
 
         power <- power + (v/.n > u/.m)*
-          .mfet_reject(z, .df, .gamma0)*
+          .modified_reject(z, .df, .gamma0)*
           stats::dbinom(x = u, prob = p0, size = .m)*
           stats::dbinom(x = v, prob = p1, size = .n)
 
       } else {
 
         power <- power +
-          .mfet_reject(z, .df, .gamma0)*
+          .modified_reject(z, .df, .gamma0)*
           stats::dbinom(x = u, prob = p0, size = .m)*
           stats::dbinom(x = v, prob = p1, size = .n)
 

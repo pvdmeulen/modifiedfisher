@@ -46,13 +46,33 @@
 #'   the test as a function of the nuisance parameter. Defaults to
 #'   \code{FALSE}.
 #' @rdname modified_fisher_exact_test
-#' @return An object of class \code{htest}.
-#' @family mfet
-#' @seealso [construct_test_frame()] for the underlying test frame of critical values and randomisation probabilities; [optimise_gamma0()] for the gamma0 optimisation; [size_mfet()] for the size of the test maximised over the nuisance parameter; [local_size_mfet()] for the local size at a fixed nuisance parameter value; [power_mfet()] for the power of the test.
+#' @return An object of class \code{htest}: a list with components
+#'   \code{p.value} (the two-sided test-based p-value, if \code{pvalue = TRUE}),
+#'   \code{estimate} (the sample odds ratio), \code{conf.int} (the two-sided
+#'   \eqn{(1 - \alpha)} confidence interval for the odds ratio, if
+#'   \code{conf_int = TRUE}), \code{null.value} (the null odds ratio),
+#'   \code{alternative}, \code{method}, and \code{data.name}. It additionally
+#'   carries \code{support.data} (the test frame from
+#'   \code{construct_test_frame()}), \code{gamma0} (the optimal threshold),
+#'   \code{power} (the power at \code{power_at_pi1} and \code{power_at_pi2}, if
+#'   \code{power = TRUE}), \code{local.size.data} (a data frame for plotting the
+#'   size as a function of the nuisance parameter, if \code{local_size_data =
+#'   TRUE}), and \code{fn_args} (the arguments used).
+#' @family modified
+#' @seealso [construct_test_frame()] for the underlying test frame of critical values and randomisation probabilities; [optimise_gamma0()] for the gamma0 optimisation; [size_modified()] for the size of the test maximised over the nuisance parameter; [local_size_modified()] for the local size at a fixed nuisance parameter value; [power_modified()] for the power of the test.
 #' @export
 #' @examples
-#' \dontrun{
-#' # Example here
+#' # Example 1 of van der Meulen, Raymond & van der Meulen (2021):
+#' # 5/12 successes versus 7/11, testing H0: OR = 1 at alpha = 0.05.
+#' modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1)
+#'
+#' \donttest{
+#' # The size of the test as a function of the nuisance parameter can be
+#' # returned for diagnostic plotting (slower, as the size is evaluated on a
+#' # grid of 101 nuisance-parameter values):
+#' res <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11,
+#'                                   odds_ratio = 1, local_size_data = TRUE)
+#' head(res$local.size.data)
 #' }
 modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
                                        alpha = 0.05,
@@ -193,7 +213,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
   RESULT_conf_int <- NULL
 
   plot_data <- NULL
-  power_mfet <- NULL
+  power_modified <- NULL
 
   #DATANAME <- deparse(substitute(data))
   DATANAME <- paste0("u = ", u, ", v = ", v, ", m = ", m, ", n = ", n)
@@ -223,7 +243,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
     p <- c(pi1, pi2)
 
-    power_mfet <- power_mfet(p, gamma0, or, .m = m, .n = n, .df = df_power,
+    power_modified <- power_modified(p, gamma0, or, .m = m, .n = n, .df = df_power,
                              .alpha = alpha, .precision = precision,
                              .superiority = superiority)*100
 
@@ -341,7 +361,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
 
       point <- plot_data$pi1[[row]]
 
-      plot_data$size[[row]] <- local_size_mfet(point, .gamma0 = opt_gamma0,
+      plot_data$size[[row]] <- local_size_modified(point, .gamma0 = opt_gamma0,
                                                .odds_ratio = odds_ratio,
                                                .m = m, .n = n, .df = df,
                                                .alpha = alpha,
@@ -410,7 +430,7 @@ modified_fisher_exact_test <- function(u, m, v, n, odds_ratio,
     support.data = df,
     local.size.data = if(local_size_data) plot_data,
     gamma0 = opt_gamma0,
-    power = if(power) power_mfet,
+    power = if(power) power_modified,
     fn_args = list(
       "alpha" = alpha,
       "precision" = precision,

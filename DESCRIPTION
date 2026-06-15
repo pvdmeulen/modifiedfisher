@@ -7,9 +7,9 @@ Description: Implements the non-randomised, non-conservative, size-alpha
     while improving on the conservativeness of the standard Fisher
     exact test, and is compared against Woolf's asymptotic test and
     the fully randomised uniformly most powerful unbiased test.
-URL: https://github.com/pvdmeulen/modified-fisher
-BugReports: https://github.com/pvdmeulen/modified-fisher/issues
-Version: 0.0.2
+URL: https://github.com/pvdmeulen/modifiedfisher
+BugReports: https://github.com/pvdmeulen/modifiedfisher/issues
+Version: 0.0.3
 Authors@R: 
     person("Peter", "van der Meulen", , "peter.vd.meulen@icloud.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0002-0988-8192"))
@@ -27,6 +27,8 @@ Suggests:
     testthat (>= 3.0.0),
     ggplot2,
     latex2exp,
-    svglite
+    svglite,
+    exact2x2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+Config/Needs/website: rmarkdown

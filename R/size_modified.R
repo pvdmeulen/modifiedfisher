@@ -5,7 +5,7 @@
 #' Supports two methods: \code{"zoom"} evaluates the local size at a grid of
 #' points and iteratively refines the maximum (matches the SAS macro default);
 #' \code{"trust"} uses a trust-region optimiser with the analytic gradient from
-#' \code{.local_size_gradient_mfet()}.
+#' \code{.local_size_gradient_modified()}.
 #'
 #' @param .c The \eqn{\gamma_0} value for which the actual size is to be
 #'   computed. Supplied as a length-1 list element; typically one element of
@@ -24,11 +24,20 @@
 #'
 #' @importFrom numDeriv hessian
 #' @importFrom trust trust
+#' @return A single numeric value: the actual size of the test, i.e. the local
+#'   size maximised over the nuisance parameter, in \eqn{[0, 1]}.
+#' @examples
+#' df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+#'                            .alpha = 0.05, .precision = 1e-3)
+#' # Actual size of the test at a candidate gamma0 threshold of 0.05:
+#' size_modified(.c = 0.05, .odds_ratio = 1, .m = 6, .n = 4, .df = df,
+#'           .alpha = 0.05, .precision = 1e-3, .method = "zoom",
+#'           .maze = 10, .zoom_iter = 6)
 #' @export
-#' @family mfet
+#' @family modified
 #' @family size
-#' @seealso [optimise_gamma0()] which maximises this quantity to find the optimal gamma0; [local_size_mfet()] for the local size at a fixed nuisance parameter value, of which this is the maximum; [local_size_woolf()], [local_size_procfreq()], [local_size_randomised()] for the equivalent quantity under alternative tests.
-size_mfet <- function(.c, .odds_ratio, .m, .n, .df, .alpha, .precision,
+#' @seealso [optimise_gamma0()] which maximises this quantity to find the optimal gamma0; [local_size_modified()] for the local size at a fixed nuisance parameter value, of which this is the maximum; [local_size_asymptotic()], [local_size_probability()], [local_size_randomised()] for the equivalent quantity under alternative tests.
+size_modified <- function(.c, .odds_ratio, .m, .n, .df, .alpha, .precision,
                       .method, .maze, .zoom_iter){
 
   if(.method == "trust"){
@@ -42,7 +51,7 @@ size_mfet <- function(.c, .odds_ratio, .m, .n, .df, .alpha, .precision,
 
       x0 <- i/.maze
 
-      size_new <- local_size_mfet(x0, gamma0, .odds_ratio, .m, .n,
+      size_new <- local_size_modified(x0, gamma0, .odds_ratio, .m, .n,
                                   .df, .alpha, .precision)
 
       if(size_new > size_old){
@@ -64,12 +73,12 @@ size_mfet <- function(.c, .odds_ratio, .m, .n, .df, .alpha, .precision,
       if(x > 1 | x < 0) return(list(value = -Inf))
 
       # Size (value, and function):
-      f <- local_size_mfet(nuisance = x, ...)
-      fx <- function(x) local_size_mfet(nuisance = x, ...)
+      f <- local_size_modified(nuisance = x, ...)
+      fx <- function(x) local_size_modified(nuisance = x, ...)
 
       # Derivative (value, and function):
-      g <- .local_size_gradient_mfet(nuisance = x, ...)
-      gx <- function(x) .local_size_gradient_mfet(nuisance = x, ...)
+      g <- .local_size_gradient_modified(nuisance = x, ...)
+      gx <- function(x) .local_size_gradient_modified(nuisance = x, ...)
 
       # Hessian:
       B <- numDeriv::hessian(func = fx, x)
@@ -92,7 +101,7 @@ size_mfet <- function(.c, .odds_ratio, .m, .n, .df, .alpha, .precision,
     # resulting value (size):
 
     #xopt <- result$value
-    #size <- local_size_mfet(xopt, .gamma0 = gamma0, .odds_ratio,
+    #size <- local_size_modified(xopt, .gamma0 = gamma0, .odds_ratio,
     #                        .m, .n, .df, .alpha, .precision)
 
   } else {
@@ -115,7 +124,7 @@ size_mfet <- function(.c, .odds_ratio, .m, .n, .df, .alpha, .precision,
 
         # New version of fn, using a single rejection matrix
         # rather than building a new one each time.
-        res[[i]] <- local_size_mfet(pt, .gamma0 = gamma0, .odds_ratio, .m, .n, .df,
+        res[[i]] <- local_size_modified(pt, .gamma0 = gamma0, .odds_ratio, .m, .n, .df,
                                     .alpha, .precision,
                                     .rejection_matrix = reject_matrix)
 

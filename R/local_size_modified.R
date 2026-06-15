@@ -3,7 +3,7 @@
 #' Computes the unconditional rejection probability (local size) of the MFET
 #' at nuisance parameter \eqn{p_0}, where
 #' \eqn{p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))}. Called repeatedly by
-#' \code{size_mfet()} during numerical optimisation over \eqn{p_0} to find
+#' \code{size_modified()} during numerical optimisation over \eqn{p_0} to find
 #' the maximum size. Computed as the bilinear form \eqn{p_u^\top R \, p_v},
 #' where \eqn{R} is the rejection matrix from
 #' \code{.build_rejection_matrix()} and \eqn{p_u}, \eqn{p_v} are the binomial
@@ -26,16 +26,24 @@
 #'   \code{.build_rejection_matrix()}. Defaults to \code{NULL}, in which case
 #'   the matrix is built internally from \code{.df} and \code{.gamma0}. Supply
 #'   a prebuilt matrix when calling repeatedly with the same test frame and
-#'   \eqn{\gamma_0} (as \code{size_mfet()} does across its zoom grid) to avoid
+#'   \eqn{\gamma_0} (as \code{size_modified()} does across its zoom grid) to avoid
 #'   rebuilding it on every call. If supplied, it must correspond to the same
 #'   \code{.df} and \code{.gamma0} passed alongside it; this is not checked.
 #'
+#' @return A single numeric value: the local size (unconditional rejection
+#'   probability) of the MFET at the given nuisance parameter, in \eqn{[0, 1]}.
+#' @examples
+#' df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4,
+#'                            .alpha = 0.05, .precision = 1e-3)
+#' # Local size at nuisance parameter p0 = 0.5, with gamma0 = 0.05:
+#' local_size_modified(nuisance = 0.5, .gamma0 = 0.05, .odds_ratio = 1,
+#'                 .m = 6, .n = 4, .df = df, .alpha = 0.05, .precision = 1e-3)
 #' @export
 #' @keywords internal
 #' @family size
-#' @family mfet
-#' @seealso [local_size_woolf()], [local_size_procfreq()], [local_size_randomised()] for the local size under alternative tests at the same nuisance parameter value; [size_mfet()] for the mfet local size maximised over the nuisance parameter; [power_mfet()] for the power of the modified Fisher exact test; [modified_fisher_exact_test()] for the main user-facing function.
-local_size_mfet <- function(nuisance, .gamma0, .odds_ratio, .m, .n,
+#' @family modified
+#' @seealso [local_size_asymptotic()], [local_size_probability()], [local_size_randomised()] for the local size under alternative tests at the same nuisance parameter value; [size_modified()] for the modified local size maximised over the nuisance parameter; [power_modified()] for the power of the modified Fisher exact test; [modified_fisher_exact_test()] for the main user-facing function.
+local_size_modified <- function(nuisance, .gamma0, .odds_ratio, .m, .n,
                             .df, .alpha, .precision, .rejection_matrix = NULL){
 
   p0 <- min(max(0, nuisance[[1]]), 1)
@@ -51,7 +59,7 @@ local_size_mfet <- function(nuisance, .gamma0, .odds_ratio, .m, .n,
   #
   #     x <- c(i, i+j)
   #
-  #     locsize <- locsize + .mfet_reject(x, .df, .gamma0) *
+  #     locsize <- locsize + .modified_reject(x, .df, .gamma0) *
   #       stats::dbinom(x = i, prob = p0, size = .m)*
   #       stats::dbinom(x = j, prob = p1, size = .n)
   #
@@ -62,7 +70,7 @@ local_size_mfet <- function(nuisance, .gamma0, .odds_ratio, .m, .n,
   # Vectorised version using helper function:
 
   # Rejection matrix is independent of the nuisance parameter; build it once
-  # here, or accept a prebuilt one (size_mfet() reuses it across the zoom grid)
+  # here, or accept a prebuilt one (size_modified() reuses it across the zoom grid)
   if (is.null(.rejection_matrix)) .rejection_matrix <- .build_rejection_matrix(.df, .gamma0, .m, .n)
 
   pu <- stats::dbinom(0:.m, size = .m, prob = p0)
