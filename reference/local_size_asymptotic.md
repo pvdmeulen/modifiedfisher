@@ -45,10 +45,11 @@ given nuisance parameter, in \\\[0, 1\]\\.
 
 ## See also
 
-Other size: [`local_size_modified()`](local_size_modified.md),
-[`local_size_probability()`](local_size_probability.md),
-[`local_size_randomised()`](local_size_randomised.md),
-[`size_modified()`](size_modified.md)
+Other size:
+[`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md),
+[`local_size_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_probability.md),
+[`local_size_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_randomised.md),
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
 
 ## Examples
 

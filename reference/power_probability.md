@@ -3,11 +3,11 @@
 Computes the unconditional power of SAS Proc FREQ's exact test for
 \\H_0\\: OR = 1, at response rates \\(\pi_1, \pi_2)\\. For each possible
 table \\(u, v)\\, the rejection decision uses
-[`pvalue_probability()`](pvalue_probability.md): the sum of central
-hypergeometric probabilities given \\T = u + v\\ that are no greater
-than the observed probability, compared against \\\alpha\\. This mirrors
-the rejection rule used in
-[`local_size_probability()`](local_size_probability.md).
+[`pvalue_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/pvalue_probability.md):
+the sum of central hypergeometric probabilities given \\T = u + v\\ that
+are no greater than the observed probability, compared against
+\\\alpha\\. This mirrors the rejection rule used in
+[`local_size_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_probability.md).
 
 ## Usage
 
@@ -47,10 +47,11 @@ response rates \\(\pi_1, \pi_2)\\, in \\\[0, 1\]\\.
 
 ## See also
 
-Other power: [`power_asymptotic()`](power_asymptotic.md),
-[`power_conservative()`](power_conservative.md),
-[`power_modified()`](power_modified.md),
-[`power_randomised()`](power_randomised.md)
+Other power:
+[`power_asymptotic()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_asymptotic.md),
+[`power_conservative()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_conservative.md),
+[`power_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_modified.md),
+[`power_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_randomised.md)
 
 ## Examples
 

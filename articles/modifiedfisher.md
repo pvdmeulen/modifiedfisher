@@ -12,12 +12,13 @@ the test’s size (maximised over the nuisance parameter) is as large as
 possible without exceeding \\\alpha\\. This makes it less conservative
 than the standard Fisher exact test while still strictly controlling the
 Type I error rate. For why this matters and how it compares to other
-tests, see the [Background and comparison](background-and-comparison.md)
+tests, see the [Background and
+comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.md)
 article; for how it is built, see [Overview of
-algorithm](overview-of-algorithm.md).
+algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.md).
 
 This vignette is a tour of
-[`modified_fisher_exact_test()`](../reference/modified_fisher_exact_test.md),
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md),
 using the worked examples from van der Meulen, Raymond and van der
 Meulen (2021).
 
@@ -73,7 +74,8 @@ never disagree. This is not true of
 [`stats::fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) or
 the SAS Proc FREQ exact test, whose p-values and intervals are built
 separately and can conflict. The [Background and
-comparison](background-and-comparison.md) article shows a worked case.
+comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.md)
+article shows a worked case.
 
 ## A different null hypothesis
 
@@ -271,9 +273,10 @@ subset(result$support.data, gamma1 > result$gamma0 | gamma2 > result$gamma0)
 ```
 
 The mechanics of this are covered in [Overview of
-algorithm](overview-of-algorithm.md), and the size and power of the
-comparison tests in [Reproducing the paper’s
-figures](reproducing-paper-figures.md).
+algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.md),
+and the size and power of the comparison tests in [Reproducing the
+paper’s
+figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.md).
 
 ## References
 

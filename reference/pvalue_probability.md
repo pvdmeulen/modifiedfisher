@@ -48,12 +48,12 @@ A single numeric value: the two-sided conditional exact p-value, in
 
 ## See also
 
-[`local_size_probability()`](local_size_probability.md) for the local
-size of the SAS Proc FREQ exact test;
-[`power_probability()`](power_probability.md) for the power of the SAS
-Proc FREQ exact test;
-[`modified_fisher_exact_test()`](modified_fisher_exact_test.md) for the
-main user-facing function.
+[`local_size_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_probability.md)
+for the local size of the SAS Proc FREQ exact test;
+[`power_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_probability.md)
+for the power of the SAS Proc FREQ exact test;
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md)
+for the main user-facing function.
 
 ## Examples
 

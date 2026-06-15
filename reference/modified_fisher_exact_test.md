@@ -130,28 +130,32 @@ sample odds ratio), `conf.int` (the two-sided \\(1 - \alpha)\\
 confidence interval for the odds ratio, if `conf_int = TRUE`),
 `null.value` (the null odds ratio), `alternative`, `method`, and
 `data.name`. It additionally carries `support.data` (the test frame from
-[`construct_test_frame()`](construct_test_frame.md)), `gamma0` (the
-optimal threshold), `power` (the power at `power_at_pi1` and
-`power_at_pi2`, if `power = TRUE`), `local.size.data` (a data frame for
-plotting the size as a function of the nuisance parameter, if
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md)),
+`gamma0` (the optimal threshold), `power` (the power at `power_at_pi1`
+and `power_at_pi2`, if `power = TRUE`), `local.size.data` (a data frame
+for plotting the size as a function of the nuisance parameter, if
 `local_size_data = TRUE`), and `fn_args` (the arguments used).
 
 ## See also
 
-[`construct_test_frame()`](construct_test_frame.md) for the underlying
-test frame of critical values and randomisation probabilities;
-[`optimise_gamma0()`](optimise_gamma0.md) for the gamma0 optimisation;
-[`size_modified()`](size_modified.md) for the size of the test maximised
-over the nuisance parameter;
-[`local_size_modified()`](local_size_modified.md) for the local size at
-a fixed nuisance parameter value;
-[`power_modified()`](power_modified.md) for the power of the test.
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md)
+for the underlying test frame of critical values and randomisation
+probabilities;
+[`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md)
+for the gamma0 optimisation;
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
+for the size of the test maximised over the nuisance parameter;
+[`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md)
+for the local size at a fixed nuisance parameter value;
+[`power_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_modified.md)
+for the power of the test.
 
-Other modified: [`construct_test_frame()`](construct_test_frame.md),
-[`local_size_modified()`](local_size_modified.md),
-[`optimise_gamma0()`](optimise_gamma0.md),
-[`power_modified()`](power_modified.md),
-[`size_modified()`](size_modified.md)
+Other modified:
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md),
+[`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md),
+[`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md),
+[`power_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_modified.md),
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
 
 ## Examples
 

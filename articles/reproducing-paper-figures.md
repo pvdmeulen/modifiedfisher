@@ -4,7 +4,8 @@ This article rebuilds the size and power figures of van der Meulen,
 Raymond and van der Meulen (2021) from package functions alone, and the
 same helpers can be pointed at your own design. For what the tests are
 and why they differ, see the [Background and
-comparison](background-and-comparison.md) article.
+comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.md)
+article.
 
 The size is maximised over the nuisance parameter at every grid point,
 so larger sample sizes are slow. The chunks below use coarse grids and

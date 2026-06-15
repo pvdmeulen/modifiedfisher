@@ -3,8 +3,10 @@
 ### Articles
 
 - [Background and comparison with other exact
-  tests](background-and-comparison.md):
-- [Overview of algorithm](overview-of-algorithm.md):
+  tests](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.md):
+- [Overview of
+  algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.md):
 - [Reproducing the paper's size and power
-  figures](reproducing-paper-figures.md):
-- [Introduction to modifiedfisher](modifiedfisher.md):
+  figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.md):
+- [Introduction to
+  modifiedfisher](https://pvdmeulen.github.io/modifiedfisher/articles/modifiedfisher.md):

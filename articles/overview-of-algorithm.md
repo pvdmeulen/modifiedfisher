@@ -3,9 +3,10 @@
 This article traces how the modified Fisher exact test is built in R,
 from the test frame through to the agreeing p-value and confidence
 interval. It assumes the statistical background, which is in the
-[Background and comparison](background-and-comparison.md) article; the
-derivations and proofs are in van der Meulen, Raymond and van der Meulen
-(2021).
+[Background and
+comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.md)
+article; the derivations and proofs are in van der Meulen, Raymond and
+van der Meulen (2021).
 
 The notation: \\u\\ successes from \\m\\ trials in Group A, \\v\\ from
 \\n\\ in Group B, with total \\T = u + v\\.
@@ -29,7 +30,7 @@ boundary rejection mass the conservative test wastes is recovered.
 The implementation chooses \\\gamma_0\\ for a given null odds ratio,
 then inverts the resulting test for the p-value and confidence interval.
 The entry point is
-[`modified_fisher_exact_test()`](../reference/modified_fisher_exact_test.md);
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md);
 the steps below are what it does internally.
 
 ``` r
@@ -42,14 +43,14 @@ modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1)
 For a given null odds ratio \\\theta_0\\ and each total \\T = 0, \ldots,
 m+n\\, find the critical values \\c_1, c_2\\ and admissible
 randomisation probabilities \\\gamma_1, \gamma_2\\. This is
-[`construct_test_frame()`](../reference/construct_test_frame.md),
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md),
 returning one row per \\T\\ with columns `c1`, `c2`, `gamma1`, `gamma2`
 (and the starting quantiles `d1`, `d2`).
 
 With the critical values fixed, the two requirements (conditional size
 \\\alpha\\ and unbiasedness) form a \\2\times2\\ linear system solved
 for \\(\gamma_1, \gamma_2)\\ by `.find_gamma12()`.
-[`construct_test_frame()`](../reference/construct_test_frame.md)
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md)
 searches for the critical values giving an admissible solution (both
 \\\gamma\\’s in \\\[0, 1\]\\), starting at the \\\alpha/2\\ quantiles of
 the non-central hypergeometric distribution and spiralling outward in
@@ -93,14 +94,14 @@ size is a function of \\\pi_1\\ and we guard against the worst case.
 For fixed \\\pi_1\\ the rejection probability is a sum over all tables
 weighted by their two binomial probabilities, computed as the bilinear
 form \\p_u^\top R\\ p_v\\ with \\R\\ the rejection matrix from Step 2
-([`local_size_modified()`](../reference/local_size_modified.md)). The
-size is the maximum over \\\pi_1 \in (0, 1)\\
-([`size_modified()`](../reference/size_modified.md)). Maximisation uses
-either `"zoom"` (grid, then re-grid finer around the peak, repeat; the
-default, and the SAS macro’s approach) or `"trust"` (a trust-region
-optimiser with the analytic gradient `.local_size_gradient_modified()`).
-The size curve can be multi-peaked, so the safest check is to plot it
-via `local_size_data = TRUE`.
+([`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md)).
+The size is the maximum over \\\pi_1 \in (0, 1)\\
+([`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)).
+Maximisation uses either `"zoom"` (grid, then re-grid finer around the
+peak, repeat; the default, and the SAS macro’s approach) or `"trust"` (a
+trust-region optimiser with the analytic gradient
+`.local_size_gradient_modified()`). The size curve can be multi-peaked,
+so the safest check is to plot it via `local_size_data = TRUE`.
 
 ``` r
 
@@ -119,10 +120,10 @@ changes when \\\gamma_0\\ crosses one of the \\2(m+n+1)\\ actual
 those values and search among them. Raising \\\gamma_0\\ can only remove
 boundaries, so size is monotone in the sorted index, which licenses a
 bisection. This is
-[`optimise_gamma0()`](../reference/optimise_gamma0.md): it sorts the
-pooled `gamma1`/`gamma2` vector and bisects to the largest threshold
-whose size does not exceed \\\alpha\\. The optimum is not a single
-number but a half-open interval between two adjacent sorted
+[`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md):
+it sorts the pooled `gamma1`/`gamma2` vector and bisects to the largest
+threshold whose size does not exceed \\\alpha\\. The optimum is not a
+single number but a half-open interval between two adjacent sorted
 \\\gamma\\’s; any value in it gives the same test.
 
 ``` r
@@ -146,15 +147,17 @@ quantities follow by inverting that one decision:
   for the given null, found by bisecting on \\\alpha\\.
 
 Both invert the same test, so they agree by construction.
-[`modified_fisher_exact_test()`](../reference/modified_fisher_exact_test.md)
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md)
 runs the pipeline
-([`construct_test_frame()`](../reference/construct_test_frame.md) →
-`.modified_reject()` / `.build_rejection_matrix()` →
-[`local_size_modified()`](../reference/local_size_modified.md) /
-[`size_modified()`](../reference/size_modified.md) →
-[`optimise_gamma0()`](../reference/optimise_gamma0.md) → `.accept()`)
-and returns an `htest` with `$p.value`, `$estimate`, `$conf.int`, the
-optimal `$gamma0`, the test frame, and optionally the
+([`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md)
+→ `.modified_reject()` / `.build_rejection_matrix()` →
+[`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md)
+/
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
+→
+[`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md)
+→ `.accept()`) and returns an `htest` with `$p.value`, `$estimate`,
+`$conf.int`, the optimal `$gamma0`, the test frame, and optionally the
 size-versus-\\\pi_1\\ data.
 
 ``` r

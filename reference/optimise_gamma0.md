@@ -61,17 +61,19 @@ A single numeric value: the optimal threshold \\\gamma_0\\.
 
 ## See also
 
-[`modified_fisher_exact_test()`](modified_fisher_exact_test.md) for the
-main user-facing function;
-[`construct_test_frame()`](construct_test_frame.md) for the test frame
-passed to this function; [`size_modified()`](size_modified.md) for the
-size function being maximised.
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md)
+for the main user-facing function;
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md)
+for the test frame passed to this function;
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
+for the size function being maximised.
 
-Other modified: [`construct_test_frame()`](construct_test_frame.md),
-[`local_size_modified()`](local_size_modified.md),
-[`modified_fisher_exact_test()`](modified_fisher_exact_test.md),
-[`power_modified()`](power_modified.md),
-[`size_modified()`](size_modified.md)
+Other modified:
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md),
+[`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md),
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md),
+[`power_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_modified.md),
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
 
 ## Examples
 

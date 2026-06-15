@@ -54,16 +54,19 @@ probabilities at `c1` and `c2`).
 
 ## See also
 
-[`modified_fisher_exact_test()`](modified_fisher_exact_test.md) for the
-main user-facing function; [`optimise_gamma0()`](optimise_gamma0.md)
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md)
+for the main user-facing function;
+[`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md)
 which uses this frame to find the optimal gamma0;
-[`size_modified()`](size_modified.md) for the resulting test size.
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
+for the resulting test size.
 
-Other modified: [`local_size_modified()`](local_size_modified.md),
-[`modified_fisher_exact_test()`](modified_fisher_exact_test.md),
-[`optimise_gamma0()`](optimise_gamma0.md),
-[`power_modified()`](power_modified.md),
-[`size_modified()`](size_modified.md)
+Other modified:
+[`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md),
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md),
+[`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md),
+[`power_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_modified.md),
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
 
 ## Examples
 

@@ -45,10 +45,11 @@ response rates \\(\pi_1, \pi_2)\\, in \\\[0, 1\]\\.
 
 ## See also
 
-Other power: [`power_conservative()`](power_conservative.md),
-[`power_modified()`](power_modified.md),
-[`power_probability()`](power_probability.md),
-[`power_randomised()`](power_randomised.md)
+Other power:
+[`power_conservative()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_conservative.md),
+[`power_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_modified.md),
+[`power_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_probability.md),
+[`power_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_randomised.md)
 
 ## Examples
 

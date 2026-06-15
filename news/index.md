@@ -23,21 +23,22 @@ internal renames are:
 
 | Old name (v0.0.2) | New name (v0.0.3) |
 |----|----|
-| `size_mfet()` | [`size_modified()`](../reference/size_modified.md) |
-| `local_size_mfet()` | [`local_size_modified()`](../reference/local_size_modified.md) |
-| `local_size_woolf()` | [`local_size_asymptotic()`](../reference/local_size_asymptotic.md) |
-| `local_size_procfreq()` | [`local_size_probability()`](../reference/local_size_probability.md) |
-| `power_mfet()` | [`power_modified()`](../reference/power_modified.md) |
-| `power_woolf()` | [`power_asymptotic()`](../reference/power_asymptotic.md) |
-| `power_procfreq()` | [`power_probability()`](../reference/power_probability.md) |
-| `pvalue_procfreq()` | [`pvalue_probability()`](../reference/pvalue_probability.md) |
+| `size_mfet()` | [`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md) |
+| `local_size_mfet()` | [`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md) |
+| `local_size_woolf()` | [`local_size_asymptotic()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_asymptotic.md) |
+| `local_size_procfreq()` | [`local_size_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_probability.md) |
+| `power_mfet()` | [`power_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_modified.md) |
+| `power_woolf()` | [`power_asymptotic()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_asymptotic.md) |
+| `power_procfreq()` | [`power_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_probability.md) |
+| `pvalue_procfreq()` | [`pvalue_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/pvalue_probability.md) |
 | `.mfet_reject()` | `.modified_reject()` |
 | `.local_size_gradient_mfet()` | `.local_size_gradient_modified()` |
 
-[`local_size_randomised()`](../reference/local_size_randomised.md),
-[`power_randomised()`](../reference/power_randomised.md), and
-[`power_conservative()`](../reference/power_conservative.md) were
-already on-scheme and are unchanged.
+[`local_size_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_randomised.md),
+[`power_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_randomised.md),
+and
+[`power_conservative()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_conservative.md)
+were already on-scheme and are unchanged.
 
 This is a breaking change: code written against the v0.0.2 comparator
 function names will need updating to the new names.
@@ -48,7 +49,7 @@ function names will need updating to the new names.
   (in v0.0.2 only the main function did), resolving the missing `\value`
   warning under `R CMD check`.
 - Replaced the placeholder `\dontrun{}` example on
-  [`modified_fisher_exact_test()`](../reference/modified_fisher_exact_test.md)
+  [`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md)
   with a runnable example reproducing Example 1 of van der Meulen et
   al. (2021), and added a runnable `@examples` block to every exported
   helper.
@@ -73,25 +74,25 @@ statistical methodology is unchanged.
 ### New exports
 
 v0.0.1 exported only
-[`modified_fisher_exact_test()`](../reference/modified_fisher_exact_test.md).
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md).
 The following diagnostic and comparison functions are now exported too:
 
-- [`construct_test_frame()`](../reference/construct_test_frame.md) -
+- [`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md) -
   builds the full table of critical values and randomisation
   probabilities for each possible total T.
-- [`optimise_gamma0()`](../reference/optimise_gamma0.md) - finds the
-  optimal γ₀ threshold by bisection over the sorted randomisation
-  probabilities.
+- [`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md) -
+  finds the optimal γ₀ threshold by bisection over the sorted
+  randomisation probabilities.
 - `size_mfet()` - the local size of the modified Fisher exact test,
   maximised over the nuisance parameter.
 - `local_size_mfet()`, `local_size_woolf()`, `local_size_procfreq()`,
-  [`local_size_randomised()`](../reference/local_size_randomised.md) -
+  [`local_size_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_randomised.md) -
   local size at a fixed nuisance parameter, for each of the four tests
   compared in van der Meulen et al. (2021).
 - `power_mfet()`, `power_woolf()`, `power_procfreq()`,
-  [`power_randomised()`](../reference/power_randomised.md),
-  [`power_conservative()`](../reference/power_conservative.md) - power
-  for each test at specified response rates.
+  [`power_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_randomised.md),
+  [`power_conservative()`](https://pvdmeulen.github.io/modifiedfisher/reference/power_conservative.md) -
+  power for each test at specified response rates.
 - `pvalue_procfreq()` - the SAS Proc FREQ-style conditional exact
   p-value.
 

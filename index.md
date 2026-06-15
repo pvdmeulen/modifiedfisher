@@ -33,20 +33,24 @@ res$conf.int    # agreeing (1 - alpha) confidence interval
 
 ## Learn more
 
-- [Introduction to modifiedfisher](articles/modifiedfisher.md): a guided
-  tour of
-  [`modified_fisher_exact_test()`](reference/modified_fisher_exact_test.md),
+- [Introduction to
+  modifiedfisher](https://pvdmeulen.github.io/modifiedfisher/articles/modifiedfisher.md):
+  a guided tour of
+  [`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md),
   its arguments, power, and diagnostics.
-- [Background and comparison](articles/background-and-comparison.md):
+- [Background and
+  comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.md):
   why the test exists, and a head-to-head against
   [`fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) and
   [`exact2x2::fisher.exact()`](https://rdrr.io/pkg/exact2x2/man/exact2x2.html)
   (both closely related to SAS PROC Freq).
-- [Overview of algorithm](articles/overview-of-algorithm.md): how the
-  test is built in R, step by step.
+- [Overview of
+  algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.md):
+  how the test is built in R, step by step.
 - [Reproducing the paper’s
-  figures](articles/reproducing-paper-figures.md): rebuilding the size
-  and power curves, and adapting them to your own design.
+  figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.md):
+  rebuilding the size and power curves, and adapting them to your own
+  design.
 
 ## Reference
 

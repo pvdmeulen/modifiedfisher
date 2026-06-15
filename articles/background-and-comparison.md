@@ -41,7 +41,8 @@ a borderline outcome only when its randomisation probability exceeds a
 single threshold γ₀, chosen as large as possible while keeping the
 maximum size (over the nuisance parameter) at or below α. Its p-value
 and confidence interval are **test-based**, so they agree by
-construction. The [Overview of algorithm](overview-of-algorithm.md)
+construction. The [Overview of
+algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.md)
 article shows how this is implemented.
 
 ## The probability-based tests in R and SAS
@@ -53,7 +54,7 @@ probabilities of all tables no more likely than the observed one. Base
 R’s [`fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) and SAS
 Proc FREQ use this same rule (in `exact2x2` it is
 `tsmethod = "minlike"`), and it is the test implemented here as
-[`pvalue_probability()`](../reference/pvalue_probability.md).
+[`pvalue_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/pvalue_probability.md).
 
 Its **confidence interval** is calculated using a different method.
 [`fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) does not
@@ -189,7 +190,8 @@ size. The modified test is the only row that is non-randomised, strictly
 size-controlling, and agreeing at once, which is what suits it to
 small-sample work needing strict Type I error control. The size and
 power of these tests are compared across the nuisance parameter in
-[Reproducing the paper’s figures](reproducing-paper-figures.md).
+[Reproducing the paper’s
+figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.md).
 
 ## References
 

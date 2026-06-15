@@ -4,10 +4,10 @@ Computes the unconditional rejection probability (local size) of the SAS
 Proc FREQ exact test for \\H_0\\: OR = \\\theta_0\\ at nuisance
 parameter \\p_0\\, where \\p_1 = p_0 / (p_0 + \theta_0 (1 - p_0))\\. For
 each possible table \\(i, j)\\, rejection is determined by
-[`pvalue_probability()`](pvalue_probability.md): the sum of Fisher
-non-central hypergeometric probabilities (given \\T = i + j\\ and OR =
-\\\theta_0\\) that are no greater than the observed probability,
-compared against \\\alpha\\.
+[`pvalue_probability()`](https://pvdmeulen.github.io/modifiedfisher/reference/pvalue_probability.md):
+the sum of Fisher non-central hypergeometric probabilities (given \\T =
+i + j\\ and OR = \\\theta_0\\) that are no greater than the observed
+probability, compared against \\\alpha\\.
 
 ## Usage
 
@@ -45,10 +45,11 @@ at the given nuisance parameter, in \\\[0, 1\]\\.
 
 ## See also
 
-Other size: [`local_size_asymptotic()`](local_size_asymptotic.md),
-[`local_size_modified()`](local_size_modified.md),
-[`local_size_randomised()`](local_size_randomised.md),
-[`size_modified()`](size_modified.md)
+Other size:
+[`local_size_asymptotic()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_asymptotic.md),
+[`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md),
+[`local_size_randomised()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_randomised.md),
+[`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
 
 ## Examples
 
