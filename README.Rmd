@@ -32,7 +32,7 @@ der Meulen (2021).
 
 The classical Fisher exact test is the uniformly most powerful unbiased (UMPU)
 test for two independent binomial proportions, but requires randomisation at the
-critical values to achieve size α exactly — making it impractical without a
+critical values to achieve size α exactly, which makes it impractical without a
 natural p-value or confidence interval. The standard non-randomised alternatives
 are unsatisfactory: rejecting only at strictly extreme values is needlessly
 conservative (as in the SAS Proc FREQ exact test), while the mid p-value and
@@ -46,7 +46,6 @@ construction.
 ## Installation
 
 ```{r installation, echo = TRUE, eval = FALSE}
-# Install from GitHub:
 devtools::install_github("pvdmeulen/modifiedfisher")
 ```
 
@@ -75,7 +74,7 @@ result$p.value    # two-sided p-value
 result$conf.int   # 95% confidence interval
 ```
 
-These match Table 2 of the paper (OR = 3.173, p = 0.034, 95% CI 1.082–10.25).
+These match Table 2 of the paper (OR = 3.173, p = 0.034, 95% CI 1.082 to 10.25).
 
 ## Comparing with other tests
 
@@ -87,18 +86,18 @@ consistency advantage of the MFET's test-based approach.
 
 | Example | Test | OR | p-value | 95% CI |
 |---|---|---|---|---|
-| 5/12 vs 7/11 | Modified FE | 0.408 | 0.321 | 0.716 – 2.210 |
-| | Woolf | 0.408 | 0.296 | 0.760 – 2.193 |
-| | SAS Proc FREQ | 0.408 | 0.414 | 0.550 – 2.871 |
-| 13/41 vs 6/47 | Modified FE | 3.173 | **0.034** | **1.082 – 10.25** |
-| | Woolf | 3.173 | 0.036 | 1.077 – 9.34 |
-| | SAS Proc FREQ | 3.173 | 0.039 | 0.969 – 11.31 |
-| 37/65 vs 28/71 | Modified FE | 2.029 | 0.0439 | 1.023 – 4.083 |
-| | Woolf | 2.029 | 0.0425 | 1.024 – 4.021 |
-| | SAS Proc FREQ | 2.029 | 0.0584 | 0.970 – 4.258 |
-| 72/128 vs 58/142 | Modified FE | 1.804 | 0.0175 | 1.108 – 2.936 |
-| | Woolf | 1.804 | 0.0167 | 1.113 – 2.925 |
-| | SAS Proc FREQ | 1.804 | 0.0203 | 1.082 – 3.018 |
+| 5/12 vs 7/11 | Modified FE | 0.408 | 0.321 | 0.716 to 2.210 |
+| | Woolf | 0.408 | 0.296 | 0.760 to 2.193 |
+| | SAS Proc FREQ | 0.408 | 0.414 | 0.550 to 2.871 |
+| 13/41 vs 6/47 | Modified FE | 3.173 | **0.034** | **1.082 to 10.25** |
+| | Woolf | 3.173 | 0.036 | 1.077 to 9.34 |
+| | SAS Proc FREQ | 3.173 | 0.039 | 0.969 to 11.31 |
+| 37/65 vs 28/71 | Modified FE | 2.029 | 0.0439 | 1.023 to 4.083 |
+| | Woolf | 2.029 | 0.0425 | 1.024 to 4.021 |
+| | SAS Proc FREQ | 2.029 | 0.0584 | 0.970 to 4.258 |
+| 72/128 vs 58/142 | Modified FE | 1.804 | 0.0175 | 1.108 to 2.936 |
+| | Woolf | 1.804 | 0.0167 | 1.113 to 2.925 |
+| | SAS Proc FREQ | 1.804 | 0.0203 | 1.082 to 3.018 |
 
 ## Diagnosing size control
 
@@ -196,7 +195,17 @@ non-conservative size control across the full range of the nuisance parameter.
 
 ## Learn more
 
-The package vignette covers additional features in detail:
+Full documentation is available on the package website:
+<https://pvdmeulen.github.io/modifiedfisher/>. The articles there cover:
+
+- [Introduction to modifiedfisher](articles/modifiedfisher.html): an introduction to `modified_fisher_exact_test()`, its arguments, power, and diagnostics.
+- [Background and comparison](articles/background-and-comparison.html): why the
+  test exists, and a comparison with `fisher.test()` and `exact2x2::fisher.exact()` (both similar to SAS PROC Freq).
+- [Overview of algorithm](articles/overview-of-algorithm.html): a step by step overview of how the test is built in R.
+- [Reproducing the paper's figures](articles/reproducing-paper-figures.html):
+  rebuilding the size and power curves, and adapting them to your own design.
+
+Broadly the same material is in the package vignette, which covers:
 
 - Testing a null hypothesis other than OR = 1
 - Controlling numerical precision and choosing the optimisation method

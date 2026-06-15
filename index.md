@@ -13,8 +13,7 @@ Raymond and van der Meulen (2021), building on van der Meulen (2008).
 ## Installation
 
 ``` r
-# install.packages("pak")
-pak::pak("pvdmeulen/modifiedfisher")
+devtools::install_github("pvdmeulen/modifiedfisher")
 ```
 
 ## Usage
@@ -34,14 +33,14 @@ res$conf.int    # agreeing (1 - alpha) confidence interval
 
 ## Learn more
 
-- [Introduction to modifiedfisher](articles/modifiedfisher.html): a
-  guided tour of `modified_fisher_exact_test()`, its arguments, power,
+- [Introduction to modifiedfisher](articles/modifiedfisher.html): an
+  introduction to `modified_fisher_exact_test()`, its arguments, power,
   and diagnostics.
 - [Background and comparison](articles/background-and-comparison.html):
-  why the test exists, and a head-to-head against `fisher.test()` and
-  `exact2x2::fisher.exact()` (both closely related to SAS PROC Freq).
-- [Overview of algorithm](articles/overview-of-algorithm.html): how the
-  test is built in R, step by step.
+  why the test exists, and a comparison with `fisher.test()` and
+  `exact2x2::fisher.exact()` (both similar to SAS PROC Freq).
+- [Overview of algorithm](articles/overview-of-algorithm.html): a step
+  by step overview of how the test is built in R.
 - [Reproducing the paper’s
   figures](articles/reproducing-paper-figures.html): rebuilding the size
   and power curves, and adapting them to your own design.
