@@ -28,7 +28,10 @@ Suggests:
     ggplot2,
     latex2exp,
     svglite,
-    exact2x2
+    exact2x2,
+    dplyr,
+    tidyr,
+    tibble
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Config/Needs/website: rmarkdown
