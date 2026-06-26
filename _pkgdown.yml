@@ -5,6 +5,13 @@ template:
   bootswatch: flatly
   light-switch: true
   math-rendering: mathjax
+  bslib:
+    base_font: {google: "Inter"}
+    code_font: {google: "Fira Code"}
+    headings-font-weight: 800
+    bg: "#FAFAFA"
+    fg: "#1F1F1F"
+    primary: "#00473B"
 
 navbar:
   structure:

@@ -2,7 +2,7 @@ Package: modifiedfisher
 Title: Non-Randomised Non-Conservative Size-Alpha Modified Fisher Exact Test
 Description: Implements the non-randomised, non-conservative, size-alpha
     modified Fisher exact test of van der Meulen, Raymond, and van der Meulen (2021)
-    <https://doi.org/10.13140/RG.2.2.34661.73448>, with agreeing test-based p-values,
+    <doi:10.13140/RG.2.2.34661.73448>, with agreeing test-based p-values,
     confidence intervals, and power. Controls the type I error rate
     while improving on the conservativeness of the standard Fisher
     exact test, and is compared against Woolf's asymptotic test and
@@ -11,7 +11,7 @@ URL: https://github.com/pvdmeulen/modifiedfisher, https://pvdmeulen.github.io/mo
 BugReports: https://github.com/pvdmeulen/modifiedfisher/issues
 Version: 0.0.3
 Authors@R: 
-    person("Peter", "van der Meulen", , "peter.vd.meulen@icloud.com", role = c("aut", "cre"),
+    person("Peter", "van der Meulen", , "pvdmeulen@pm.me", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0002-0988-8192"))
 License: GPL (>= 3)
 Encoding: UTF-8
@@ -31,7 +31,9 @@ Suggests:
     exact2x2,
     dplyr,
     tidyr,
-    tibble
+    tibble,
+    spelling
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Config/Needs/website: rmarkdown
+Language: en-GB

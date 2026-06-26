@@ -36,7 +36,7 @@ pvalue_probability <- function(s, t, m, n, odds_ratio = 1) {
   observed_prob <- BiasedUrn::dFNCHypergeo(s,       m, n, t, odds_ratio)
 
   # Sum all probabilities <= observed (small tolerance for floating point)
-  pvalue <- sum(probs[probs <= observed_prob + 1e-10])
+  pvalue <- sum(probs[probs <= observed_prob * (1 + 1e-7)])
 
   return(pvalue)
 
