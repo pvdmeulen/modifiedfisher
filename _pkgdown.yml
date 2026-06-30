@@ -2,16 +2,22 @@ url: https://pvdmeulen.github.io/modifiedfisher/
 
 template:
   bootstrap: 5
-  bootswatch: flatly
+  bootswatch: minty
   light-switch: true
+  theme: arrow-light
+  theme-dark: arrow-dark
   math-rendering: mathjax
   bslib:
-    base_font: {google: "Inter"}
-    code_font: {google: "Fira Code"}
-    headings-font-weight: 800
-    bg: "#FAFAFA"
-    fg: "#1F1F1F"
-    primary: "#00473B"
+      base_font: {google: "Inter"}
+      code_font: {google: "Fira Code"}
+      heading_font: {google: "Inter"}
+      headings-font-weight: 600
+      headings-font-color: "#121212"
+      bg:               "#FAFAFA"
+      fg:               "#080808"
+      primary:          "#00473B"
+      link-color:       "#016c59"
+      link-hover-color: "#67A9CF"
 
 navbar:
   structure:

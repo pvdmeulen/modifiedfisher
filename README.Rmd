@@ -6,12 +6,14 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# modifiedfisher: Non-Conservative Size-α Modified Fisher Exact Test <a href="https://pvdmeulen.github.io/modifiedfisher/"><img src="man/figures/logo.png" align="right" height="139" alt="modifiedfisher website" /></a>
+# modifiedfisher <a href="https://pvdmeulen.github.io/modifiedfisher/"><img src="man/figures/logo.png" align="right" height="139" alt="modifiedfisher website" /></a>
 
 <!-- badges: start -->
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental)
 [![R-CMD-check](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
+
+## The Non-Conservative Size-α Modified Fisher Exact Test
 
 ```{r options, echo = FALSE, message = FALSE, include = FALSE}
 options(cli.ignore_unknown_rstudio_theme = TRUE)
@@ -25,8 +27,8 @@ knitr::opts_chunk$set(
 ```
 
 The `modifiedfisher` package implements the non-randomised, non-conservative,
-size-α modified Fisher exact test (MFET) for comparing two binomial proportions,
-as introduced by van der Meulen (2008) and extended with agreeing test-based
+size-α modified Fisher exact test for comparing two binomial proportions, as
+introduced by van der Meulen (2008) and extended with agreeing test-based
 p-values, confidence intervals, and power in van der Meulen, Raymond, and van
 der Meulen (2021).
 
@@ -35,13 +37,15 @@ test for two independent binomial proportions, but requires randomisation at the
 critical values to achieve size α exactly, which makes it impractical without a
 natural p-value or confidence interval. The standard non-randomised alternatives
 are unsatisfactory: rejecting only at strictly extreme values is needlessly
-conservative (as in the SAS Proc FREQ exact test), while the mid p-value and
-Woolf's asymptotic test do not strictly control the Type I error rate. The MFET
-resolves this by additionally rejecting when the randomisation probability at a
-critical value exceeds a data-driven threshold γ₀, chosen to bring the actual
-size as close to α as possible without exceeding it. P-values and confidence
-intervals are both derived directly from this test, so they agree by
-construction.
+conservative (as in the SAS Proc FREQ exact test or R's `fisher.test()`), while
+the mid p-value and Woolf's asymptotic test do not strictly control the Type I
+error rate.
+
+The MFET resolves this by additionally rejecting when the randomisation
+probability at a critical value exceeds a data-driven threshold γ₀, chosen to
+bring the actual size as close to α as possible without exceeding it. P-values
+and confidence intervals are both derived directly from this test, so they agree
+by construction.
 
 ## Installation
 
@@ -78,26 +82,17 @@ These match Table 2 of the paper (OR = 3.173, p = 0.034, 95% CI 1.082 to 10.25).
 
 ## Comparing with other tests
 
-The table below reproduces Table 2 from the paper, comparing the MFET against
-Woolf's asymptotic test and the SAS Proc FREQ exact test across four worked
-examples. The disagreement between the SAS Proc FREQ p-value and confidence
-interval in Example 2 (p < 0.05 but CI includes OR = 1) illustrates the
-consistency advantage of the MFET's test-based approach.
+The table below reproduces Table 2 Example 2 from the paper, comparing the
+modified test against Woolf's asymptotic test and the SAS Proc FREQ exact test
+for the same worked example as above. The disagreement between the SAS Proc FREQ
+p-value and confidence interval (p < 0.05 but CI includes OR = 1) illustrates
+the consistency advantage of the MFET's test-based approach.
 
-| Example | Test | OR | p-value | 95% CI |
-|---|---|---|---|---|
-| 5/12 vs 7/11 | Modified FE | 0.408 | 0.321 | 0.716 to 2.210 |
-| | Woolf | 0.408 | 0.296 | 0.760 to 2.193 |
-| | SAS Proc FREQ | 0.408 | 0.414 | 0.550 to 2.871 |
-| 13/41 vs 6/47 | Modified FE | 3.173 | **0.034** | **1.082 to 10.25** |
-| | Woolf | 3.173 | 0.036 | 1.077 to 9.34 |
-| | SAS Proc FREQ | 3.173 | 0.039 | 0.969 to 11.31 |
-| 37/65 vs 28/71 | Modified FE | 2.029 | 0.0439 | 1.023 to 4.083 |
-| | Woolf | 2.029 | 0.0425 | 1.024 to 4.021 |
-| | SAS Proc FREQ | 2.029 | 0.0584 | 0.970 to 4.258 |
-| 72/128 vs 58/142 | Modified FE | 1.804 | 0.0175 | 1.108 to 2.936 |
-| | Woolf | 1.804 | 0.0167 | 1.113 to 2.925 |
-| | SAS Proc FREQ | 1.804 | 0.0203 | 1.082 to 3.018 |
+| Test          | OR    | p-value   | 95% CI             |
+|---------------|-------|-----------|--------------------|
+| Modified FE   | 3.173 | **0.034** | **1.082 to 10.25** |
+| Woolf         | 3.173 | 0.036     | 1.077 to 9.34      |
+| SAS Proc FREQ | 3.173 | 0.039     | 0.969 to 11.31     |
 
 ## Diagnosing size control
 
@@ -198,11 +193,11 @@ non-conservative size control across the full range of the nuisance parameter.
 Full documentation is available on the package website:
 <https://pvdmeulen.github.io/modifiedfisher/>. The articles there cover:
 
-- [Introduction to modifiedfisher](articles/modifiedfisher.html): an introduction to `modified_fisher_exact_test()`, its arguments, power, and diagnostics.
-- [Background and comparison](articles/background-and-comparison.html): why the
+- [Introduction to modifiedfisher](https://pvdmeulen.github.io/modifiedfisher/articles/modifiedfisher.html): an introduction to `modified_fisher_exact_test()`, its arguments, power, and diagnostics.
+- [Background and comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.html): why the
   test exists, and a comparison with `fisher.test()` and `exact2x2::fisher.exact()` (both similar to SAS PROC Freq).
-- [Overview of algorithm](articles/overview-of-algorithm.html): a step by step overview of how the test is built in R.
-- [Reproducing the paper's figures](articles/reproducing-paper-figures.html):
+- [Overview of algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.html): a step by step overview of how the test is built in R.
+- [Reproducing the paper's figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.html):
   rebuilding the size and power curves, and adapting them to your own design.
 
 Broadly the same material is in the package vignette, which covers:

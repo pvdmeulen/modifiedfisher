@@ -1,8 +1,9 @@
 ---
-title: "Introduction to modifiedfisher"
+title: "Get started"
+subtitle: "An overview of modifiedfisher and its options"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to modifiedfisher}
+  %\VignetteIndexEntry{Get started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,21 +13,18 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+library(dplyr)
+library(ggplot2)
 ```
 
-```{r setup}
-library(modifiedfisher)
-```
+The **non-conservative, size-$\alpha$ modified Fisher exact test** rejects the null at a critical value only when the corresponding randomisation probability exceeds a threshold $\gamma_0$, chosen so the test's size (maximised over the nuisance parameter) is as large as possible without exceeding $\alpha$.
 
-The **non-conservative, size-$\alpha$ modified Fisher exact test** (MFET)
-rejects the null at a critical value only when the corresponding randomisation
-probability exceeds a threshold $\gamma_0$, chosen so the test's size (maximised
-over the nuisance parameter) is as large as possible without exceeding $\alpha$.
 This makes it less conservative than the standard Fisher exact test while still
 strictly controlling the Type I error rate. For why this matters and how it
-compares to other tests, see the
-[Background and comparison](background-and-comparison.html) article; for how it
-is built, see [Overview of algorithm](overview-of-algorithm.html).
+compares to other tests, see the [Background and
+comparison](background-and-comparison.html) article; for how it is built, see
+[Overview of algorithm](overview-of-algorithm.html).
 
 This vignette is a tour of `modified_fisher_exact_test()`, using the worked
 examples from van der Meulen, Raymond and van der Meulen (2021).
@@ -40,6 +38,7 @@ $H_0: \theta = \theta_0$ where $\theta$ is the log odds ratio. By default
 We reproduce Example 2 from the paper's Table 2: 13 of 41 versus 6 of 47.
 
 ```{r}
+library(modifiedfisher)
 result <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
                                      odds_ratio = 1, local_size_data = TRUE)
 result
@@ -65,8 +64,7 @@ worked case.
 
 ## A different null hypothesis
 
-`odds_ratio` sets $\theta_0$ and need not be 1. The estimate and confidence
-interval do not depend on it; only the p-value and `$null.value` change.
+The `odds_ratio` argument sets $\theta_0$; this does not need be 1. The estimate and confidence interval do not depend on it (only the p-value and `$null.value` change).
 
 ```{r}
 result_or2 <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
@@ -79,68 +77,84 @@ result_or2$conf.int
 
 Two arguments control the numerics:
 
-- `precision` is the tolerance for the bisection searches behind the confidence
-  limits and p-value (default `1e-3`). A smaller value is more accurate but
-  needs more size evaluations, which is the expensive step.
-- `method` selects how the size is maximised over the nuisance parameter. The
-  default `"zoom"` refines a grid search and is usually fastest; `"trust"` uses
-  a trust-region optimiser with an analytic gradient. They agree to within
-  `precision`. For `"zoom"`, `maze` sets the grid points per iteration and
-  `zoom_iter` the number of refinements.
+- `precision` is the tolerance for the bisection searches behind the confidence limits and p-value (default `1e-3`). A smaller value is more accurate but needs more size evaluations, which is the expensive step.
+  
+- `method` selects how the size is maximised over the nuisance parameter. The default `"zoom"` refines a grid search and is usually fastest; `"trust"` uses a trust-region optimiser with an analytic gradient. They agree to within `precision`. For `"zoom"`, `maze` sets the grid points per iteration and `zoom_iter` the number of refinements.
 
 ```{r}
 result_trust <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
                                            odds_ratio = 1, method = "trust")
+
 result_trust$p.value
 ```
 
 ## Power
 
-By default the test also returns its power at two response rates `power_at_pi1`
-and `power_at_pi2`, under the null `odds_ratio` used to build the test frame.
-This is the unconditional probability of rejecting $H_0$ at those true rates and
-sample sizes.
+The test also returns its power at two response rates `power_at_pi1`
+and `power_at_pi2` under the null `odds_ratio` used to build the test frame. This is the unconditional probability of rejecting $H_0$ at when $\pi_1=$`power_at_pi1` and $\pi_2=$`power_at_pi2`. The default values are 0.5 and 0.75, respectively, but these can be changed:
 
 ```{r}
 result_power <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
-                                           odds_ratio = 1,
-                                           power_at_pi1 = 0.3, power_at_pi2 = 0.6)
+                                           odds_ratio = 1, power_at_pi1 = 0.3,
+                                           power_at_pi2 = 0.6)
+
 result_power$power
 ```
 
 Set `power = FALSE` to skip this, which saves time for larger samples. Setting
 `superiority = TRUE` restricts the calculation to a positive observed effect
-(one-directional alternative), which the paper notes changes power only slightly
-for relevant effect sizes.
+(one-directional alternative), which (as the paper notes) only slightly changes power for relevant effect sizes:
 
 ```{r}
 result_sup <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
-                                         odds_ratio = 1,
-                                         power_at_pi1 = 0.3, power_at_pi2 = 0.6,
-                                         superiority = TRUE)
+                                         odds_ratio = 1, power_at_pi1 = 0.3,
+                                         power_at_pi2 = 0.6, superiority = TRUE)
+
 result_sup$power
 ```
 
 ## Diagnostic: plotting the size
 
-The size of the MFET is found numerically, so it is worth confirming the
-optimiser has not mistaken a local peak for the global one. `local_size_data =
-TRUE` attaches the local size at 101 values of the nuisance parameter $\pi_1$:
+The size of the modified test is found numerically, so it is worth confirming
+the optimiser has not mistaken a local peak for the global one. `local_size_data
+= TRUE` attaches the local size at 101 values of the nuisance parameter $\pi_1$:
 
 ```{r}
-head(result$local.size.data)
+result$local.size.data |> head()
 ```
 
-```{r, fig.alt = "Local size of the modified Fisher exact test against the nuisance parameter, with a reference line at alpha."}
-plot(size ~ pi1, data = result$local.size.data,
-     type = "l", col = "firebrick", lwd = 2,
-     xlab = expression(pi[1]), ylab = "Size (%)")
-abline(h = 0.05 * 100, lty = 2)
+Plotting this data:
+
+```{r, fig.alt = "Local size of the modified Fisher exact test against the nuisance parameter, with a reference line at alpha.", echo = FALSE}
+plotdata <- result$local.size.data
+
+p <- ggplot(
+  data = plotdata,
+  aes(x = pi1, y = size)
+  ) +
+  geom_line(colour = "#016c59", linewidth = 0.8, linetype = 1) +
+  geom_hline(yintercept = 5, linetype = 2, colour = "grey40") +
+  labs(x = expression(pi[1]), y = "Size (%)") +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    plot.background = element_rect(fill = "transparent")
+  )
+
+print(p)
+
+#plot(size ~ pi1, data = result$local.size.data,
+#     type = "l", col = "firebrick", lwd = 2,
+#     xlab = expression(pi[1]), ylab = "Size (%)")
+#abline(h = 0.05 * 100, lty = 2)
 ```
 
 The curve should stay at or below $\alpha \times 100\%$ throughout, touching it
-across a broad central region. That is the non-conservative behaviour behind the
-MFET's power advantage.
+across a broad central region. This is the non-conservative behaviour behind the
+modified test's power advantage.
 
 ## Internals: gamma0 and the test frame
 
@@ -151,14 +165,15 @@ $c_1, c_2$ and randomisation probabilities $\gamma_1, \gamma_2$.
 
 ```{r}
 result$gamma0
-head(result$support.data)
+result$support.data |> head()
 ```
 
-The boundary outcomes the MFET rejects (but the conservative test does not) are
-exactly those with a randomisation probability above the threshold:
+The boundary outcomes the modified test rejects (but the conservative test does
+not) are exactly those with a randomisation probability above the threshold:
 
 ```{r}
-subset(result$support.data, gamma1 > result$gamma0 | gamma2 > result$gamma0)
+result$support.data |> 
+  filter(gamma1 > result$gamma0 | gamma2 > result$gamma0)
 ```
 
 The mechanics of this are covered in

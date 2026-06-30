@@ -1,12 +1,13 @@
 ---
-title: "Background and comparison with other exact tests"
+title: "Background and comparison"
+subtitle: "The rationale behind the modified test and a comparison with other exact tests"
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/background-",
+  fig.path = "figures/background-",
   out.width = "100%",
   message = FALSE, warning = FALSE
 )
@@ -33,12 +34,78 @@ nominal level α, but because the data are discrete it cannot in general hit siz
 α exactly, so it ends up **conservative**: its true rejection rate sits below α,
 and a conservative test is underpowered.
 
-Fisher's Exat Test is only *uniformly most powerful unbiased* (UMPU) if it is
-allowed to **randomise** at the borderline outcomes, in effect flipping a
-weighted coin to decide significance. That is rarely acceptable in practice, so
-a non-randomised version is used instead. The non-randomised tests all try to
-recover the power lost to dropping the coin flip, and differ in how, and in
-whether they still strictly control the Type I error rate:
+Take a worked example with two independent binomial proportions $u/m$ and $v/n$,
+testing $H_0: \theta = 1$ where $\theta$ is the log odds ratio. Given $u=13$, $m=41$, $v=6$, and $n=47$ (Example 2 from the paper), the probability distribution for $u$ is given by:
+
+```{r prob_plot, echo = FALSE, include = TRUE, eval = TRUE}
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+
+m_obs  <- 41                 # observed trials in Group A
+n_obs  <- 47                 # observed trials in Group B
+or <- 1                  # odds ratio to test
+
+u_obs   <- 13            # observed successes in Group A
+v_obs   <- 6             # observed successes in Group B
+t_obs  <- u_obs + v_obs  # t = 19; the fixed total T
+
+# Support: all valid u given T, with v = T - u:
+
+plot_s <- seq(max(0L, t_obs - n_obs), min(m_obs, t_obs))  # 0:19
+plot_t <- t_obs - plot_s                                      # 19:0
+
+plotdata <- tibble(
+  s  = plot_s,
+  t  = plot_t,
+  m  = m_obs,
+  n  = n_obs,
+  or = or
+  )
+
+plotdata <- plotdata |>
+  mutate(
+    prob = pmap_dbl(
+      .l = list(s = s, t = t, m = m, n = n),
+      .f = modifiedfisher:::pvalue_probability
+      ),
+    obs = case_when(
+      s == u_obs ~ TRUE,
+      TRUE ~ FALSE
+    )
+  )
+
+p <- ggplot(
+  data = plotdata,
+  aes(x = s, y = prob)
+  ) +
+  geom_col(aes(fill = obs)) +
+  scale_fill_manual(
+    values = c(
+      `TRUE` = "#016c59",
+      `FALSE` = "#016c59"
+      )
+    ) +
+  scale_y_continuous(
+    breaks = c(0, 0.05, 0.25, 0.5, 0.75, 1)
+  ) +
+  geom_hline(yintercept = 0.05, linetype = 2, colour = "grey40") +
+  labs(x = "u", y = "probability") +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    plot.background = element_rect(fill = "transparent")
+  )
+
+print(p)
+```
+
+Fisher's Exact Test is only *uniformly most powerful unbiased* (UMPU) if it is
+allowed to **randomise** at the borderline outcomes (e.g. randomising between $u=\{3,4\}$ and $u=\{8,9\}$), in effect flipping a weighted coin to decide significance. That is rarely acceptable in practice, so a non-randomised version is used instead. The non-randomised tests all try to recover the power lost to dropping the coin flip, and differ in how, and in whether they still strictly control the Type I error rate:
 
 - The **conservative / probability-based test** rejects on the summed probability of outcomes at least as likely as the one observed. This is the "exact" test in SAS Proc FREQ and base R's `fisher.test()`. It controls the size but is conservative, and its p-value and confidence interval can disagree (shown below).
 - **Asymptotic tests** (Woolf's) and **mid-*p*** approaches are less conservative but do not strictly control the size; the true size can be larger than α.
@@ -46,8 +113,8 @@ whether they still strictly control the Type I error rate:
 The **modified Fisher exact test** in this package keeps strict size control
 while staying closest to the randomised UMPU test. It rejects at a borderline
 outcome only when its randomisation probability exceeds a single threshold γ₀,
-chosen as large as possible while keeping the maximum size (over the nuisance
-parameter) at or below α. Its p-value and confidence interval are
+chosen to be as large as possible while keeping the maximum size (over the
+nuisance parameter) at or below α. Its p-value and confidence interval are
 **test-based**, so they agree by construction. The [Overview of
 algorithm](overview-of-algorithm.html) article shows how this is implemented.
 
@@ -123,11 +190,10 @@ results$`OR = 1 in CI?` <- ifelse(
 knitr::kable(results, digits = c(NA, 3, 3, 3, 3, NA))
 ```
 
-Two things stand out. The odds-ratio estimates differ, because `fisher.test()`
-and `fisher.exact()` report the conditional MLE while the modified test reports
-the sample odds ratio. And the last two columns, read together, show the
-disagreement: base R's `fisher.test()` can return a p-value below 0.05 while its
-95% interval still contains an odds ratio of 1, because p-value and interval use
+Two things stand out:
+
+- The odds-ratio estimates differ, because `fisher.test()` and `fisher.exact()` report the conditional MLE while the modified test reports the sample odds ratio.
+- The last two columns, read together, show the disagreement between p-values and confidence intervals: base R's `fisher.test()` can return a p-value below 0.05 while its 95% interval still contains an odds ratio of 1, because p-value and interval use
 different rules. The `central` variant makes the equal-tail interval (and its
 larger matching p-value) explicit; the `minlike` variant pairs the
 likelihood-ordering p-value with an agreeing interval. The modified test, like
