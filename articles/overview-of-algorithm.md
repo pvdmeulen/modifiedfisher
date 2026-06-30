@@ -11,32 +11,37 @@ van der Meulen (2021).
 The notation: \\u\\ successes from \\m\\ trials in Group A, \\v\\ from
 \\n\\ in Group B, with total \\T = u + v\\.
 
-|                  | Group A: Success | Group A: Failure | Total |
-|:-----------------|:----------------:|:----------------:|:-----:|
-| Group B: Success |        ..        |        ..        |   v   |
-| Group B: Failure |        ..        |        ..        |  v’   |
-| Total            |        u         |        u’        |   t   |
+|                  | Group A: Success | Group A: Failure | Total  |
+|:-----------------|:----------------:|:----------------:|:------:|
+| Group B: Success |        ..        |        ..        | \\v\\  |
+| Group B: Failure |        ..        |        ..        | \\v'\\ |
+| Total            |      \\u\\       |      \\u'\\      | \\t\\  |
 
-## The idea in one line
+## The basic premise
 
 The modified test makes a single change to the randomised (UMPU) Fisher
 test: instead of always rejecting at a critical value (randomised) or
 never rejecting there (conservative), it uses one global threshold
 \\\gamma_0\\ and rejects at a boundary only if that boundary’s
-randomisation probability \\\gamma\\ exceeds \\\gamma_0\\. The coin flip
-disappears, every outcome gives a clear verdict, and most of the
-boundary rejection mass the conservative test wastes is recovered.
+randomisation probability \\\gamma\\ exceeds \\\gamma_0\\. The
+randomisation is taken away, and most of the boundary rejection mass is
+recovered.
 
 The implementation chooses \\\gamma_0\\ for a given null odds ratio,
 then inverts the resulting test for the p-value and confidence interval.
 The entry point is
-[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md);
-the steps below are what it does internally.
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md):
 
 ``` r
 
 modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1)
 ```
+
+The steps below show what the above function does internally. Helper
+functions not exported to the namespace are prefixed by `.`, these can
+still be accessed through `modifiedfisher:::` (e.g. for troubleshooting
+purposes, or to visualise the steps with your own example as in this
+article).
 
 ## Step 1: Build the test frame of critical values and randomisations
 
@@ -61,9 +66,23 @@ total, which matters in Step 4.
 
 ``` r
 
-# Reproduces Table 1 of the paper (m = 6, n = 4):
-construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4, .alpha = 0.05, .precision = 1e-3)
+# Example 1 from the paper (m = 12, n = 11):
+construct_test_frame(.odds_ratio = 1, .m = 12, .n = 11, .alpha = 0.05, .precision = 1e-3)
 ```
+
+The first ten rows of this dataframe are given by:
+
+    #>    t c1 d1    gamma1 c2 d2    gamma2
+    #> 1  0  0  0 0.0250000  0  1 0.0250000
+    #> 2  1  0  0 0.0500000  1  2 0.0500000
+    #> 3  2  0  0 0.1100000  2  3 0.1000000
+    #> 4  3  0  0 0.2566667  3  4 0.2100000
+    #> 5  4  0  1 0.6416667  4  4 0.4666667
+    #> 6  5  1  1 0.1081481  4  5 0.0000337
+    #> 7  6  1  2 0.3630208  5  6 0.1892519
+    #> 8  7  1  2 0.9953571  6  6 0.5526948
+    #> 9  8  2  2 0.2761364  6  7 0.0543831
+    #> 10 9  2  3 0.8060101  7  8 0.3582323
 
 ## Step 2: Define the rejection rule for a candidate \\\gamma_0\\
 
@@ -83,89 +102,103 @@ whole rejection region is built once into an \\(m+1)\times(n+1)\\ 0/1
 matrix (`.build_rejection_matrix()`), so later steps avoid recomputing
 it.
 
-## Step 3: Measure the size, worst case over the nuisance parameter
+## Step 3: Measure the (worst case) size over the nuisance parameter \\\pi_1\\
 
 A \\\gamma_0\\ is acceptable only if the test’s true (unconditional)
 size stays below \\\alpha\\. Conditional on \\T\\ the test is
-size-\\\alpha\\ by construction, but unconditionally the rejection
-probability depends on the unknown success rate \\\pi_1\\, so the real
-size is a function of \\\pi_1\\ and we guard against the worst case.
+size-\\\alpha\\ by construction, but **unconditionally** the rejection
+probability depends on the unknown success rate \\\pi_1\\. The real size
+is therefore a function of \\\pi_1\\, and we need to guard against the
+‘worst case’.
 
-For fixed \\\pi_1\\ the rejection probability is a sum over all tables
-weighted by their two binomial probabilities, computed as the bilinear
-form \\p_u^\top R\\ p_v\\ with \\R\\ the rejection matrix from Step 2
+For a fixed \\\pi_1\\, the rejection probability is a sum over all
+tables weighted by their two binomial probabilities, computed as the
+bilinear form \\p_u^\top R\\ p_v\\ with \\R\\ the rejection matrix from
+Step 2
 ([`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md)).
 The size is the maximum over \\\pi_1 \in (0, 1)\\
 ([`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)).
+
 Maximisation uses either `"zoom"` (grid, then re-grid finer around the
-peak, repeat; the default, and the SAS macro’s approach) or `"trust"` (a
-trust-region optimiser with the analytic gradient
+peak, repeat; the default, and also the SAS macro’s approach) or
+`"trust"` (a trust-region optimiser with the analytic gradient
 `.local_size_gradient_modified()`). The size curve can be multi-peaked,
 so the safest check is to plot it via `local_size_data = TRUE`.
 
 ``` r
 
-df <- construct_test_frame(.odds_ratio = 1, .m = 6, .n = 4, .alpha = 0.05, .precision = 1e-3)
+testframe <- construct_test_frame(.odds_ratio = 1, .m = 12, .n = 11, .alpha = 0.05, .precision = 1e-3)
+
 # Worst-case size at a candidate gamma0 of 0.05:
-size_modified(.c = 0.05, .odds_ratio = 1, .m = 6, .n = 4, .df = df,
+size_modified(.c = 0.05, .odds_ratio = 1, .m = 12, .n = 11, .df = testframe,
               .alpha = 0.05, .precision = 1e-3, .method = "zoom",
               .maze = 10, .zoom_iter = 6)
 ```
 
 ## Step 4: Find the optimal \\\gamma_0\\ by bisection
 
-We want the largest worst-case size still \\\le \alpha\\. The size only
-changes when \\\gamma_0\\ crosses one of the \\2(m+n+1)\\ actual
-\\\gamma\\ values from Step 1, so rather than search a continuum we sort
-those values and search among them. Raising \\\gamma_0\\ can only remove
-boundaries, so size is monotone in the sorted index, which licenses a
-bisection. This is
+We still want the largest worst-case size to be less than \\\alpha\\.
+The size only changes when \\\gamma_0\\ crosses one of the \\2(m+n+1)\\
+actual \\\gamma\\ values from Step 1, so rather than search a continuum,
+we sort those values and search among them.
+
+Raising \\\gamma_0\\ can only *remove* boundaries, so size is monotone
+in the sorted index, which makes a bisection appropriate. This is done
+in
 [`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md):
 it sorts the pooled `gamma1`/`gamma2` vector and bisects to the largest
 threshold whose size does not exceed \\\alpha\\. The optimum is not a
 single number but a half-open interval between two adjacent sorted
-\\\gamma\\’s; any value in it gives the same test.
+\\\gamma\\’s and any value in it gives the same test.
 
 ``` r
 
-optimise_gamma0(.odds_ratio = 1, .m = 6, .n = 4, .alpha = 0.05,
+optimise_gamma0(.odds_ratio = 1, .m = 12, .n = 11, .alpha = 0.05,
                 .precision = 1e-3, .method = "zoom", .maze = 10, .zoom_iter = 6)
 ```
 
 ## Step 5: Invert the test for the p-value and confidence interval
 
-Steps 1 to 4 decide, at any null odds ratio \\\theta_0\\, whether the
-observed table is rejected (`.accept()` ties it together: build the
-frame, optimise \\\gamma_0\\, apply the rule). The inferential
-quantities follow by inverting that one decision:
+Steps 1 to 4 decide, at some given null odds ratio \\\theta_0\\, whether
+the observed table is rejected (and the `.accept()` helper function ties
+it together: build the frame, optimise \\\gamma_0\\, apply the rule).
+Confidence intervals and p-values are obtained by inverting that
+decision:
 
 - **Confidence interval**: all \\\theta_0\\ not rejected at level
   \\\alpha\\. Its edges are found by bisection, starting from Woolf’s
-  asymptotic limits and squeezing inward to the first rejection, to the
+  asymptotic limits and moving inward to the first rejection, to the
   requested `precision`.
 - **P-value**: the smallest \\\alpha\\ at which the table is rejected
   for the given null, found by bisecting on \\\alpha\\.
 
 Both invert the same test, so they agree by construction.
+
+The main
 [`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md)
-runs the pipeline
-([`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md)
+function runs the following pipeline:
+
+[`construct_test_frame()`](https://pvdmeulen.github.io/modifiedfisher/reference/construct_test_frame.md)
 → `.modified_reject()` / `.build_rejection_matrix()` →
 [`local_size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/local_size_modified.md)
 /
 [`size_modified()`](https://pvdmeulen.github.io/modifiedfisher/reference/size_modified.md)
 →
 [`optimise_gamma0()`](https://pvdmeulen.github.io/modifiedfisher/reference/optimise_gamma0.md)
-→ `.accept()`) and returns an `htest` with `$p.value`, `$estimate`,
+→ `.accept()`
+
+The function returns an `htest` with `$p.value`,`$estimate`,
 `$conf.int`, the optimal `$gamma0`, the test frame, and optionally the
-size-versus-\\\pi_1\\ data.
+size-versus-\\\pi_1\\ dataframe:
 
 ``` r
 
-result <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1)
+result <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11, odds_ratio = 1, local_size_data = TRUE)
+
 result$estimate
 result$p.value
 result$conf.int
+result$local.size.data
 ```
 
 ## Reference

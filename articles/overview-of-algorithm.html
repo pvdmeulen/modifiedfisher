@@ -47,9 +47,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison with other exact tests</a></li>
+<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison</a></li>
     <li><a class="dropdown-item" href="../articles/overview-of-algorithm.html">Overview of algorithm</a></li>
-    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's size and power figures</a></li>
+    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's figures</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -72,6 +72,8 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Overview of algorithm</h1>
+            <h3 data-toc-skip class="subtitle">A step by step overview
+of the algorithm and the helper functions it relies on</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pvdmeulen/modifiedfisher/blob/main/vignettes/articles/overview-of-algorithm.Rmd" class="external-link"><code>vignettes/articles/overview-of-algorithm.Rmd</code></a></small>
@@ -99,38 +101,41 @@ van der Meulen (2021).</p>
 <td align="left">Group B: Success</td>
 <td align="center">..</td>
 <td align="center">..</td>
-<td align="center">v</td>
+<td align="center"><span class="math inline">\(v\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">Group B: Failure</td>
 <td align="center">..</td>
 <td align="center">..</td>
-<td align="center">v’</td>
+<td align="center"><span class="math inline">\(v'\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">Total</td>
-<td align="center">u</td>
-<td align="center">u’</td>
-<td align="center">t</td>
+<td align="center"><span class="math inline">\(u\)</span></td>
+<td align="center"><span class="math inline">\(u'\)</span></td>
+<td align="center"><span class="math inline">\(t\)</span></td>
 </tr>
 </tbody>
 </table>
 <div class="section level2">
-<h2 id="the-idea-in-one-line">The idea in one line<a class="anchor" aria-label="anchor" href="#the-idea-in-one-line"></a>
+<h2 id="the-basic-premise">The basic premise<a class="anchor" aria-label="anchor" href="#the-basic-premise"></a>
 </h2>
 <p>The modified test makes a single change to the randomised (UMPU)
 Fisher test: instead of always rejecting at a critical value
 (randomised) or never rejecting there (conservative), it uses one global
 threshold <span class="math inline">\(\gamma_0\)</span> and rejects at a
-boundary only if that boundary’s randomisation probability <span class="math inline">\(\gamma\)</span> exceeds <span class="math inline">\(\gamma_0\)</span>. The coin flip disappears, every
-outcome gives a clear verdict, and most of the boundary rejection mass
-the conservative test wastes is recovered.</p>
+boundary only if that boundary’s randomisation probability <span class="math inline">\(\gamma\)</span> exceeds <span class="math inline">\(\gamma_0\)</span>. The randomisation is taken
+away, and most of the boundary rejection mass is recovered.</p>
 <p>The implementation chooses <span class="math inline">\(\gamma_0\)</span> for a given null odds ratio,
 then inverts the resulting test for the p-value and confidence interval.
-The entry point is <code><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test()</a></code>; the steps
-below are what it does internally.</p>
+The entry point is <code><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test()</a></code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">12</span>, v <span class="op">=</span> <span class="fl">7</span>, n <span class="op">=</span> <span class="fl">11</span>, odds_ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>The steps below show what the above function does internally. Helper
+functions not exported to the namespace are prefixed by <code>.</code>,
+these can still be accessed through <code>modifiedfisher:::</code>
+(e.g. for troubleshooting purposes, or to visualise the steps with your
+own example as in this article).</p>
 </div>
 <div class="section level2">
 <h2 id="step-1-build-the-test-frame-of-critical-values-and-randomisations">Step 1: Build the test frame of critical values and
@@ -158,8 +163,20 @@ until one is found for every <span class="math inline">\(T\)</span>. At
 \gamma_2 = \alpha/2\)</span>. The frame holds <span class="math inline">\(2(m+n+1)\)</span> randomisation probabilities in
 total, which matters in Step 4.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Reproduces Table 1 of the paper (m = 6, n = 4):</span></span>
-<span><span class="fu"><a href="../reference/construct_test_frame.html">construct_test_frame</a></span><span class="op">(</span>.odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">6</span>, .n <span class="op">=</span> <span class="fl">4</span>, .alpha <span class="op">=</span> <span class="fl">0.05</span>, .precision <span class="op">=</span> <span class="fl">1e-3</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Example 1 from the paper (m = 12, n = 11):</span></span>
+<span><span class="fu"><a href="../reference/construct_test_frame.html">construct_test_frame</a></span><span class="op">(</span>.odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">12</span>, .n <span class="op">=</span> <span class="fl">11</span>, .alpha <span class="op">=</span> <span class="fl">0.05</span>, .precision <span class="op">=</span> <span class="fl">1e-3</span><span class="op">)</span></span></code></pre></div>
+<p>The first ten rows of this dataframe are given by:</p>
+<pre><code><span><span class="co">#&gt;    t c1 d1    gamma1 c2 d2    gamma2</span></span>
+<span><span class="co">#&gt; 1  0  0  0 0.0250000  0  1 0.0250000</span></span>
+<span><span class="co">#&gt; 2  1  0  0 0.0500000  1  2 0.0500000</span></span>
+<span><span class="co">#&gt; 3  2  0  0 0.1100000  2  3 0.1000000</span></span>
+<span><span class="co">#&gt; 4  3  0  0 0.2566667  3  4 0.2100000</span></span>
+<span><span class="co">#&gt; 5  4  0  1 0.6416667  4  4 0.4666667</span></span>
+<span><span class="co">#&gt; 6  5  1  1 0.1081481  4  5 0.0000337</span></span>
+<span><span class="co">#&gt; 7  6  1  2 0.3630208  5  6 0.1892519</span></span>
+<span><span class="co">#&gt; 8  7  1  2 0.9953571  6  6 0.5526948</span></span>
+<span><span class="co">#&gt; 9  8  2  2 0.2761364  6  7 0.0543831</span></span>
+<span><span class="co">#&gt; 10 9  2  3 0.8060101  7  8 0.3582323</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="step-2-define-the-rejection-rule-for-a-candidate-gamma_0">Step 2: Define the rejection rule for a candidate <span class="math inline">\(\gamma_0\)</span><a class="anchor" aria-label="anchor" href="#step-2-define-the-rejection-rule-for-a-candidate-gamma_0"></a>
@@ -187,82 +204,87 @@ matrix (<code>.build_rejection_matrix()</code>), so later steps avoid
 recomputing it.</p>
 </div>
 <div class="section level2">
-<h2 id="step-3-measure-the-size-worst-case-over-the-nuisance-parameter">Step 3: Measure the size, worst case over the nuisance
-parameter<a class="anchor" aria-label="anchor" href="#step-3-measure-the-size-worst-case-over-the-nuisance-parameter"></a>
+<h2 id="step-3-measure-the-worst-case-size-over-the-nuisance-parameter-pi_1">Step 3: Measure the (worst case) size over the nuisance parameter
+<span class="math inline">\(\pi_1\)</span><a class="anchor" aria-label="anchor" href="#step-3-measure-the-worst-case-size-over-the-nuisance-parameter-pi_1"></a>
 </h2>
 <p>A <span class="math inline">\(\gamma_0\)</span> is acceptable only if
 the test’s true (unconditional) size stays below <span class="math inline">\(\alpha\)</span>. Conditional on <span class="math inline">\(T\)</span> the test is size-<span class="math inline">\(\alpha\)</span> by construction, but
-unconditionally the rejection probability depends on the unknown success
-rate <span class="math inline">\(\pi_1\)</span>, so the real size is a
-function of <span class="math inline">\(\pi_1\)</span> and we guard
-against the worst case.</p>
-<p>For fixed <span class="math inline">\(\pi_1\)</span> the rejection
+<strong>unconditionally</strong> the rejection probability depends on
+the unknown success rate <span class="math inline">\(\pi_1\)</span>. The
+real size is therefore a function of <span class="math inline">\(\pi_1\)</span>, and we need to guard against the
+‘worst case’.</p>
+<p>For a fixed <span class="math inline">\(\pi_1\)</span>, the rejection
 probability is a sum over all tables weighted by their two binomial
 probabilities, computed as the bilinear form <span class="math inline">\(p_u^\top R\,
 p_v\)</span> with <span class="math inline">\(R\)</span> the rejection
 matrix from Step 2 (<code><a href="../reference/local_size_modified.html">local_size_modified()</a></code>). The size is the
 maximum over <span class="math inline">\(\pi_1 \in (0, 1)\)</span>
-(<code><a href="../reference/size_modified.html">size_modified()</a></code>). Maximisation uses either
-<code>"zoom"</code> (grid, then re-grid finer around the peak, repeat;
-the default, and the SAS macro’s approach) or <code>"trust"</code> (a
-trust-region optimiser with the analytic gradient
-<code>.local_size_gradient_modified()</code>). The size curve can be
-multi-peaked, so the safest check is to plot it via
+(<code><a href="../reference/size_modified.html">size_modified()</a></code>).</p>
+<p>Maximisation uses either <code>"zoom"</code> (grid, then re-grid
+finer around the peak, repeat; the default, and also the SAS macro’s
+approach) or <code>"trust"</code> (a trust-region optimiser with the
+analytic gradient <code>.local_size_gradient_modified()</code>). The
+size curve can be multi-peaked, so the safest check is to plot it via
 <code>local_size_data = TRUE</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/construct_test_frame.html">construct_test_frame</a></span><span class="op">(</span>.odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">6</span>, .n <span class="op">=</span> <span class="fl">4</span>, .alpha <span class="op">=</span> <span class="fl">0.05</span>, .precision <span class="op">=</span> <span class="fl">1e-3</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">testframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/construct_test_frame.html">construct_test_frame</a></span><span class="op">(</span>.odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">12</span>, .n <span class="op">=</span> <span class="fl">11</span>, .alpha <span class="op">=</span> <span class="fl">0.05</span>, .precision <span class="op">=</span> <span class="fl">1e-3</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Worst-case size at a candidate gamma0 of 0.05:</span></span>
-<span><span class="fu"><a href="../reference/size_modified.html">size_modified</a></span><span class="op">(</span>.c <span class="op">=</span> <span class="fl">0.05</span>, .odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">6</span>, .n <span class="op">=</span> <span class="fl">4</span>, .df <span class="op">=</span> <span class="va">df</span>,</span>
+<span><span class="fu"><a href="../reference/size_modified.html">size_modified</a></span><span class="op">(</span>.c <span class="op">=</span> <span class="fl">0.05</span>, .odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">12</span>, .n <span class="op">=</span> <span class="fl">11</span>, .df <span class="op">=</span> <span class="va">testframe</span>,</span>
 <span>              .alpha <span class="op">=</span> <span class="fl">0.05</span>, .precision <span class="op">=</span> <span class="fl">1e-3</span>, .method <span class="op">=</span> <span class="st">"zoom"</span>,</span>
 <span>              .maze <span class="op">=</span> <span class="fl">10</span>, .zoom_iter <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-4-find-the-optimal-gamma_0-by-bisection">Step 4: Find the optimal <span class="math inline">\(\gamma_0\)</span> by bisection<a class="anchor" aria-label="anchor" href="#step-4-find-the-optimal-gamma_0-by-bisection"></a>
 </h2>
-<p>We want the largest worst-case size still <span class="math inline">\(\le \alpha\)</span>. The size only changes when
-<span class="math inline">\(\gamma_0\)</span> crosses one of the <span class="math inline">\(2(m+n+1)\)</span> actual <span class="math inline">\(\gamma\)</span> values from Step 1, so rather than
-search a continuum we sort those values and search among them. Raising
-<span class="math inline">\(\gamma_0\)</span> can only remove
-boundaries, so size is monotone in the sorted index, which licenses a
-bisection. This is <code><a href="../reference/optimise_gamma0.html">optimise_gamma0()</a></code>: it sorts the pooled
+<p>We still want the largest worst-case size to be less than <span class="math inline">\(\alpha\)</span>. The size only changes when <span class="math inline">\(\gamma_0\)</span> crosses one of the <span class="math inline">\(2(m+n+1)\)</span> actual <span class="math inline">\(\gamma\)</span> values from Step 1, so rather than
+search a continuum, we sort those values and search among them.</p>
+<p>Raising <span class="math inline">\(\gamma_0\)</span> can only
+<em>remove</em> boundaries, so size is monotone in the sorted index,
+which makes a bisection appropriate. This is done in
+<code><a href="../reference/optimise_gamma0.html">optimise_gamma0()</a></code>: it sorts the pooled
 <code>gamma1</code>/<code>gamma2</code> vector and bisects to the
 largest threshold whose size does not exceed <span class="math inline">\(\alpha\)</span>. The optimum is not a single
-number but a half-open interval between two adjacent sorted <span class="math inline">\(\gamma\)</span>’s; any value in it gives the same
-test.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/optimise_gamma0.html">optimise_gamma0</a></span><span class="op">(</span>.odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">6</span>, .n <span class="op">=</span> <span class="fl">4</span>, .alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
+number but a half-open interval between two adjacent sorted <span class="math inline">\(\gamma\)</span>’s and any value in it gives the
+same test.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/optimise_gamma0.html">optimise_gamma0</a></span><span class="op">(</span>.odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="fl">12</span>, .n <span class="op">=</span> <span class="fl">11</span>, .alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                .precision <span class="op">=</span> <span class="fl">1e-3</span>, .method <span class="op">=</span> <span class="st">"zoom"</span>, .maze <span class="op">=</span> <span class="fl">10</span>, .zoom_iter <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-5-invert-the-test-for-the-p-value-and-confidence-interval">Step 5: Invert the test for the p-value and confidence interval<a class="anchor" aria-label="anchor" href="#step-5-invert-the-test-for-the-p-value-and-confidence-interval"></a>
 </h2>
-<p>Steps 1 to 4 decide, at any null odds ratio <span class="math inline">\(\theta_0\)</span>, whether the observed table is
-rejected (<code>.accept()</code> ties it together: build the frame,
-optimise <span class="math inline">\(\gamma_0\)</span>, apply the rule).
-The inferential quantities follow by inverting that one decision:</p>
+<p>Steps 1 to 4 decide, at some given null odds ratio <span class="math inline">\(\theta_0\)</span>, whether the observed table is
+rejected (and the <code>.accept()</code> helper function ties it
+together: build the frame, optimise <span class="math inline">\(\gamma_0\)</span>, apply the rule). Confidence
+intervals and p-values are obtained by inverting that decision:</p>
 <ul>
 <li>
 <strong>Confidence interval</strong>: all <span class="math inline">\(\theta_0\)</span> not rejected at level <span class="math inline">\(\alpha\)</span>. Its edges are found by bisection,
-starting from Woolf’s asymptotic limits and squeezing inward to the
-first rejection, to the requested <code>precision</code>.</li>
+starting from Woolf’s asymptotic limits and moving inward to the first
+rejection, to the requested <code>precision</code>.</li>
 <li>
 <strong>P-value</strong>: the smallest <span class="math inline">\(\alpha\)</span> at which the table is rejected for
 the given null, found by bisecting on <span class="math inline">\(\alpha\)</span>.</li>
 </ul>
-<p>Both invert the same test, so they agree by construction.
-<code><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test()</a></code> runs the pipeline
-(<code><a href="../reference/construct_test_frame.html">construct_test_frame()</a></code> → <code>.modified_reject()</code> /
-<code>.build_rejection_matrix()</code> →
+<p>Both invert the same test, so they agree by construction.</p>
+<p>The main <code><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test()</a></code> function runs the
+following pipeline:</p>
+<p><code><a href="../reference/construct_test_frame.html">construct_test_frame()</a></code> → <code>.modified_reject()</code>
+/ <code>.build_rejection_matrix()</code> →
 <code><a href="../reference/local_size_modified.html">local_size_modified()</a></code> / <code><a href="../reference/size_modified.html">size_modified()</a></code> →
-<code><a href="../reference/optimise_gamma0.html">optimise_gamma0()</a></code> → <code>.accept()</code>) and returns an
-<code>htest</code> with <code>$p.value</code>, <code>$estimate</code>,
-<code>$conf.int</code>, the optimal <code>$gamma0</code>, the test
-frame, and optionally the size-versus-<span class="math inline">\(\pi_1\)</span> data.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">12</span>, v <span class="op">=</span> <span class="fl">7</span>, n <span class="op">=</span> <span class="fl">11</span>, odds_ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<code><a href="../reference/optimise_gamma0.html">optimise_gamma0()</a></code> → <code>.accept()</code></p>
+<p>The function returns an <code>htest</code> with
+<code>$p.value</code>,<code>$estimate</code>, <code>$conf.int</code>,
+the optimal <code>$gamma0</code>, the test frame, and optionally the
+size-versus-<span class="math inline">\(\pi_1\)</span> dataframe:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">5</span>, m <span class="op">=</span> <span class="fl">12</span>, v <span class="op">=</span> <span class="fl">7</span>, n <span class="op">=</span> <span class="fl">11</span>, odds_ratio <span class="op">=</span> <span class="fl">1</span>, local_size_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">estimate</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">p.value</span></span>
-<span><span class="va">result</span><span class="op">$</span><span class="va">conf.int</span></span></code></pre></div>
+<span><span class="va">result</span><span class="op">$</span><span class="va">conf.int</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">local.size.data</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>

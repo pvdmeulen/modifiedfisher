@@ -1,4 +1,4 @@
-# Background and comparison with other exact tests
+# Background and comparison
 
 This article is the statistical background for the package, and a
 comparison against base R’s
@@ -17,8 +17,16 @@ cannot in general hit size α exactly, so it ends up **conservative**:
 its true rejection rate sits below α, and a conservative test is
 underpowered.
 
-Fisher’s Exat Test is only *uniformly most powerful unbiased* (UMPU) if
-it is allowed to **randomise** at the borderline outcomes, in effect
+Take a worked example with two independent binomial proportions \\u/m\\
+and \\v/n\\, testing \\H_0: \theta = 1\\ where \\\theta\\ is the log
+odds ratio. Given \\u=13\\, \\m=41\\, \\v=6\\, and \\n=47\\ (Example 2
+from the paper), the probability distribution for \\u\\ is given by:
+
+![](figures/background-prob_plot-1.png)
+
+Fisher’s Exact Test is only *uniformly most powerful unbiased* (UMPU) if
+it is allowed to **randomise** at the borderline outcomes
+(e.g. randomising between \\u=\\3,4\\\\ and \\u=\\8,9\\\\), in effect
 flipping a weighted coin to decide significance. That is rarely
 acceptable in practice, so a non-randomised version is used instead. The
 non-randomised tests all try to recover the power lost to dropping the
@@ -38,7 +46,7 @@ the Type I error rate:
 The **modified Fisher exact test** in this package keeps strict size
 control while staying closest to the randomised UMPU test. It rejects at
 a borderline outcome only when its randomisation probability exceeds a
-single threshold γ₀, chosen as large as possible while keeping the
+single threshold γ₀, chosen to be as large as possible while keeping the
 maximum size (over the nuisance parameter) at or below α. Its p-value
 and confidence interval are **test-based**, so they agree by
 construction. The [Overview of
@@ -133,19 +141,22 @@ knitr::kable(results, digits = c(NA, 3, 3, 3, 3, NA))
 | fisher.exact() minlike (exact2x2) | 3.130 | 0.039 | 1.038 | 9.581 | no |
 | fisher.exact() central (exact2x2) | 3.130 | 0.058 | 0.969 | 11.312 | yes |
 
-Two things stand out. The odds-ratio estimates differ, because
-[`fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) and
-`fisher.exact()` report the conditional MLE while the modified test
-reports the sample odds ratio. And the last two columns, read together,
-show the disagreement: base R’s
-[`fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) can return a
-p-value below 0.05 while its 95% interval still contains an odds ratio
-of 1, because p-value and interval use different rules. The `central`
-variant makes the equal-tail interval (and its larger matching p-value)
-explicit; the `minlike` variant pairs the likelihood-ordering p-value
-with an agreeing interval. The modified test, like the agreeing
-`exact2x2` options, never points its p-value and interval in opposite
-directions.
+Two things stand out:
+
+- The odds-ratio estimates differ, because
+  [`fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) and
+  `fisher.exact()` report the conditional MLE while the modified test
+  reports the sample odds ratio.
+- The last two columns, read together, show the disagreement between
+  p-values and confidence intervals: base R’s
+  [`fisher.test()`](https://rdrr.io/r/stats/fisher.test.html) can return
+  a p-value below 0.05 while its 95% interval still contains an odds
+  ratio of 1, because p-value and interval use different rules. The
+  `central` variant makes the equal-tail interval (and its larger
+  matching p-value) explicit; the `minlike` variant pairs the
+  likelihood-ordering p-value with an agreeing interval. The modified
+  test, like the agreeing `exact2x2` options, never points its p-value
+  and interval in opposite directions.
 
 ## Which test controls what
 

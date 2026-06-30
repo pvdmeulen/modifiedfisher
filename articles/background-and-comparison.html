@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Background and comparison with other exact tests • modifiedfisher</title>
+<title>Background and comparison • modifiedfisher</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -23,7 +23,7 @@
 <link href="../deps/Fira_Code-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Background and comparison with other exact tests">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Background and comparison">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -47,9 +47,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison with other exact tests</a></li>
+<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison</a></li>
     <li><a class="dropdown-item" href="../articles/overview-of-algorithm.html">Overview of algorithm</a></li>
-    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's size and power figures</a></li>
+    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's figures</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -71,7 +71,9 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Background and comparison with other exact tests</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Background and comparison</h1>
+            <h3 data-toc-skip class="subtitle">The rationale behind the
+modified test and a comparison with other exact tests</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pvdmeulen/modifiedfisher/blob/main/vignettes/articles/background-and-comparison.Rmd" class="external-link"><code>vignettes/articles/background-and-comparison.Rmd</code></a></small>
@@ -95,13 +97,17 @@ never exceeds its nominal level α, but because the data are discrete it
 cannot in general hit size α exactly, so it ends up
 <strong>conservative</strong>: its true rejection rate sits below α, and
 a conservative test is underpowered.</p>
-<p>Fisher’s Exat Test is only <em>uniformly most powerful unbiased</em>
+<p>Take a worked example with two independent binomial proportions <span class="math inline">\(u/m\)</span> and <span class="math inline">\(v/n\)</span>, testing <span class="math inline">\(H_0: \theta = 1\)</span> where <span class="math inline">\(\theta\)</span> is the log odds ratio. Given <span class="math inline">\(u=13\)</span>, <span class="math inline">\(m=41\)</span>, <span class="math inline">\(v=6\)</span>, and <span class="math inline">\(n=47\)</span> (Example 2 from the paper), the
+probability distribution for <span class="math inline">\(u\)</span> is
+given by:</p>
+<p><img src="figures/background-prob_plot-1.png" class="r-plt" alt="" width="100%"></p>
+<p>Fisher’s Exact Test is only <em>uniformly most powerful unbiased</em>
 (UMPU) if it is allowed to <strong>randomise</strong> at the borderline
-outcomes, in effect flipping a weighted coin to decide significance.
-That is rarely acceptable in practice, so a non-randomised version is
-used instead. The non-randomised tests all try to recover the power lost
-to dropping the coin flip, and differ in how, and in whether they still
-strictly control the Type I error rate:</p>
+outcomes (e.g. randomising between <span class="math inline">\(u=\{3,4\}\)</span> and <span class="math inline">\(u=\{8,9\}\)</span>), in effect flipping a weighted
+coin to decide significance. That is rarely acceptable in practice, so a
+non-randomised version is used instead. The non-randomised tests all try
+to recover the power lost to dropping the coin flip, and differ in how,
+and in whether they still strictly control the Type I error rate:</p>
 <ul>
 <li>The <strong>conservative / probability-based test</strong> rejects
 on the summed probability of outcomes at least as likely as the one
@@ -116,10 +122,10 @@ not strictly control the size; the true size can be larger than α.</li>
 <p>The <strong>modified Fisher exact test</strong> in this package keeps
 strict size control while staying closest to the randomised UMPU test.
 It rejects at a borderline outcome only when its randomisation
-probability exceeds a single threshold γ₀, chosen as large as possible
-while keeping the maximum size (over the nuisance parameter) at or below
-α. Its p-value and confidence interval are <strong>test-based</strong>,
-so they agree by construction. The <a href="overview-of-algorithm.html">Overview of algorithm</a> article
+probability exceeds a single threshold γ₀, chosen to be as large as
+possible while keeping the maximum size (over the nuisance parameter) at
+or below α. Its p-value and confidence interval are
+<strong>test-based</strong>, so they agree by construction. The <a href="overview-of-algorithm.html">Overview of algorithm</a> article
 shows how this is implemented.</p>
 </div>
 <div class="section level2">
@@ -246,18 +252,21 @@ Group B, testing the null odds ratio of 1 at α = 0.05.</p>
 </tr>
 </tbody>
 </table>
-<p>Two things stand out. The odds-ratio estimates differ, because
-<code><a href="https://rdrr.io/r/stats/fisher.test.html" class="external-link">fisher.test()</a></code> and <code>fisher.exact()</code> report the
-conditional MLE while the modified test reports the sample odds ratio.
-And the last two columns, read together, show the disagreement: base R’s
-<code><a href="https://rdrr.io/r/stats/fisher.test.html" class="external-link">fisher.test()</a></code> can return a p-value below 0.05 while its 95%
-interval still contains an odds ratio of 1, because p-value and interval
-use different rules. The <code>central</code> variant makes the
-equal-tail interval (and its larger matching p-value) explicit; the
-<code>minlike</code> variant pairs the likelihood-ordering p-value with
-an agreeing interval. The modified test, like the agreeing
-<code>exact2x2</code> options, never points its p-value and interval in
-opposite directions.</p>
+<p>Two things stand out:</p>
+<ul>
+<li>The odds-ratio estimates differ, because <code><a href="https://rdrr.io/r/stats/fisher.test.html" class="external-link">fisher.test()</a></code>
+and <code>fisher.exact()</code> report the conditional MLE while the
+modified test reports the sample odds ratio.</li>
+<li>The last two columns, read together, show the disagreement between
+p-values and confidence intervals: base R’s <code><a href="https://rdrr.io/r/stats/fisher.test.html" class="external-link">fisher.test()</a></code>
+can return a p-value below 0.05 while its 95% interval still contains an
+odds ratio of 1, because p-value and interval use different rules. The
+<code>central</code> variant makes the equal-tail interval (and its
+larger matching p-value) explicit; the <code>minlike</code> variant
+pairs the likelihood-ordering p-value with an agreeing interval. The
+modified test, like the agreeing <code>exact2x2</code> options, never
+points its p-value and interval in opposite directions.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="which-test-controls-what">Which test controls what<a class="anchor" aria-label="anchor" href="#which-test-controls-what"></a>

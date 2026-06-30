@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Introduction to modifiedfisher • modifiedfisher</title>
+<title>Get started • modifiedfisher</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -23,7 +23,7 @@
 <link href="../deps/Fira_Code-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to modifiedfisher">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Get started">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -47,9 +47,9 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison with other exact tests</a></li>
+<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison</a></li>
     <li><a class="dropdown-item" href="../articles/overview-of-algorithm.html">Overview of algorithm</a></li>
-    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's size and power figures</a></li>
+    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's figures</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -71,7 +71,9 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Introduction to modifiedfisher</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Get started</h1>
+            <h3 data-toc-skip class="subtitle">An overview of
+modifiedfisher and its options</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pvdmeulen/modifiedfisher/blob/main/vignettes/modifiedfisher.Rmd" class="external-link"><code>vignettes/modifiedfisher.Rmd</code></a></small>
@@ -80,16 +82,14 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/pvdmeulen/modifiedfisher" class="external-link">modifiedfisher</a></span><span class="op">)</span></span></code></pre></div>
 <p>The <strong>non-conservative, size-<span class="math inline">\(\alpha\)</span> modified Fisher exact
-test</strong> (MFET) rejects the null at a critical value only when the
+test</strong> rejects the null at a critical value only when the
 corresponding randomisation probability exceeds a threshold <span class="math inline">\(\gamma_0\)</span>, chosen so the test’s size
 (maximised over the nuisance parameter) is as large as possible without
-exceeding <span class="math inline">\(\alpha\)</span>. This makes it
-less conservative than the standard Fisher exact test while still
-strictly controlling the Type I error rate. For why this matters and how
-it compares to other tests, see the <a href="background-and-comparison.html">Background and comparison</a>
+exceeding <span class="math inline">\(\alpha\)</span>.</p>
+<p>This makes it less conservative than the standard Fisher exact test
+while still strictly controlling the Type I error rate. For why this
+matters and how it compares to other tests, see the <a href="background-and-comparison.html">Background and comparison</a>
 article; for how it is built, see <a href="overview-of-algorithm.html">Overview of algorithm</a>.</p>
 <p>This vignette is a tour of <code><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test()</a></code>,
 using the worked examples from van der Meulen, Raymond and van der
@@ -101,8 +101,9 @@ Meulen (2021).</p>
 <code>odds_ratio = 1</code> (equality of proportions).</p>
 <p>We reproduce Example 2 from the paper’s Table 2: 13 of 41 versus 6 of
 47.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">13</span>, m <span class="op">=</span> <span class="fl">41</span>, v <span class="op">=</span> <span class="fl">6</span>, n <span class="op">=</span> <span class="fl">47</span>,</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/pvdmeulen/modifiedfisher" class="external-link">modifiedfisher</a></span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">13</span>, m <span class="op">=</span> <span class="fl">41</span>, v <span class="op">=</span> <span class="fl">6</span>, n <span class="op">=</span> <span class="fl">47</span>,</span>
 <span>                                     odds_ratio <span class="op">=</span> <span class="fl">1</span>, local_size_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">result</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -119,7 +120,7 @@ Meulen (2021).</p>
 <p>The result is an <code>htest</code>, so the usual components are
 available directly, and they match Table 2 (odds ratio 3.173, p-value
 0.034, 95% CI 1.082 to 10.25):</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">estimate</span></span>
 <span><span class="co">#&gt; odds ratio </span></span>
 <span><span class="co">#&gt;   3.172619</span></span>
@@ -143,10 +144,10 @@ article shows a worked case.</p>
 <div class="section level2">
 <h2 id="a-different-null-hypothesis">A different null hypothesis<a class="anchor" aria-label="anchor" href="#a-different-null-hypothesis"></a>
 </h2>
-<p><code>odds_ratio</code> sets <span class="math inline">\(\theta_0\)</span> and need not be 1. The estimate
-and confidence interval do not depend on it; only the p-value and
-<code>$null.value</code> change.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>The <code>odds_ratio</code> argument sets <span class="math inline">\(\theta_0\)</span>; this does not need be 1. The
+estimate and confidence interval do not depend on it (only the p-value
+and <code>$null.value</code> change).</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result_or2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">13</span>, m <span class="op">=</span> <span class="fl">41</span>, v <span class="op">=</span> <span class="fl">6</span>, n <span class="op">=</span> <span class="fl">47</span>,</span>
 <span>                                         odds_ratio <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">result_or2</span><span class="op">$</span><span class="va">p.value</span></span>
@@ -161,62 +162,63 @@ and confidence interval do not depend on it; only the p-value and
 </h2>
 <p>Two arguments control the numerics:</p>
 <ul>
-<li>
-<code>precision</code> is the tolerance for the bisection searches
-behind the confidence limits and p-value (default <code>1e-3</code>). A
-smaller value is more accurate but needs more size evaluations, which is
-the expensive step.</li>
-<li>
-<code>method</code> selects how the size is maximised over the
+<li><p><code>precision</code> is the tolerance for the bisection
+searches behind the confidence limits and p-value (default
+<code>1e-3</code>). A smaller value is more accurate but needs more size
+evaluations, which is the expensive step.</p></li>
+<li><p><code>method</code> selects how the size is maximised over the
 nuisance parameter. The default <code>"zoom"</code> refines a grid
 search and is usually fastest; <code>"trust"</code> uses a trust-region
 optimiser with an analytic gradient. They agree to within
 <code>precision</code>. For <code>"zoom"</code>, <code>maze</code> sets
 the grid points per iteration and <code>zoom_iter</code> the number of
-refinements.</li>
+refinements.</p></li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result_trust</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">13</span>, m <span class="op">=</span> <span class="fl">41</span>, v <span class="op">=</span> <span class="fl">6</span>, n <span class="op">=</span> <span class="fl">47</span>,</span>
 <span>                                           odds_ratio <span class="op">=</span> <span class="fl">1</span>, method <span class="op">=</span> <span class="st">"trust"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">result_trust</span><span class="op">$</span><span class="va">p.value</span></span>
 <span><span class="co">#&gt; [1] 0.03369141</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="power">Power<a class="anchor" aria-label="anchor" href="#power"></a>
 </h2>
-<p>By default the test also returns its power at two response rates
-<code>power_at_pi1</code> and <code>power_at_pi2</code>, under the null
+<p>The test also returns its power at two response rates
+<code>power_at_pi1</code> and <code>power_at_pi2</code> under the null
 <code>odds_ratio</code> used to build the test frame. This is the
-unconditional probability of rejecting <span class="math inline">\(H_0\)</span> at those true rates and sample
-sizes.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+unconditional probability of rejecting <span class="math inline">\(H_0\)</span> at when <span class="math inline">\(\pi_1=\)</span><code>power_at_pi1</code> and <span class="math inline">\(\pi_2=\)</span><code>power_at_pi2</code>. The
+default values are 0.5 and 0.75, respectively, but these can be
+changed:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result_power</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">13</span>, m <span class="op">=</span> <span class="fl">41</span>, v <span class="op">=</span> <span class="fl">6</span>, n <span class="op">=</span> <span class="fl">47</span>,</span>
-<span>                                           odds_ratio <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                                           power_at_pi1 <span class="op">=</span> <span class="fl">0.3</span>, power_at_pi2 <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
+<span>                                           odds_ratio <span class="op">=</span> <span class="fl">1</span>, power_at_pi1 <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>                                           power_at_pi2 <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">result_power</span><span class="op">$</span><span class="va">power</span></span>
 <span><span class="co">#&gt; [1] 80.40905</span></span></code></pre></div>
 <p>Set <code>power = FALSE</code> to skip this, which saves time for
 larger samples. Setting <code>superiority = TRUE</code> restricts the
 calculation to a positive observed effect (one-directional alternative),
-which the paper notes changes power only slightly for relevant effect
-sizes.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+which (as the paper notes) only slightly changes power for relevant
+effect sizes:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result_sup</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">13</span>, m <span class="op">=</span> <span class="fl">41</span>, v <span class="op">=</span> <span class="fl">6</span>, n <span class="op">=</span> <span class="fl">47</span>,</span>
-<span>                                         odds_ratio <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                                         power_at_pi1 <span class="op">=</span> <span class="fl">0.3</span>, power_at_pi2 <span class="op">=</span> <span class="fl">0.6</span>,</span>
-<span>                                         superiority <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                                         odds_ratio <span class="op">=</span> <span class="fl">1</span>, power_at_pi1 <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>                                         power_at_pi2 <span class="op">=</span> <span class="fl">0.6</span>, superiority <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">result_sup</span><span class="op">$</span><span class="va">power</span></span>
 <span><span class="co">#&gt; [1] 80.409</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="diagnostic-plotting-the-size">Diagnostic: plotting the size<a class="anchor" aria-label="anchor" href="#diagnostic-plotting-the-size"></a>
 </h2>
-<p>The size of the MFET is found numerically, so it is worth confirming
-the optimiser has not mistaken a local peak for the global one.
-<code>local_size_data = TRUE</code> attaches the local size at 101
+<p>The size of the modified test is found numerically, so it is worth
+confirming the optimiser has not mistaken a local peak for the global
+one. <code>local_size_data = TRUE</code> attaches the local size at 101
 values of the nuisance parameter <span class="math inline">\(\pi_1\)</span>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">local.size.data</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">local.size.data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    pi1       size method</span></span>
 <span><span class="co">#&gt; 1 0.00 0.00000000   zoom</span></span>
 <span><span class="co">#&gt; 2 0.01 0.05426853   zoom</span></span>
@@ -224,16 +226,12 @@ values of the nuisance parameter <span class="math inline">\(\pi_1\)</span>:</p>
 <span><span class="co">#&gt; 4 0.03 1.25223277   zoom</span></span>
 <span><span class="co">#&gt; 5 0.04 2.16089076   zoom</span></span>
 <span><span class="co">#&gt; 6 0.05 2.96284034   zoom</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">size</span> <span class="op">~</span> <span class="va">pi1</span>, data <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">local.size.data</span>,</span>
-<span>     type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"firebrick"</span>, lwd <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>     xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">pi</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, ylab <span class="op">=</span> <span class="st">"Size (%)"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0.05</span> <span class="op">*</span> <span class="fl">100</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p>Plotting this data:</p>
 <p><img src="modifiedfisher_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Local size of the modified Fisher exact test against the nuisance parameter, with a reference line at alpha." width="700"></p>
 <p>The curve should stay at or below <span class="math inline">\(\alpha
 \times 100\%\)</span> throughout, touching it across a broad central
-region. That is the non-conservative behaviour behind the MFET’s power
-advantage.</p>
+region. This is the non-conservative behaviour behind the modified
+test’s power advantage.</p>
 </div>
 <div class="section level2">
 <h2 id="internals-gamma0-and-the-test-frame">Internals: gamma0 and the test frame<a class="anchor" aria-label="anchor" href="#internals-gamma0-and-the-test-frame"></a>
@@ -245,10 +243,10 @@ holds, for every total <span class="math inline">\(T\)</span>, the
 critical values <span class="math inline">\(c_1, c_2\)</span> and
 randomisation probabilities <span class="math inline">\(\gamma_1,
 \gamma_2\)</span>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">gamma0</span></span>
 <span><span class="co">#&gt; [1] 0.4950519</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">support.data</span><span class="op">)</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">support.data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   t c1 d1    gamma1 c2 d2    gamma2</span></span>
 <span><span class="co">#&gt; 1 0  0  0 0.0250000  0  1 0.0250000</span></span>
 <span><span class="co">#&gt; 2 1  0  0 0.0500000  1  2 0.0500000</span></span>
@@ -256,68 +254,69 @@ randomisation probabilities <span class="math inline">\(\gamma_1,
 <span><span class="co">#&gt; 4 3  0  0 0.1807246  3  4 0.2398077</span></span>
 <span><span class="co">#&gt; 5 4  0  0 0.3491271  4  4 0.5364119</span></span>
 <span><span class="co">#&gt; 6 5  0  1 0.6554145  4  5 0.0428649</span></span></code></pre></div>
-<p>The boundary outcomes the MFET rejects (but the conservative test
-does not) are exactly those with a randomisation probability above the
-threshold:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">support.data</span>, <span class="va">gamma1</span> <span class="op">&gt;</span> <span class="va">result</span><span class="op">$</span><span class="va">gamma0</span> <span class="op">|</span> <span class="va">gamma2</span> <span class="op">&gt;</span> <span class="va">result</span><span class="op">$</span><span class="va">gamma0</span><span class="op">)</span></span>
+<p>The boundary outcomes the modified test rejects (but the conservative
+test does not) are exactly those with a randomisation probability above
+the threshold:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">support.data</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gamma1</span> <span class="op">&gt;</span> <span class="va">result</span><span class="op">$</span><span class="va">gamma0</span> <span class="op">|</span> <span class="va">gamma2</span> <span class="op">&gt;</span> <span class="va">result</span><span class="op">$</span><span class="va">gamma0</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     t c1 d1    gamma1 c2 d2    gamma2</span></span>
-<span><span class="co">#&gt; 5   4  0  0 0.3491271  4  4 0.5364119</span></span>
-<span><span class="co">#&gt; 6   5  0  1 0.6554145  4  5 0.0428649</span></span>
-<span><span class="co">#&gt; 8   7  1  1 0.2337006  6  6 0.6111712</span></span>
-<span><span class="co">#&gt; 9   8  1  2 0.5169722  6  7 0.0852055</span></span>
-<span><span class="co">#&gt; 10  9  1  2 0.9803533  7  8 0.4001280</span></span>
-<span><span class="co">#&gt; 11 10  2  2 0.2198852  8  8 0.8747505</span></span>
-<span><span class="co">#&gt; 12 11  2  3 0.5174349  8  9 0.2309683</span></span>
-<span><span class="co">#&gt; 13 12  3  3 0.0072742  9  9 0.6657947</span></span>
-<span><span class="co">#&gt; 15 14  3  4 0.6087134 10 10 0.4950519</span></span>
-<span><span class="co">#&gt; 18 17  4  5 0.7890628 12 12 0.9331548</span></span>
-<span><span class="co">#&gt; 20 19  5  6 0.5165288 13 13 0.8006534</span></span>
-<span><span class="co">#&gt; 22 21  6  6 0.3163047 14 14 0.7126309</span></span>
-<span><span class="co">#&gt; 23 22  6  7 0.7373777 14 15 0.1989687</span></span>
-<span><span class="co">#&gt; 24 23  7  7 0.1586046 15 15 0.6565864</span></span>
-<span><span class="co">#&gt; 25 24  7  8 0.5268783 15 16 0.1606163</span></span>
-<span><span class="co">#&gt; 26 25  8  8 0.0283864 16 16 0.6253905</span></span>
-<span><span class="co">#&gt; 28 27  8  9 0.8235340 17 17 0.5960512</span></span>
-<span><span class="co">#&gt; 30 29  9 10 0.6356104 18 18 0.5778886</span></span>
-<span><span class="co">#&gt; 32 31 10 11 0.4841665 19 19 0.5749891</span></span>
-<span><span class="co">#&gt; 34 33 11 11 0.3592251 20 20 0.5863044</span></span>
-<span><span class="co">#&gt; 35 34 11 12 0.8468401 20 21 0.1424674</span></span>
-<span><span class="co">#&gt; 36 35 12 12 0.2544432 21 21 0.6113470</span></span>
-<span><span class="co">#&gt; 37 36 12 13 0.7024766 21 22 0.1600169</span></span>
-<span><span class="co">#&gt; 38 37 13 13 0.1656454 22 22 0.6501001</span></span>
-<span><span class="co">#&gt; 39 38 13 14 0.5826859 22 23 0.1870078</span></span>
-<span><span class="co">#&gt; 40 39 14 14 0.0900074 23 23 0.7029931</span></span>
-<span><span class="co">#&gt; 42 41 15 15 0.0255816 24 24 0.7709303</span></span>
-<span><span class="co">#&gt; 44 43 15 16 0.9406416 25 25 0.8491776</span></span>
-<span><span class="co">#&gt; 46 45 16 17 0.8491776 26 26 0.9406416</span></span>
-<span><span class="co">#&gt; 48 47 17 18 0.7709303 26 27 0.0255816</span></span>
-<span><span class="co">#&gt; 50 49 18 19 0.7029931 27 28 0.0900074</span></span>
-<span><span class="co">#&gt; 51 50 19 19 0.1870078 28 28 0.5826859</span></span>
-<span><span class="co">#&gt; 52 51 19 20 0.6501001 28 29 0.1656454</span></span>
-<span><span class="co">#&gt; 53 52 20 20 0.1600169 29 29 0.7024766</span></span>
-<span><span class="co">#&gt; 54 53 20 21 0.6113470 29 30 0.2544432</span></span>
-<span><span class="co">#&gt; 55 54 21 21 0.1424674 30 30 0.8468401</span></span>
-<span><span class="co">#&gt; 56 55 21 22 0.5863044 30 30 0.3592251</span></span>
-<span><span class="co">#&gt; 58 57 22 23 0.5749891 31 31 0.4841665</span></span>
-<span><span class="co">#&gt; 60 59 23 24 0.5778886 32 32 0.6356104</span></span>
-<span><span class="co">#&gt; 62 61 24 25 0.5960512 33 33 0.8235340</span></span>
-<span><span class="co">#&gt; 64 63 25 26 0.6253905 33 34 0.0283864</span></span>
-<span><span class="co">#&gt; 65 64 26 26 0.1606163 34 34 0.5268783</span></span>
-<span><span class="co">#&gt; 66 65 26 27 0.6565864 34 35 0.1586046</span></span>
-<span><span class="co">#&gt; 67 66 27 27 0.1989687 35 35 0.7373777</span></span>
-<span><span class="co">#&gt; 68 67 27 28 0.7126309 35 35 0.3163047</span></span>
-<span><span class="co">#&gt; 70 69 28 29 0.8006534 36 36 0.5165288</span></span>
-<span><span class="co">#&gt; 72 71 29 30 0.9331548 37 37 0.7890628</span></span>
-<span><span class="co">#&gt; 75 74 31 32 0.4950519 38 38 0.6087134</span></span>
-<span><span class="co">#&gt; 77 76 32 33 0.6657947 38 39 0.0072742</span></span>
-<span><span class="co">#&gt; 78 77 33 33 0.2309683 39 39 0.5174349</span></span>
-<span><span class="co">#&gt; 79 78 33 34 0.8747505 39 39 0.2198852</span></span>
-<span><span class="co">#&gt; 80 79 34 35 0.4001280 40 40 0.9803533</span></span>
-<span><span class="co">#&gt; 81 80 35 35 0.0852055 40 40 0.5169722</span></span>
-<span><span class="co">#&gt; 82 81 35 36 0.6111712 40 40 0.2337006</span></span>
-<span><span class="co">#&gt; 84 83 37 37 0.0428649 41 41 0.6554145</span></span>
-<span><span class="co">#&gt; 85 84 37 38 0.5364119 41 41 0.3491271</span></span></code></pre></div>
+<span><span class="co">#&gt; 1   4  0  0 0.3491271  4  4 0.5364119</span></span>
+<span><span class="co">#&gt; 2   5  0  1 0.6554145  4  5 0.0428649</span></span>
+<span><span class="co">#&gt; 3   7  1  1 0.2337006  6  6 0.6111712</span></span>
+<span><span class="co">#&gt; 4   8  1  2 0.5169722  6  7 0.0852055</span></span>
+<span><span class="co">#&gt; 5   9  1  2 0.9803533  7  8 0.4001280</span></span>
+<span><span class="co">#&gt; 6  10  2  2 0.2198852  8  8 0.8747505</span></span>
+<span><span class="co">#&gt; 7  11  2  3 0.5174349  8  9 0.2309683</span></span>
+<span><span class="co">#&gt; 8  12  3  3 0.0072742  9  9 0.6657947</span></span>
+<span><span class="co">#&gt; 9  14  3  4 0.6087134 10 10 0.4950519</span></span>
+<span><span class="co">#&gt; 10 17  4  5 0.7890628 12 12 0.9331548</span></span>
+<span><span class="co">#&gt; 11 19  5  6 0.5165288 13 13 0.8006534</span></span>
+<span><span class="co">#&gt; 12 21  6  6 0.3163047 14 14 0.7126309</span></span>
+<span><span class="co">#&gt; 13 22  6  7 0.7373777 14 15 0.1989687</span></span>
+<span><span class="co">#&gt; 14 23  7  7 0.1586046 15 15 0.6565864</span></span>
+<span><span class="co">#&gt; 15 24  7  8 0.5268783 15 16 0.1606163</span></span>
+<span><span class="co">#&gt; 16 25  8  8 0.0283864 16 16 0.6253905</span></span>
+<span><span class="co">#&gt; 17 27  8  9 0.8235340 17 17 0.5960512</span></span>
+<span><span class="co">#&gt; 18 29  9 10 0.6356104 18 18 0.5778886</span></span>
+<span><span class="co">#&gt; 19 31 10 11 0.4841665 19 19 0.5749891</span></span>
+<span><span class="co">#&gt; 20 33 11 11 0.3592251 20 20 0.5863044</span></span>
+<span><span class="co">#&gt; 21 34 11 12 0.8468401 20 21 0.1424674</span></span>
+<span><span class="co">#&gt; 22 35 12 12 0.2544432 21 21 0.6113470</span></span>
+<span><span class="co">#&gt; 23 36 12 13 0.7024766 21 22 0.1600169</span></span>
+<span><span class="co">#&gt; 24 37 13 13 0.1656454 22 22 0.6501001</span></span>
+<span><span class="co">#&gt; 25 38 13 14 0.5826859 22 23 0.1870078</span></span>
+<span><span class="co">#&gt; 26 39 14 14 0.0900074 23 23 0.7029931</span></span>
+<span><span class="co">#&gt; 27 41 15 15 0.0255816 24 24 0.7709303</span></span>
+<span><span class="co">#&gt; 28 43 15 16 0.9406416 25 25 0.8491776</span></span>
+<span><span class="co">#&gt; 29 45 16 17 0.8491776 26 26 0.9406416</span></span>
+<span><span class="co">#&gt; 30 47 17 18 0.7709303 26 27 0.0255816</span></span>
+<span><span class="co">#&gt; 31 49 18 19 0.7029931 27 28 0.0900074</span></span>
+<span><span class="co">#&gt; 32 50 19 19 0.1870078 28 28 0.5826859</span></span>
+<span><span class="co">#&gt; 33 51 19 20 0.6501001 28 29 0.1656454</span></span>
+<span><span class="co">#&gt; 34 52 20 20 0.1600169 29 29 0.7024766</span></span>
+<span><span class="co">#&gt; 35 53 20 21 0.6113470 29 30 0.2544432</span></span>
+<span><span class="co">#&gt; 36 54 21 21 0.1424674 30 30 0.8468401</span></span>
+<span><span class="co">#&gt; 37 55 21 22 0.5863044 30 30 0.3592251</span></span>
+<span><span class="co">#&gt; 38 57 22 23 0.5749891 31 31 0.4841665</span></span>
+<span><span class="co">#&gt; 39 59 23 24 0.5778886 32 32 0.6356104</span></span>
+<span><span class="co">#&gt; 40 61 24 25 0.5960512 33 33 0.8235340</span></span>
+<span><span class="co">#&gt; 41 63 25 26 0.6253905 33 34 0.0283864</span></span>
+<span><span class="co">#&gt; 42 64 26 26 0.1606163 34 34 0.5268783</span></span>
+<span><span class="co">#&gt; 43 65 26 27 0.6565864 34 35 0.1586046</span></span>
+<span><span class="co">#&gt; 44 66 27 27 0.1989687 35 35 0.7373777</span></span>
+<span><span class="co">#&gt; 45 67 27 28 0.7126309 35 35 0.3163047</span></span>
+<span><span class="co">#&gt; 46 69 28 29 0.8006534 36 36 0.5165288</span></span>
+<span><span class="co">#&gt; 47 71 29 30 0.9331548 37 37 0.7890628</span></span>
+<span><span class="co">#&gt; 48 74 31 32 0.4950519 38 38 0.6087134</span></span>
+<span><span class="co">#&gt; 49 76 32 33 0.6657947 38 39 0.0072742</span></span>
+<span><span class="co">#&gt; 50 77 33 33 0.2309683 39 39 0.5174349</span></span>
+<span><span class="co">#&gt; 51 78 33 34 0.8747505 39 39 0.2198852</span></span>
+<span><span class="co">#&gt; 52 79 34 35 0.4001280 40 40 0.9803533</span></span>
+<span><span class="co">#&gt; 53 80 35 35 0.0852055 40 40 0.5169722</span></span>
+<span><span class="co">#&gt; 54 81 35 36 0.6111712 40 40 0.2337006</span></span>
+<span><span class="co">#&gt; 55 83 37 37 0.0428649 41 41 0.6554145</span></span>
+<span><span class="co">#&gt; 56 84 37 38 0.5364119 41 41 0.3491271</span></span></code></pre></div>
 <p>The mechanics of this are covered in <a href="overview-of-algorithm.html">Overview of algorithm</a>, and the
 size and power of the comparison tests in <a href="reproducing-paper-figures.html">Reproducing the paper’s
 figures</a>.</p>

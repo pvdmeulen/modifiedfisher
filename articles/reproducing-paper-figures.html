@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Reproducing the paper's size and power figures • modifiedfisher</title>
+<title>Reproducing the paper's figures • modifiedfisher</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -23,7 +23,7 @@
 <link href="../deps/Fira_Code-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Reproducing the paper's size and power figures">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Reproducing the paper's figures">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -47,9 +47,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison with other exact tests</a></li>
+<li><a class="dropdown-item" href="../articles/background-and-comparison.html">Background and comparison</a></li>
     <li><a class="dropdown-item" href="../articles/overview-of-algorithm.html">Overview of algorithm</a></li>
-    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's size and power figures</a></li>
+    <li><a class="dropdown-item" href="../articles/reproducing-paper-figures.html">Reproducing the paper's figures</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -71,7 +71,10 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Reproducing the paper's size and power figures</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Reproducing the paper's figures</h1>
+            <h3 data-toc-skip class="subtitle">Comparing the size and
+power of the modified test against alternatives with the use of helper
+functions</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pvdmeulen/modifiedfisher/blob/main/vignettes/articles/reproducing-paper-figures.Rmd" class="external-link"><code>vignettes/articles/reproducing-paper-figures.Rmd</code></a></small>
@@ -82,22 +85,21 @@
     
 <p>This article rebuilds the size and power figures of van der Meulen,
 Raymond and van der Meulen (2021) from package functions alone, and the
-same helpers can be pointed at your own design. For what the tests are
-and why they differ, see the <a href="background-and-comparison.html">Background and comparison</a>
-article.</p>
-<p>The size is maximised over the nuisance parameter at every grid
-point, so larger sample sizes are slow. The chunks below use coarse
-grids and modest <code>m</code>, <code>n</code> by default; increase
-both to match a specific figure exactly.</p>
+same helpers defined here can be pointed at your own design. For an
+overview of the function’s algorithm, see the <a href="overview-of-algorithm.html">Overview of algorithm</a> article.</p>
+<p>The size is maximised over the nuisance parameter <span class="math inline">\(\pi_1\)</span> at every grid point, so larger
+sample sizes are slow. For that reason, the code and plots below use
+coarse grids by default; increase this grid to match a specific figure
+more closely.</p>
 <div class="section level2">
 <h2 id="helper-size-curves">Helper: size curves<a class="anchor" aria-label="anchor" href="#helper-size-curves"></a>
 </h2>
 <p>Size is a function of the nuisance parameter <span class="math inline">\(\pi_1\)</span>. The helper evaluates all four
 tests over a grid of <span class="math inline">\(\pi_1\)</span> for
-given sample sizes and null odds ratio, returning a tidy data frame of
-percentages. It needs the optimal <span class="math inline">\(\gamma_0\)</span> first; the conservative test is
-just the modified test with <span class="math inline">\(\gamma_0 =
-1\)</span> (no boundary outcome ever rejected).</p>
+given sample sizes and null odds ratio, returning a data frame of size
+percentages. It needs the optimal <span class="math inline">\(\gamma_0\)</span> first. Note that the
+conservative test is the modified test with <span class="math inline">\(\gamma_0 = 1\)</span> (i.e. no boundary outcome
+ever rejected).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">compute_size_curves</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">m</span>, <span class="va">n</span>, <span class="va">alpha</span> <span class="op">=</span> <span class="fl">0.05</span>, <span class="va">or</span> <span class="op">=</span> <span class="fl">1</span>, <span class="va">precision</span> <span class="op">=</span> <span class="fl">1e-3</span>,</span>
 <span>                                <span class="va">p0_grid</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span>, by <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>,</span>
@@ -205,8 +207,8 @@ level α drawn as a dashed reference line on the size plot.</p>
 <h2 id="size-figure">Size figure<a class="anchor" aria-label="anchor" href="#size-figure"></a>
 </h2>
 <p>We use <span class="math inline">\(m = 27\)</span>, <span class="math inline">\(n = 21\)</span> for the null <span class="math inline">\(\mathrm{OR} = 1\)</span>, which corresponds to
-Figure 2(a) in the paper. The modified test (solid) should track just
-under the dashed α line across the whole range; the conservative test
+Figure 2(a) in the paper. The modified test (solid) tracks just under
+the dashed α line across the whole range, while the conservative test
 sits well below it.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
@@ -226,7 +228,7 @@ sits well below it.</p>
 <span>       subtitle <span class="op">=</span> <span class="st">"m = 27, n = 21, H0: OR = 1"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/figures-size-figure-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="figures/reproduce-size-figure-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="power-figure">Power figure<a class="anchor" aria-label="anchor" href="#power-figure"></a>
@@ -251,7 +253,7 @@ across the alternative space.</p>
 <span>       subtitle <span class="op">=</span> <span class="st">"m = n = 30, pi1 = 0.2, H0: OR = 1"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/figures-power-figure-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="figures/reproduce-power-figure-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="matching-a-specific-figure">Matching a specific figure<a class="anchor" aria-label="anchor" href="#matching-a-specific-figure"></a>
@@ -260,19 +262,68 @@ across the alternative space.</p>
 <code>n</code> to that figure’s values, use a fine grid (the paper steps
 <span class="math inline">\(\pi_1\)</span> in 0.01), and for the OR = 2
 panels pass <code>or = 2</code> to both helpers. For example, Figure
-3(a) is <code>m = 65</code>, <code>n = 71</code>, <code>or = 1</code>.
-Be aware this is slow: the paper reports CPU times of roughly a minute
-at <span class="math inline">\(N = 50\)</span> rising to an hour at
-<span class="math inline">\(N = 300\)</span>, because the size is
-re-maximised over the nuisance parameter at every grid point. For a
-quick check, keep the coarse grids above; for a publication-quality
-curve, run the fine grid once and cache the result.</p>
+3(a) is <code>m = 65</code>, <code>n = 71</code>,
+<code>or = 1</code>.</p>
+<div class="section level3">
+<h3 id="speed-gain-over-the-sas-macro">Speed gain over the SAS macro<a class="anchor" aria-label="anchor" href="#speed-gain-over-the-sas-macro"></a>
+</h3>
+<p>The original paper reports CPU times of roughly a minute at <span class="math inline">\(N = 50\)</span> rising to an hour at <span class="math inline">\(N = 300\)</span>, mainly because the size is
+re-maximised over the nuisance parameter at every grid point in the SAS
+macro.</p>
+<p>The R function, using these same values, takes:</p>
+<ul>
+<li>roughly 1.5 seconds when <span class="math inline">\(N = 20\)</span>
+(i.e. <code>p0_grid = seq(0.05, 0.95, by = 0.05)</code>),</li>
+<li>roughly 3.6 seconds when <span class="math inline">\(N =
+50\)</span>, and</li>
+<li>roughly 6.8 seconds when <span class="math inline">\(N =
+100\)</span>, and</li>
+<li>roughly 20.2 seconds when <span class="math inline">\(N =
+300\)</span>.</li>
+</ul>
+<p>The difference in speed comes primarily from the rejection matrix
+constructed in <code>.build_rejection_matrix()</code>. In the SAS macro,
+the rejection rule is re-evaluated for every table <span class="math inline">\((u, T)\)</span> at each grid point of <span class="math inline">\(\pi_1\)</span>, as mentioned above. The R
+implementation instead builds the <span class="math inline">\((m+1)
+\times (n+1)\)</span> rejection matrix <span class="math inline">\(R\)</span> once per <span class="math inline">\(\gamma_0\)</span> candidate, then evaluates the
+local size at any <span class="math inline">\(\pi_1\)</span> as the
+bilinear form <span class="math inline">\(p_u^\top R\, p_v\)</span>,
+where <span class="math inline">\(p_u\)</span> and <span class="math inline">\(p_v\)</span> are the binomial probability vectors
+for Groups A and B. This reduces each size evaluation to a single
+matrix-vector multiplication, speeding up the process considerably.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Figure 3(a) of the paper (slow):</span></span>
 <span><span class="va">size_fig3a</span> <span class="op">&lt;-</span> <span class="fu">compute_size_curves</span><span class="op">(</span></span>
 <span>  m <span class="op">=</span> <span class="fl">65</span>, n <span class="op">=</span> <span class="fl">71</span>, or <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  p0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.99</span>, by <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate time taken in R:</span></span>
+<span><span class="co"># microbenchmark::microbenchmark(compute_size_curves(m = 65, n = 71, or = 1, p0_grid = seq(0.01, 0.99, by = 0.05)))</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="errors-in-table-2">Errors in Table 2<a class="anchor" aria-label="anchor" href="#errors-in-table-2"></a>
+</h2>
+<p>Two typos were identified in Table 2 of van der Meulen, Raymond and
+van der Meulen (2021) while verifying the package against the worked
+examples. The <code>modifiedfisher</code> package produces the correct
+numbers in both cases.</p>
+<ul>
+<li><p><strong>Example 1 (5/12 vs 7/11): lower confidence limits are
+missing a leading zero.</strong> The correct lower limit for the
+modified test is 0.0716, not the printed 0.716 (and likewise 0.076 not
+0.760 for Woolf, and 0.055 not 0.550 for Proc FREQ). The misprint is
+also self-contradictory: a test-based interval of (0.716, 2.210) cannot
+exclude its own point estimate of 0.408.</p></li>
+<li><p><strong>Example 4: the success count for Group A should be <span class="math inline">\(u = 71\)</span>, not 72.</strong> The heading
+“72/128 vs 58/142” is incorrect. With <span class="math inline">\(u =
+71\)</span>, the estimate (1.804), p-value (0.0175), and confidence
+interval (1.108, 2.936) all match the printed values exactly; with <span class="math inline">\(u = 72\)</span> none of them do.</p></li>
+</ul>
+<p>Examples 2 and 3 are correct as printed. Both typos were confirmed
+using closed-form Woolf limits and base R’s <code><a href="https://rdrr.io/r/stats/fisher.test.html" class="external-link">fisher.test()</a></code>,
+neither of which relies on any package code.</p>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
