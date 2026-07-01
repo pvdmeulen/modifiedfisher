@@ -10,7 +10,7 @@ output:
 
 <!-- badges: start -->
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental)
-[![R-CMD-check](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/pvdmeulen/modifiedfisher/branch/main/graph/badge.svg?token=<token>)](https://codecov.io/gh/pvdmeulen/modifiedfisher)
 <!-- badges: end -->
 
@@ -206,17 +206,9 @@ Full documentation is available on the package website:
 - [Background and comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.html): why the
   test exists, and a comparison with `fisher.test()` and `exact2x2::fisher.exact()` (both similar to SAS PROC Freq).
 - [Overview of algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.html): a step by step overview of how the test is built in R.
-- [Reproducing the paper's figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.html):
-  rebuilding the size and power curves, and adapting them to your own design.
+- [Reproducing the paper's figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.html): rebuilding the size and power curves, and adapting them to your own design.
 
-Broadly the same material is in the package vignette, which covers:
-
-- Testing a null hypothesis other than OR = 1
-- Controlling numerical precision and choosing the optimisation method
-- Power calculations, including for superiority testing
-- Accessing the test frame (critical values and randomisation probabilities)
-- Reproducing the size and power comparison plots from the paper using the
-  exported `local_size_*()` and `power_*()` functions
+The 'Get Started' materials are also available in the package vignette:
 
 ```{r vignette, echo = TRUE, eval = FALSE}
 vignette("modifiedfisher")

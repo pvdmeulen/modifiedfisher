@@ -29,9 +29,17 @@ Meulen (2021), building on van der Meulen (2008).
 
 ## Installation
 
-```{r install, eval = FALSE}
+`modifiedfisher` is not yet on CRAN. Install the current development version
+from GitHub using `devtools`:
+ 
+```r
+# install.packages("devtools")
 devtools::install_github("pvdmeulen/modifiedfisher")
 ```
+ 
+A CRAN submission is planned once the package clears the remaining `R CMD check`
+notes. In regulated or locked-down environments where non-CRAN packages cannot
+be installed, contact the maintainer for a source tarball.
 
 ## Usage
 
@@ -49,7 +57,7 @@ res$conf.int    # agreeing (1 - alpha) confidence interval
 
 ## Learn more
 
-- [Introduction to modifiedfisher](articles/modifiedfisher.html): an introduction to `modified_fisher_exact_test()`, its arguments, power, and diagnostics.
+- [Get started](articles/modifiedfisher.html): an introduction to `modified_fisher_exact_test()`, its arguments, power, and diagnostics.
 - [Background and comparison](articles/background-and-comparison.html): why the
   test exists, and a comparison with `fisher.test()` and
   `exact2x2::fisher.exact()` (both similar to SAS PROC Freq).
