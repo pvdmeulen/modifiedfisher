@@ -159,47 +159,6 @@ so the two agree - making it a suitable conservative comparator to
 </h2>
 <p>We use the paper’s Example 2: 13 of 41 in Group A versus 6 of 47 in
 Group B, testing the null odds ratio of 1 at α = 0.05.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13</span>, <span class="fl">28</span>,</span>
-<span>                 <span class="fl">6</span>, <span class="fl">41</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Group   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>,</span>
-<span>                              Outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Success"</span>, <span class="st">"Failure"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">mfe</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test</a></span><span class="op">(</span>u <span class="op">=</span> <span class="fl">13</span>, m <span class="op">=</span> <span class="fl">41</span>, v <span class="op">=</span> <span class="fl">6</span>, n <span class="op">=</span> <span class="fl">47</span>,</span>
-<span>                                  odds_ratio <span class="op">=</span> <span class="fl">1</span>, power <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">ft</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/fisher.test.html" class="external-link">fisher.test</a></span><span class="op">(</span><span class="va">tab</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
-<span>  Test       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Modified FE (this package)"</span>, <span class="st">"fisher.test() (base R)"</span><span class="op">)</span>,</span>
-<span>  `OR est.`  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">mfe</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">ft</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  `p-value`  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mfe</span><span class="op">$</span><span class="va">p.value</span>, <span class="va">ft</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span>,</span>
-<span>  `CI lower` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mfe</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">ft</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>  `CI upper` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mfe</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">ft</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># exact2x2 rows are added only if that (Suggests) package is installed.</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"exact2x2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">fe_min</span> <span class="op">&lt;-</span> <span class="fu">exact2x2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/exact2x2/man/exact2x2.html" class="external-link">fisher.exact</a></span><span class="op">(</span><span class="va">tab</span>, tsmethod <span class="op">=</span> <span class="st">"minlike"</span><span class="op">)</span></span>
-<span>  <span class="va">fe_cen</span> <span class="op">&lt;-</span> <span class="fu">exact2x2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/exact2x2/man/exact2x2.html" class="external-link">fisher.exact</a></span><span class="op">(</span><span class="va">tab</span>, tsmethod <span class="op">=</span> <span class="st">"central"</span><span class="op">)</span></span>
-<span>  <span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span></span>
-<span>    <span class="va">results</span>,</span>
-<span>    <span class="fu">tibble</span><span class="op">(</span></span>
-<span>      Test       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fisher.exact() minlike (exact2x2)"</span>,</span>
-<span>                     <span class="st">"fisher.exact() central (exact2x2)"</span><span class="op">)</span>,</span>
-<span>      `OR est.`  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">fe_min</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">fe_cen</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      `p-value`  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">fe_min</span><span class="op">$</span><span class="va">p.value</span>, <span class="va">fe_cen</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span>,</span>
-<span>      `CI lower` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">fe_min</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">fe_cen</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>      `CI upper` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">fe_min</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">fe_cen</span><span class="op">$</span><span class="va">conf.int</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Does the 95% interval still contain the null odds ratio of 1?</span></span>
-<span><span class="va">results</span><span class="op">$</span><span class="va">`OR = 1 in CI?`</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span></span>
-<span>  <span class="va">results</span><span class="op">$</span><span class="va">`CI lower`</span> <span class="op">&lt;=</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">results</span><span class="op">$</span><span class="va">`CI upper`</span> <span class="op">&gt;=</span> <span class="fl">1</span>, <span class="st">"yes"</span>, <span class="st">"no"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">results</span>, digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="41%">
@@ -273,25 +232,6 @@ points its p-value and interval in opposite directions.</li>
 </h2>
 <p>Strict size control here means the actual size never exceeds α for
 any nuisance parameter value.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">properties</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
-<span>  Test <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Randomised FE (UMPU)"</span>,</span>
-<span>           <span class="st">"Conservative / probability-based (base fisher.test, Proc FREQ)"</span>,</span>
-<span>           <span class="st">"exact2x2 fisher.exact, minlike"</span>,</span>
-<span>           <span class="st">"Woolf asymptotic"</span>,</span>
-<span>           <span class="st">"Modified FE (this package)"</span><span class="op">)</span>,</span>
-<span>  `Strict size control?` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"yes (size = α exactly)"</span>,</span>
-<span>                             <span class="st">"yes (but conservative)"</span>,</span>
-<span>                             <span class="st">"yes (but conservative)"</span>,</span>
-<span>                             <span class="st">"no (can exceed α)"</span>,</span>
-<span>                             <span class="st">"yes (close to α)"</span><span class="op">)</span>,</span>
-<span>  `Non-randomised?` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>, <span class="st">"yes"</span>, <span class="st">"yes"</span>, <span class="st">"yes"</span>, <span class="st">"yes"</span><span class="op">)</span>,</span>
-<span>  `p-value and CI agree?` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"not usable"</span>, <span class="st">"no"</span>, <span class="st">"yes"</span>, <span class="st">"yes"</span>, <span class="st">"yes"</span><span class="op">)</span>,</span>
-<span>  `OR estimate` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"conditional MLE"</span>, <span class="st">"conditional MLE"</span>, <span class="st">"conditional MLE"</span>,</span>
-<span>                   <span class="st">"sample OR"</span>, <span class="st">"sample OR"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">properties</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="45%">
@@ -357,8 +297,28 @@ power of these tests are compared across the nuisance parameter in <a href="repr
 figures</a>.</p>
 </div>
 <div class="section level2">
+<h2 id="unconditional-exact-tests">Unconditional exact tests<a class="anchor" aria-label="anchor" href="#unconditional-exact-tests"></a>
+</h2>
+<p>The tests compared above (Fisher’s, Woolf’s, and the modified test)
+are all <strong>conditional</strong>: they fix the total number of
+successes <span class="math inline">\(T = u + v\)</span> and evaluate
+the extremity of the observed split.</p>
+<p>A separate class of <strong>unconditional exact tests</strong> does
+not condition on <span class="math inline">\(T\)</span>. These fix only
+the sample sizes <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> and work with the full sample space of
+all possible <span class="math inline">\((u, v)\)</span> pairs. Two key
+tests in this class are Barnard’s and Boschloo’s tests.</p>
+<p>The power advantage of unconditional tests over the modified Fisher
+exact test is largest when only the sample sizes <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> are fixed by design (the typical
+setting in a randomised trial), since conditioning on <span class="math inline">\(T\)</span> in that setting restricts the sample
+space without a design-based justification. The modified test’s
+advantage over the standard Fisher test holds within the conditional
+framework.</p>
+</div>
+<div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
+<p><strong>This ‘modified’ Fisher exact test:</strong></p>
 <p>van der Meulen EA, Raymond K, van der Meulen PJ (2021).
 <em>Consistent Confidence Limits, P Values, and Power of the
 Non-Conservative, Size-α Modified Fisher Exact Test.</em> Journal of
@@ -366,9 +326,10 @@ Biostatistics and Biometric Applications 6(1):102.</p>
 <p>van der Meulen EA (2008). A Nonrandomized, Nonconservative Version of
 the Fisher Exact Test. <em>Communications in Statistics - Theory and
 Methods</em>, 37:699-708.</p>
+<p><strong>The <code>exact2x2</code> package is a useful resource for
+comparison tests:</strong></p>
 <p>Fay MP (2010). Confidence intervals that match Fisher’s exact or
-Blaker’s exact tests. <em>Biostatistics</em> 11(2):373-374. (The
-<code>exact2x2</code> package.)</p>
+Blaker’s exact tests. <em>Biostatistics</em> 11(2):373-374.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

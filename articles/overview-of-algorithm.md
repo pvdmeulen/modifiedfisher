@@ -201,6 +201,49 @@ result$conf.int
 result$local.size.data
 ```
 
+## Numerical limits and edge cases
+
+**Degenerate tables.** If \\u = 0\\ or \\u = m\\ (all failures or all
+successes in one group), the test still runs but the confidence interval
+may be one-sided or very wide. The same applies when \\v = 0\\ or \\v =
+n\\. These are not errors; they reflect genuine uncertainty given the
+data.
+
+**Extreme odds ratios.** Testing a null odds ratio far from the data
+(e.g. `odds_ratio = 100` when the observed OR is near 1) is valid but
+may push the bisection searches to their limits. Set `precision` smaller
+(e.g. `1e-4`) if the returned confidence limits look imprecise, and
+check that the returned p-value and confidence interval are still
+consistent.
+
+**Very small tables.** The algorithm requires that \\m + n \geq 2\\. For
+very small tables (e.g. \\m = n = 2\\), the test frame may have few rows
+and the optimised \\\gamma_0\\ may be 0 (no borderline rejections),
+making the modified test identical to the conservative test. Check
+`result$gamma0` and `result$support.data` to confirm the threshold is
+non-trivial.
+
+**Very large tables.** Computation time grows with \\(m+1)(n+1)\\
+because the rejection matrix has that many entries. The `power = FALSE`
+and `conf_int = FALSE` flags skip optional steps and reduce runtime when
+only the p-value is needed.
+
+**Grid density and size maximisation.** The dominant cost in most calls
+is the maximisation of the local size over \\\pi_1\\. This is controlled
+by the `maze` and `zoom_iter` arguments (for `method = "zoom"`). A
+denser \\\pi_1\\ grid (equivalent to a larger \\N\\ in the paper’s
+notation) gives a more reliable size estimate but takes proportionally
+longer: at \\m = 65\\, \\n = 71\\ the function takes roughly 1.5 seconds
+at \\N = 20\\ grid points and around 20 seconds at \\N = 300\\. The
+default settings (`maze = 10`, `zoom_iter = 6`) are adequate for most
+purposes.
+
+**Precision.** The default `precision = 1e-3` is adequate for most
+purposes. Results are reported to three decimal places, matching the
+paper. For simulation studies or comparisons requiring finer agreement,
+use `precision = 1e-4` or smaller, at the cost of additional
+computation.
+
 ## Reference
 
 van der Meulen EA, Raymond K, van der Meulen PJ (2021). *Consistent

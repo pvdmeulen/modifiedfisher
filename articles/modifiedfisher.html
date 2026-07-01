@@ -140,6 +140,22 @@ rejected at level <code>alpha</code> if and only if it falls outside
 p-values and intervals are built separately and can conflict. The <a href="background-and-comparison.html">Background and comparison</a>
 article shows a worked case.</p>
 </div>
+<div class="section level3">
+<h3 id="scope-and-limitations">Scope and limitations<a class="anchor" aria-label="anchor" href="#scope-and-limitations"></a>
+</h3>
+<p><code><a href="../reference/modified_fisher_exact_test.html">modified_fisher_exact_test()</a></code> implements a two-sided test
+only. The null hypothesis is <span class="math inline">\(H_0\)</span>:
+OR = <code>odds_ratio</code>, and the alternative is two-sided: OR <span class="math inline">\(\neq\)</span> <code>odds_ratio</code>. One-sided
+p-values and one-sided confidence bounds are not currently returned.</p>
+<p>For superiority trials where the direction of the effect is specified
+in advance, the <code>superiority = TRUE</code> argument adjusts the
+<strong>power calculation</strong> to count only tables where the
+observed rate in group 2 exceeds that in group 1. This does not change
+the test or p-value; it narrows the power evaluation to the relevant
+region.</p>
+<p>Formal one-sided inference (a one-sided p-value and a one-sided
+confidence bound) is outside the current scope of the package.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="a-different-null-hypothesis">A different null hypothesis<a class="anchor" aria-label="anchor" href="#a-different-null-hypothesis"></a>
@@ -211,13 +227,81 @@ effect sizes:</p>
 <span><span class="co">#&gt; [1] 80.409</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="sample-size-planning">Sample size planning<a class="anchor" aria-label="anchor" href="#sample-size-planning"></a>
+</h2>
+<p>The power functions can be inverted to answer the planning question:
+given a target power, what sample sizes are needed? There is no
+closed-form answer, so the simplest approach is a grid search over
+candidate values of <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span>.</p>
+<p>The example below finds the smallest equal-allocation sample size
+(<span class="math inline">\(m = n\)</span>) needed to achieve 80% power
+against <span class="math inline">\(\pi_1 = 0.3\)</span>, <span class="math inline">\(\pi_2 = 0.6\)</span> under <span class="math inline">\(H_0\)</span>: OR = 1 at <span class="math inline">\(\alpha = 0.05\)</span>:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">target_power</span> <span class="op">&lt;-</span> <span class="fl">80</span>   <span class="co"># percent</span></span>
+<span><span class="va">pi1</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
+<span><span class="va">pi2</span> <span class="op">&lt;-</span> <span class="fl">0.6</span></span>
+<span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
+<span> </span>
+<span><span class="co"># Search over candidate n = m from 10 to 100</span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, power <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span> </span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">n_candidate</span> <span class="kw">in</span> <span class="fl">10</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="va">df_candidate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/construct_test_frame.html">construct_test_frame</a></span><span class="op">(</span></span>
+<span>    .odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="va">n_candidate</span>, .n <span class="op">=</span> <span class="va">n_candidate</span>,</span>
+<span>    .alpha <span class="op">=</span> <span class="va">alpha</span>, .precision <span class="op">=</span> <span class="fl">1e-3</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">g0_candidate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/optimise_gamma0.html">optimise_gamma0</a></span><span class="op">(</span></span>
+<span>    .odds_ratio <span class="op">=</span> <span class="fl">1</span>, .m <span class="op">=</span> <span class="va">n_candidate</span>, .n <span class="op">=</span> <span class="va">n_candidate</span>,</span>
+<span>    .alpha <span class="op">=</span> <span class="va">alpha</span>, .precision <span class="op">=</span> <span class="fl">1e-3</span>,</span>
+<span>    .method <span class="op">=</span> <span class="st">"zoom"</span>, .maze <span class="op">=</span> <span class="fl">10</span>, .zoom_iter <span class="op">=</span> <span class="fl">6</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">pwr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/power_modified.html">power_modified</a></span><span class="op">(</span></span>
+<span>    p          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">pi1</span>, <span class="va">pi2</span><span class="op">)</span>,</span>
+<span>    .gamma0    <span class="op">=</span> <span class="va">g0_candidate</span>,</span>
+<span>    .odds_ratio <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    .m         <span class="op">=</span> <span class="va">n_candidate</span>,</span>
+<span>    .n         <span class="op">=</span> <span class="va">n_candidate</span>,</span>
+<span>    .df        <span class="op">=</span> <span class="va">df_candidate</span>,</span>
+<span>    .alpha     <span class="op">=</span> <span class="va">alpha</span>,</span>
+<span>    .precision <span class="op">=</span> <span class="fl">1e-3</span>,</span>
+<span>    .superiority <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">results</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n_candidate</span>, power <span class="op">=</span> <span class="va">pwr</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Stop when desired power is reached:</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">pwr</span> <span class="op">*</span> <span class="fl">100</span> <span class="op">&gt;=</span> <span class="va">target_power</span><span class="op">)</span> <span class="kw">break</span></span>
+<span>  </span>
+<span><span class="op">}</span></span>
+<span> </span>
+<span><span class="co"># Show last three rows:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">results</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     n    power</span></span>
+<span><span class="co">#&gt; 33 42 77.75243</span></span>
+<span><span class="co">#&gt; 34 43 79.13426</span></span>
+<span><span class="co">#&gt; 35 44 80.10992</span></span></code></pre></div>
+<p>The smallest <span class="math inline">\(n\)</span> achieving 80%
+power is 44 per group, giving 80.1% power. The search stops at the first
+<span class="math inline">\(n\)</span> that crosses the threshold;
+inspect <code>results</code> to see how power grows with sample
+size.</p>
+<p>For unequal allocation, replace the loop with a grid over pairs <span class="math inline">\((m, n)\)</span>. Note that the power calculation
+re-runs the full test optimisation at each candidate sample size, so the
+search is slow for large candidate ranges. A coarse first pass (step
+size 5 or 10) followed by a fine search around the crossing point is
+more efficient.</p>
+</div>
+<div class="section level2">
 <h2 id="diagnostic-plotting-the-size">Diagnostic: plotting the size<a class="anchor" aria-label="anchor" href="#diagnostic-plotting-the-size"></a>
 </h2>
 <p>The size of the modified test is found numerically, so it is worth
 confirming the optimiser has not mistaken a local peak for the global
 one. <code>local_size_data = TRUE</code> attaches the local size at 101
 values of the nuisance parameter <span class="math inline">\(\pi_1\)</span>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">local.size.data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    pi1       size method</span></span>
 <span><span class="co">#&gt; 1 0.00 0.00000000   zoom</span></span>
@@ -243,7 +327,7 @@ holds, for every total <span class="math inline">\(T\)</span>, the
 critical values <span class="math inline">\(c_1, c_2\)</span> and
 randomisation probabilities <span class="math inline">\(\gamma_1,
 \gamma_2\)</span>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">gamma0</span></span>
 <span><span class="co">#&gt; [1] 0.4950519</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">support.data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -257,7 +341,7 @@ randomisation probabilities <span class="math inline">\(\gamma_1,
 <p>The boundary outcomes the modified test rejects (but the conservative
 test does not) are exactly those with a randomisation probability above
 the threshold:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">support.data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gamma1</span> <span class="op">&gt;</span> <span class="va">result</span><span class="op">$</span><span class="va">gamma0</span> <span class="op">|</span> <span class="va">gamma2</span> <span class="op">&gt;</span> <span class="va">result</span><span class="op">$</span><span class="va">gamma0</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     t c1 d1    gamma1 c2 d2    gamma2</span></span>

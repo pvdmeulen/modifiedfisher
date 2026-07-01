@@ -87,53 +87,6 @@ to `modifiedfisher`.
 We use the paper’s Example 2: 13 of 41 in Group A versus 6 of 47 in
 Group B, testing the null odds ratio of 1 at α = 0.05.
 
-``` r
-
-tab <- matrix(c(13, 28,
-                 6, 41), nrow = 2, byrow = TRUE,
-              dimnames = list(Group   = c("A", "B"),
-                              Outcome = c("Success", "Failure")))
-
-mfe <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
-                                  odds_ratio = 1, power = FALSE)
-ft <- fisher.test(tab)
-```
-
-``` r
-
-results <- tibble(
-  Test       = c("Modified FE (this package)", "fisher.test() (base R)"),
-  `OR est.`  = c(unname(mfe$estimate), unname(ft$estimate)),
-  `p-value`  = c(mfe$p.value, ft$p.value),
-  `CI lower` = c(mfe$conf.int[1], ft$conf.int[1]),
-  `CI upper` = c(mfe$conf.int[2], ft$conf.int[2])
-)
-
-# exact2x2 rows are added only if that (Suggests) package is installed.
-if (requireNamespace("exact2x2", quietly = TRUE)) {
-  fe_min <- exact2x2::fisher.exact(tab, tsmethod = "minlike")
-  fe_cen <- exact2x2::fisher.exact(tab, tsmethod = "central")
-  results <- bind_rows(
-    results,
-    tibble(
-      Test       = c("fisher.exact() minlike (exact2x2)",
-                     "fisher.exact() central (exact2x2)"),
-      `OR est.`  = c(unname(fe_min$estimate), unname(fe_cen$estimate)),
-      `p-value`  = c(fe_min$p.value, fe_cen$p.value),
-      `CI lower` = c(fe_min$conf.int[1], fe_cen$conf.int[1]),
-      `CI upper` = c(fe_min$conf.int[2], fe_cen$conf.int[2])
-    )
-  )
-}
-
-# Does the 95% interval still contain the null odds ratio of 1?
-results$`OR = 1 in CI?` <- ifelse(
-  results$`CI lower` <= 1 & results$`CI upper` >= 1, "yes", "no"
-)
-
-knitr::kable(results, digits = c(NA, 3, 3, 3, 3, NA))
-```
-
 | Test | OR est. | p-value | CI lower | CI upper | OR = 1 in CI? |
 |:---|---:|---:|---:|---:|:---|
 | Modified FE (this package) | 3.173 | 0.034 | 1.082 | 10.249 | no |
@@ -163,28 +116,6 @@ Two things stand out:
 Strict size control here means the actual size never exceeds α for any
 nuisance parameter value.
 
-``` r
-
-properties <- tibble(
-  Test = c("Randomised FE (UMPU)",
-           "Conservative / probability-based (base fisher.test, Proc FREQ)",
-           "exact2x2 fisher.exact, minlike",
-           "Woolf asymptotic",
-           "Modified FE (this package)"),
-  `Strict size control?` = c("yes (size = α exactly)",
-                             "yes (but conservative)",
-                             "yes (but conservative)",
-                             "no (can exceed α)",
-                             "yes (close to α)"),
-  `Non-randomised?` = c("no", "yes", "yes", "yes", "yes"),
-  `p-value and CI agree?` = c("not usable", "no", "yes", "yes", "yes"),
-  `OR estimate` = c("conditional MLE", "conditional MLE", "conditional MLE",
-                   "sample OR", "sample OR")
-)
-
-knitr::kable(properties)
-```
-
 | Test | Strict size control? | Non-randomised? | p-value and CI agree? | OR estimate |
 |:---|:---|:---|:---|:---|
 | Randomised FE (UMPU) | yes (size = α exactly) | no | not usable | conditional MLE |
@@ -204,7 +135,27 @@ power of these tests are compared across the nuisance parameter in
 [Reproducing the paper’s
 figures](https://pvdmeulen.github.io/modifiedfisher/articles/reproducing-paper-figures.md).
 
+## Unconditional exact tests
+
+The tests compared above (Fisher’s, Woolf’s, and the modified test) are
+all **conditional**: they fix the total number of successes \\T = u +
+v\\ and evaluate the extremity of the observed split.
+
+A separate class of **unconditional exact tests** does not condition on
+\\T\\. These fix only the sample sizes \\m\\ and \\n\\ and work with the
+full sample space of all possible \\(u, v)\\ pairs. Two key tests in
+this class are Barnard’s and Boschloo’s tests.
+
+The power advantage of unconditional tests over the modified Fisher
+exact test is largest when only the sample sizes \\m\\ and \\n\\ are
+fixed by design (the typical setting in a randomised trial), since
+conditioning on \\T\\ in that setting restricts the sample space without
+a design-based justification. The modified test’s advantage over the
+standard Fisher test holds within the conditional framework.
+
 ## References
+
+**This ‘modified’ Fisher exact test:**
 
 van der Meulen EA, Raymond K, van der Meulen PJ (2021). *Consistent
 Confidence Limits, P Values, and Power of the Non-Conservative, Size-α
@@ -215,6 +166,7 @@ van der Meulen EA (2008). A Nonrandomized, Nonconservative Version of
 the Fisher Exact Test. *Communications in Statistics - Theory and
 Methods*, 37:699-708.
 
+**The `exact2x2` package is a useful resource for comparison tests:**
+
 Fay MP (2010). Confidence intervals that match Fisher’s exact or
-Blaker’s exact tests. *Biostatistics* 11(2):373-374. (The `exact2x2`
-package.)
+Blaker’s exact tests. *Biostatistics* 11(2):373-374.

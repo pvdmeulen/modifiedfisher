@@ -74,6 +74,23 @@ separately and can conflict. The [Background and
 comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.md)
 article shows a worked case.
 
+### Scope and limitations
+
+[`modified_fisher_exact_test()`](https://pvdmeulen.github.io/modifiedfisher/reference/modified_fisher_exact_test.md)
+implements a two-sided test only. The null hypothesis is \\H_0\\: OR =
+`odds_ratio`, and the alternative is two-sided: OR \\\neq\\
+`odds_ratio`. One-sided p-values and one-sided confidence bounds are not
+currently returned.
+
+For superiority trials where the direction of the effect is specified in
+advance, the `superiority = TRUE` argument adjusts the **power
+calculation** to count only tables where the observed rate in group 2
+exceeds that in group 1. This does not change the test or p-value; it
+narrows the power evaluation to the relevant region.
+
+Formal one-sided inference (a one-sided p-value and a one-sided
+confidence bound) is outside the current scope of the package.
+
 ## A different null hypothesis
 
 The `odds_ratio` argument sets \\\theta_0\\; this does not need be 1.
@@ -149,6 +166,77 @@ result_sup <- modified_fisher_exact_test(u = 13, m = 41, v = 6, n = 47,
 result_sup$power
 #> [1] 80.409
 ```
+
+## Sample size planning
+
+The power functions can be inverted to answer the planning question:
+given a target power, what sample sizes are needed? There is no
+closed-form answer, so the simplest approach is a grid search over
+candidate values of \\m\\ and \\n\\.
+
+The example below finds the smallest equal-allocation sample size (\\m =
+n\\) needed to achieve 80% power against \\\pi_1 = 0.3\\, \\\pi_2 =
+0.6\\ under \\H_0\\: OR = 1 at \\\alpha = 0.05\\:
+
+``` r
+
+target_power <- 80   # percent
+pi1 <- 0.3
+pi2 <- 0.6
+alpha <- 0.05
+ 
+# Search over candidate n = m from 10 to 100
+results <- data.frame(n = integer(), power = numeric())
+ 
+for (n_candidate in 10:100) {
+  
+  df_candidate <- construct_test_frame(
+    .odds_ratio = 1, .m = n_candidate, .n = n_candidate,
+    .alpha = alpha, .precision = 1e-3
+  )
+  
+  g0_candidate <- optimise_gamma0(
+    .odds_ratio = 1, .m = n_candidate, .n = n_candidate,
+    .alpha = alpha, .precision = 1e-3,
+    .method = "zoom", .maze = 10, .zoom_iter = 6
+  )
+  
+  pwr <- power_modified(
+    p          = c(pi1, pi2),
+    .gamma0    = g0_candidate,
+    .odds_ratio = 1,
+    .m         = n_candidate,
+    .n         = n_candidate,
+    .df        = df_candidate,
+    .alpha     = alpha,
+    .precision = 1e-3,
+    .superiority = FALSE
+  )
+  
+  results <- rbind(results, data.frame(n = n_candidate, power = pwr * 100))
+  
+  # Stop when desired power is reached:
+  if (pwr * 100 >= target_power) break
+  
+}
+ 
+# Show last three rows:
+tail(results, 3)
+#>     n    power
+#> 33 42 77.75243
+#> 34 43 79.13426
+#> 35 44 80.10992
+```
+
+The smallest \\n\\ achieving 80% power is 44 per group, giving 80.1%
+power. The search stops at the first \\n\\ that crosses the threshold;
+inspect `results` to see how power grows with sample size.
+
+For unequal allocation, replace the loop with a grid over pairs \\(m,
+n)\\. Note that the power calculation re-runs the full test optimisation
+at each candidate sample size, so the search is slow for large candidate
+ranges. A coarse first pass (step size 5 or 10) followed by a fine
+search around the crossing point is more efficient.
 
 ## Diagnostic: plotting the size
 
