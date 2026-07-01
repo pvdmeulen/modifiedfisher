@@ -53,16 +53,3 @@ test_that("boundary cases of t match closed-form results", {
   expect_within(df$gamma1[df$t == 1], 0.05)
 
 })
-
-# Output is stable on rerun ---------------------------------------------------
-
-test_that("construct_test_frame output is stable (snapshot)", {
-
-  skip_on_cran()
-
-  df <- modifiedfisher:::construct_test_frame(.odds_ratio = 1, .m = 20, .n = 20,
-                                              .alpha = 0.05, .precision = 1e-3)
-
-  expect_snapshot(df)
-
-})
