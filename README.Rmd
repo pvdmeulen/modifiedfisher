@@ -41,7 +41,7 @@ conservative (as in the SAS Proc FREQ exact test or R's `fisher.test()`), while
 the mid p-value and Woolf's asymptotic test do not strictly control the Type I
 error rate.
 
-The MFET resolves this by additionally rejecting when the randomisation
+The modified test resolves this by additionally rejecting when the randomisation
 probability at a critical value exceeds a data-driven threshold γ₀, chosen to
 bring the actual size as close to α as possible without exceeding it. P-values
 and confidence intervals are both derived directly from this test, so they agree
@@ -86,7 +86,7 @@ The table below reproduces Table 2 Example 2 from the paper, comparing the
 modified test against Woolf's asymptotic test and the SAS Proc FREQ exact test
 for the same worked example as above. The disagreement between the SAS Proc FREQ
 p-value and confidence interval (p < 0.05 but CI includes OR = 1) illustrates
-the consistency advantage of the MFET's test-based approach.
+the consistency advantage of the modified test's test-based approach.
 
 | Test          | OR    | p-value   | 95% CI             |
 |---------------|-------|-----------|--------------------|
@@ -193,7 +193,7 @@ non-conservative size control across the full range of the nuisance parameter.
 Full documentation is available on the package website:
 <https://pvdmeulen.github.io/modifiedfisher/>. The articles there cover:
 
-- [Introduction to modifiedfisher](https://pvdmeulen.github.io/modifiedfisher/articles/modifiedfisher.html): an introduction to `modified_fisher_exact_test()`, its arguments, power, and diagnostics.
+- [Get started](https://pvdmeulen.github.io/modifiedfisher/articles/modifiedfisher.html): an introduction to `modified_fisher_exact_test()`, its arguments, power, and diagnostics.
 - [Background and comparison](https://pvdmeulen.github.io/modifiedfisher/articles/background-and-comparison.html): why the
   test exists, and a comparison with `fisher.test()` and `exact2x2::fisher.exact()` (both similar to SAS PROC Freq).
 - [Overview of algorithm](https://pvdmeulen.github.io/modifiedfisher/articles/overview-of-algorithm.html): a step by step overview of how the test is built in R.
