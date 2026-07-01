@@ -7,6 +7,7 @@
 
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental)
 [![R-CMD-check](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/pvdmeulen/modifiedfisher/branch/main/graph/badge.svg?token=%3Ctoken%3E)](https://codecov.io/gh/pvdmeulen/modifiedfisher)
 <!-- badges: end -->
 
 ## The Non-Conservative Size-α Modified Fisher Exact Test
@@ -35,9 +36,18 @@ directly from this test, so they agree by construction.
 
 ## Installation
 
+`modifiedfisher` is not yet on CRAN. Install the current development
+version from GitHub using `devtools`:
+
 ``` r
+# install.packages("devtools")
 devtools::install_github("pvdmeulen/modifiedfisher")
 ```
+
+A CRAN submission is planned once the package clears the remaining
+`R CMD check` notes. In regulated or locked-down environments where
+non-CRAN packages cannot be installed, contact the maintainer for a
+source tarball.
 
 ## Quick start
 

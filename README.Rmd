@@ -11,6 +11,7 @@ output:
 <!-- badges: start -->
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental)
 [![R-CMD-check](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvdmeulen/modifiedfisher/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/pvdmeulen/modifiedfisher/branch/main/graph/badge.svg?token=<token>)](https://codecov.io/gh/pvdmeulen/modifiedfisher)
 <!-- badges: end -->
 
 ## The Non-Conservative Size-α Modified Fisher Exact Test
@@ -48,10 +49,18 @@ and confidence intervals are both derived directly from this test, so they agree
 by construction.
 
 ## Installation
-
-```{r installation, echo = TRUE, eval = FALSE}
+ 
+`modifiedfisher` is not yet on CRAN. Install the current development version
+from GitHub using `devtools`:
+ 
+```r
+# install.packages("devtools")
 devtools::install_github("pvdmeulen/modifiedfisher")
 ```
+ 
+A CRAN submission is planned once the package clears the remaining `R CMD check`
+notes. In regulated or locked-down environments where non-CRAN packages cannot
+be installed, contact the maintainer for a source tarball.
 
 ## Quick start
 
@@ -139,7 +148,7 @@ theme_bw_dark <- function(base_size = 11, base_family = "") {
 }
 
 plot <- ggplot(data = result_diag$local.size.data, aes(x = pi1, y = size)) +
-    geom_line(colour = "#DB5461", linewidth = 1) +
+    geom_line(colour = "#016c59", linewidth = 1) +
     coord_cartesian(ylim = c(0, 1.05 * alpha * 100)) +
     labs(
       title = "Size of Modified Fisher Exact Test",

@@ -32,7 +32,8 @@ Suggests:
     dplyr,
     tidyr,
     tibble,
-    spelling
+    spelling,
+    covr
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Config/Needs/website: rmarkdown
