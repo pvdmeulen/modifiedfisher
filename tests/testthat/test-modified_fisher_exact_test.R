@@ -191,3 +191,33 @@ test_that("Results for (71/128 vs 58/142) match Table 2 Example 4", {
   expect_within(res$conf.int[2], 2.936, abs_tol = 1e-2)
 
 })
+
+# Test some additional arguments to the fn ------------------------------------
+
+# Covers method = "trust" branch
+test_that("trust method matches zoom", {
+  res <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11,
+                                    odds_ratio = 1, method = "trust")
+  expect_equal(res$p.value, 0.321, tolerance = 1e-2)
+})
+
+# Covers conf_int = FALSE and pvalue = FALSE branches
+test_that("skipping conf_int and pvalue does not error", {
+  res <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11,
+                                    odds_ratio = 1,
+                                    conf_int = FALSE, pvalue = FALSE,
+                                    power = FALSE)
+  expect_null(res$conf.int)
+  expect_null(res$p.value)
+})
+
+# Covers superiority = TRUE branch
+test_that("superiority flag changes power", {
+  res1 <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11,
+                                     odds_ratio = 1, power_at_pi1 = 0.3,
+                                     power_at_pi2 = 0.6, superiority = FALSE)
+  res2 <- modified_fisher_exact_test(u = 5, m = 12, v = 7, n = 11,
+                                     odds_ratio = 1, power_at_pi1 = 0.3,
+                                     power_at_pi2 = 0.6, superiority = TRUE)
+  expect_true(res2$power <= res1$power)
+})
